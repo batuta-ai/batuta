@@ -1,0 +1,114 @@
+---
+name: batuta
+description: Batuta's main entry point. Use when the user requests a code task that can be delegated (feature, bugfix, refactor, config) or invokes /batuta. Classifies complexity, routes to the cheapest capable executor, builds the brief, delegates, verifies and commits.
+---
+
+# Batuta — the maestro's cycle
+
+> The conductor doesn't play. You (the orchestrator) spend tokens directing, not
+> writing code. Code is written by the cheapest capable executor.
+
+## Step 0 — Onboarding (first run only)
+
+If `.batuta/profile.md` does NOT exist in the project:
+
+1. Detect the stack (package.json, composer.json, go.mod, etc.) and suggest it
+   as the default.
+2. Ask 3–5 short questions, all at once:
+   - Stack? (detected suggestion as default)
+   - Methodology: TDD or tests after? Conventional commits or free-form?
+     Trunk-based or feature branches?
+   - Test command? Build command?
+3. Save the answers to `.batuta/profile.md`, referencing the matching stack
+   template (`templates/react.md`, `templates/vue.md`, `templates/node-api.md`
+   or `templates/generic.md`).
+4. Create `WORK.md` at the project root if it doesn't exist (format in Step 5).
+
+Onboarding never repeats. The user can edit the profile at any time.
+
+## Step 1 — Classify and route
+
+1. Read the routing table: the project's `.batuta/routing.md` if it exists,
+   otherwise the plugin's `routing.md`.
+2. Classify the task as **trivial / medium / complex** using the table's examples.
+3. Announce the decision in ONE line: `→ codex: medium bugfix`. No further
+   justification.
+4. If the user overrides ("use kimi for this"), obey without arguing.
+5. Check executor availability as described in its adapter
+   (`adapters/<executor>.md`). Unavailable → move one row up the table and say so.
+
+Ambiguous or large task? Before routing, ask 2–3 questions and sketch the plan
+in plain text in the conversation (inline planning — no artifact). If the work
+spans sessions, suggest `/batuta:plan`. A plan is never a prerequisite: a clear
+task goes straight into the cycle.
+
+## Step 2 — Brief
+
+Build the task brief with:
+
+- **Goal** — what to deliver, in 1–3 sentences.
+- **Context** — relevant files (paths), snippets that matter, decisions already
+  made in the conversation.
+- **Conventions** — the rules from `.batuta/profile.md` and the stack template it
+  references. They go into every brief, always.
+- **Acceptance criteria** — a verifiable list; this is what you review against.
+  Transform imperative asks into verifiable goals: "fix the bug" → "a test
+  reproducing the bug now passes"; "add validation" → "tests with invalid
+  inputs pass"; "refactor X" → "existing tests pass before and after". Weak
+  criteria ("make it work") produce briefs no executor can act on — rewrite them.
+- **Boundaries** — what NOT to touch.
+
+The brief must be self-sufficient: the executor has no access to the conversation.
+
+## Step 3 — Delegate
+
+Invoke the executor as described in its adapter at `adapters/<executor>.md`
+(non-interactive command, via Bash). The `claude.md` adapter = you execute it
+yourself (complex tasks only).
+
+**Parallelism:** independent tasks run in parallel — executors in the background
+(`run_in_background`), one git worktree per executor when file conflicts are
+likely. If the superpowers plugin is installed, use its
+`dispatching-parallel-agents` and `using-git-worktrees` skills to conduct the
+distribution; without it, use native capabilities. Detect at runtime; no hard
+dependency.
+
+## Step 4 — Verify
+
+Always, no exceptions:
+
+1. **Diff review** — `git diff`; review the code as the maestro: correctness,
+   scope (only what was asked?), adherence to the profile's conventions.
+   Traceability test: every changed line must trace directly to the brief —
+   drive-by edits fail verification even when the code is correct.
+2. **Tests** — run the profile's test command.
+3. **Acceptance criteria** — check them one by one against the brief.
+
+Failed → send the diff + specific feedback back to the executor and allow
+**1 retry**. Failed again → **escalate**: the task moves one row up the routing
+table and the cycle restarts at Step 2 (brief enriched with what was learned).
+
+## Step 5 — Commit and record
+
+1. Atomic commit: one verified task = one commit (message per the profile's
+   methodology).
+2. One line in `WORK.md` (entries in the user's language):
+
+```markdown
+# WORK — <project>
+
+## In progress
+- [ ] <task> → codex (delegated 2026-07-19)
+
+## Done
+- [x] <task> → kimi, commit abc123
+```
+
+Prose + checkboxes. Never turn WORK.md into a schema-bound table.
+
+## Non-negotiable principles
+
+1. Don't write code for trivial/medium tasks — delegate.
+2. Every delivery goes through Step 4, even in a hurry.
+3. State is prose; brittle formats are bugs.
+4. The routing decision is yours, but the final word is the user's.
