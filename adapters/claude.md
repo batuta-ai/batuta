@@ -49,6 +49,18 @@ Common case: none needed — the orchestrator already holds the conversation
 context. Background instance: brief inline via `-p`, or written to a file the
 prompt points at.
 
+## Research invocation
+
+For the Research support lane: background instance on a cheap model with
+write tools blocked:
+
+```bash
+claude -p --model haiku --disallowedTools "Write,Edit,NotebookEdit" "<research brief>"
+```
+
+Bash remains available for `grep`/`ls`; the universal guard from
+`skills/batuta/SKILL.md` ("The scout") covers writes attempted through it.
+
 ## Capabilities and limits
 
 - Good at: architecture, security-sensitive work, tasks that need the

@@ -55,6 +55,15 @@ EOF
 opencode run --model <provider/model> "Follow the instructions in $batuta_brief"
 ```
 
+## Research invocation
+
+For the Research support lane (`routing.md`, Support lanes): same invocation
+shape, model from the Research row. opencode has no native read-only mode, so
+the research brief MUST state: "Read-only task: do not create, edit or delete
+any file." The universal guard from `skills/batuta/SKILL.md` ("The scout") —
+`git status --porcelain` before/after, revert + count as failure if dirty —
+is the actual guarantee.
+
 ## Capabilities and limits
 
 - Good at: renames, config changes, copy edits, simple unit tests, small

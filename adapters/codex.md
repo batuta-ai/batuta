@@ -51,6 +51,18 @@ EOF
 codex exec --sandbox workspace-write "Follow the instructions in $batuta_brief"
 ```
 
+## Research invocation
+
+For the Research support lane: native read-only sandbox, model from the
+Research row (small/cheap — this is not the complex lane's strong model):
+
+```bash
+codex exec --sandbox read-only -m <model> "<research brief>"
+```
+
+The sandbox blocks writes; still apply the universal guard from
+`skills/batuta/SKILL.md` ("The scout") as defense in depth.
+
 ## Capabilities and limits
 
 - Default model — good at: isolated features, bugfixes with a clear repro,
