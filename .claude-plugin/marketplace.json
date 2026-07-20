@@ -5,15 +5,13 @@
     "name": "franciscpd"
   },
   "metadata": {
-    "description": "Lightweight orchestration for Claude Code: the maestro delegates to the cheapest capable executor, verifies and commits. Quem rege não toca.",
-    "version": "0.1.0"
+    "description": "Lightweight orchestration for Claude Code: the maestro delegates to the cheapest capable executor, verifies and commits. Quem rege não toca."
   },
   "plugins": [
     {
       "name": "batuta",
       "source": "./",
       "description": "Lightweight orchestration for Claude Code: classifies each task, routes it to the cheapest capable executor (opencode, codex, claude), builds the brief, verifies and commits. Quem rege não toca.",
-      "version": "0.1.0",
       "author": {
         "name": "Francisross Soares de Oliveira"
       },
