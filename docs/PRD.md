@@ -120,7 +120,9 @@ o perfil a qualquer momento; o onboarding não se repete.
 
 O perfil também ganha um **mapa do projeto**: 20–40 linhas em prosa (diretórios-
 chave, onde vivem rotas/componentes/testes, pontos de entrada, o que é gerado e
-não se toca), preenchidas no onboarding — varredura delegável a executor barato.
+não se toca), preenchidas no onboarding — varredura delegada ao batedor (lane de pesquisa,
+§6.9) quando mapeada; o maestro só varre ele mesmo se a lane não existir ou o
+batedor falhar duas vezes.
 A manutenção é oportunista: se ao montar um brief o maestro descobrir algo que o
 mapa não tinha, acrescenta uma linha; nunca existe uma "fase de atualizar o
 mapa". Se o projeto tem `CLAUDE.md`/`AGENTS.md`, o perfil complementa sem
@@ -143,7 +145,9 @@ complexa — codex + modelo forte (default) ou modelo Claude forte via instânci
 background, à preferência do usuário. Sem codex → opencode cobre trivial/média,
 complexa vai para Claude forte em background, crítica fica com a sessão. Só
 claude → lanes se diferenciam por modelo Claude via instância background
-(`claude -p --model …`). Tudo numa única pergunta de confirmação; o
+(`claude -p --model …`). A mesma proposta cobre a lane de apoio de pesquisa (§6.9): candidato barato
+vindo da mesma descoberta (filtro kimi/haiku/mini/nano/flash).
+Tudo numa única pergunta de confirmação; o
 resultado vira o `.batuta/routing.md` do projeto — a cópia local nasce no
 onboarding com executores e modelos explícitos. Executor ausente é informado na
 hora, junto com o colapso de lanes, em vez de descoberto na primeira delegação.
@@ -266,6 +270,30 @@ conforme o catálogo cresce: suportar cursor, copilot, kimi CLI etc. é um
 arquivo de ~50 linhas que ninguém paga para ter, só para usar. Propriedade
 inegociável ao adicionar executores.
 
+### 6.9 Lane de apoio: pesquisa (o batedor)
+
+Pesquisa de arquivos (onde mora X, o que toca Y, como Z é testado) é delegada
+a uma **lane de apoio**, ortogonal à escada de complexidade: o *batedor* — um
+executor barato, read-only, definido numa segunda tabela do `routing.md`
+("Support lanes") e confirmado na mesma pergunta única do onboarding. Três
+gatilhos: varredura do mapa no onboarding, contexto pré-brief e perguntas
+ad-hoc do usuário sobre a base.
+
+- **Contrato de relatório** com 4 seções fixas (resposta; arquivos com linha;
+  evidência; incertezas — obrigatória) viaja em todo research brief: modelo
+  pequeno segue formato literal.
+- **Verificação estrutural barata** antes de consumir: paths citados via
+  `ls`, símbolos via `grep`. Âncora fantasma → 1 retry com feedback; segunda
+  falha → o maestro pesquisa ele mesmo. Sem escada: o fallback da lane é
+  sempre o maestro.
+- **Read-only garantido pela guarda universal** (`git status --porcelain`
+  antes/depois; árvore suja → reverte e conta como falha), com os modos
+  nativos dos CLIs (`codex --sandbox read-only`, tools bloqueadas no
+  `claude -p`) como defesa em profundidade.
+- Pesquisa não escreve código, não commita e não entra no `WORK.md`.
+- Execução em background com fan-out: perguntas independentes viram batedores
+  paralelos enquanto o maestro segue conduzindo.
+
 ## 7. Fora de escopo (v1)
 
 - Instalador próprio ou binário — distribuição é via plugin marketplace/git.
@@ -306,5 +334,6 @@ inegociável ao adicionar executores.
 | Mapeamento de lanes é escolha do usuário | Onboarding propõe as lanes a partir dos executores instalados e o usuário confirma/ajusta qual CLI/provider/modelo assume cada uma; setups parciais viram tabelas válidas (só claude → lanes por modelo Claude) | A tabela default assume o trio completo, mas o setup real varia; impor o default a quem só tem claude ou claude+opencode quebraria o roteamento na primeira tarefa. O usuário decide, o Batuta descobre e sugere |
 | Lane complexa delegável ao codex | Tabela ganha 4 faixas: complexa (codex + modelo forte, reasoning alto) separada de crítica (claude); divisa é o brief autossuficiente, não o tamanho | Sob assinatura ChatGPT o custo por tarefa é flat — modelo forte na complexa entrega capacidade sem custo extra, reservando o Claude (lane mais cara) para o que realmente exige contexto da conversa ou julgamento. Na dúvida classifica crítica: errar para cima custa diferença de preço, errar para baixo custa ciclo de delegação falho |
 | Variante Claude na lane complexa | Onboarding oferece mapear a complexa para modelo Claude forte via instância background (`claude -p --model opus`) como alternativa ao codex + modelo forte; a crítica segue sempre com a sessão | Lógica pesada que passa no teste do brief não precisa do modelo da sessão — um Claude forte em background resolve mais barato, e há quem prefira Claude a codex para esse trabalho. O limite é contexto, não capacidade: instância background não vê a conversa, então a variante nunca absorve a crítica |
+| Batedor (lane de pesquisa) | Segunda tabela "Support lanes" no `routing.md` com executor barato read-only para varredura de mapa, contexto de brief e perguntas ad-hoc; relatório de contrato fixo, verificação estrutural (`ls`/`grep`), guarda de git e fallback para o maestro | Pesquisa era paga pelo modelo caro da sessão; um modelo de centavos em background devolve o destilado. Ortogonal à escada (falha não escala — volta ao maestro); modo de falha silencioso de modelo pequeno (referência inventada) é coberto pela verificação estrutural, que custa centavos e não traz conteúdo ao contexto premium |
 | Registro de decisões de regência | Linha do `WORK.md` carrega executor + modelo + escaladas; agregação só sob demanda no `/batuta:status` | O valor se demonstra com fatos (taxa de delegação, taxa de escalada), não com contabilidade inventada — o Batuta não tem como saber tokens nem preços de cada CLI. Valores em dinheiro só se o usuário fornecer preços de referência na tabela de roteamento. Telemetria segue fora do escopo |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |
