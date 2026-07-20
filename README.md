@@ -184,7 +184,7 @@ claude plugin marketplace add franciscpd/batuta
 claude plugin install batuta@batuta
 ```
 
-Depois é só abrir um projeto e invocar `/batuta` — a primeira execução roda o onboarding.
+Depois é só abrir um projeto e rodar `/batuta:init` para configurar — daí em diante o `/batuta` conduz o ciclo.
 
 Pré-requisitos:
 
