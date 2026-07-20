@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/franciscpd/batuta/compare/v0.1.4...v0.1.5) (2026-07-20)
+
+
+### Bug Fixes
+
+* sweep do mapa adiado pós-mapeamento e guarda do batedor sob paralelismo ([67100fc](https://github.com/franciscpd/batuta/commit/67100fcd0ec7b5031b9e84763846de5f8cb2a3dd))
+
 ## [0.1.4](https://github.com/franciscpd/batuta/compare/v0.1.3...v0.1.4) (2026-07-20)
 
 
