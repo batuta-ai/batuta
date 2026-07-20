@@ -90,6 +90,12 @@ scout. Árvore suja depois da pesquisa → reverter e contar como falha do scout
 É a garantia que não depende de recurso do CLI; as flags nativas são defesa em
 profundidade.
 
+Sob paralelismo a guarda só é atribuível se nada mais escreve na mesma árvore
+durante a janela: batedores nunca rodam em paralelo com executores de código
+no mesmo checkout, e fan-out de batedores usa um worktree por batedor — ou
+aceita que árvore suja falha o lote inteiro (reverte as entradas novas e
+refaz as perguntas em série).
+
 ### Verificação estrutural
 
 Antes de consumir o relatório (alimentar brief ou responder o usuário):
@@ -106,7 +112,9 @@ indiretamente.
 ### Onboarding
 
 A lane Research entra na **mesma pergunta única** de mapeamento do Step 0.6 —
-sem segunda rodada de confirmação. Discovery reusa os adapters, filtrando para
+sem segunda rodada de confirmação. O sweep do mapa (Step 0.4) é adiado para o
+fim do onboarding, depois do mapeamento das lanes — antes disso a lane de
+pesquisa ainda não existe. Discovery reusa os adapters, filtrando para
 candidatos baratos (`kimi|haiku|mini|nano|flash|free`). Cenários:
 
 - **Full trio:** sugerir opencode + modelo barato (kimi/deepseek) ou

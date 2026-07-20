@@ -28,9 +28,10 @@ If `.batuta/profile.md` does NOT exist in the project:
    or `templates/generic.md`).
 4. Add a **"Project map"** section to the profile: 20–40 lines of prose — key
    directories, where routes/components/tests live, entry points, generated
-   files not to touch. This initial sweep is delegated to the Research lane's scout (see "The
-   scout" below) when the lane is mapped; the maestro only sweeps itself if
-   the lane is unmapped or the scout fails twice.
+   files not to touch. Defer this initial sweep to the end of onboarding, after Step 6 maps the
+   lanes: delegate it to the Research lane's scout (see "The scout" below);
+   if the user left that lane unmapped or the scout fails twice, sweep it
+   yourself.
    The map says where to start looking, not everything: details stay with
    grep and git, which never go stale.
 5. **Takeover:** if artifacts from another framework exist (`.planning/`,
@@ -219,10 +220,16 @@ exist"). Failed again → do the research yourself; that is the lane's only
 fallback. Semantic claims with valid anchors are accepted — in the brief
 flow, Step 4 still catches them indirectly.
 
-**Read-only guard (universal):** run `git status --porcelain` before and
-after every scout; a dirtied tree → revert the changes and count the run as a
-scout failure. The adapters' native read-only modes are defense in depth, not
-the guarantee.
+**Read-only guard (universal):** capture `git status --porcelain` as a
+baseline before dispatch and compare after the scout returns — any entry that
+is new or changed relative to the baseline means the scout wrote: revert
+those entries and count the run as a scout failure. The comparison is only
+attributable when nothing else writes to the same tree during the window:
+never run scouts in parallel with code executors on one checkout, and for
+scout fan-out either give each scout its own worktree or accept that a
+dirtied tree fails the whole batch (revert the new entries, then retry the
+questions serially). The adapters' native read-only modes are defense in
+depth, not the guarantee.
 
 ## Non-negotiable principles
 
