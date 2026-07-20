@@ -11,7 +11,7 @@
         {
           "type": "json",
           "path": ".claude-plugin/plugin.json",
-          "jsonPath": "$.version"
+          "jsonpath": "$.version"
         }
       ]
     }
