@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/franciscpd/batuta/compare/v0.2.0...v0.2.1) (2026-07-20)
+
+
+### Bug Fixes
+
+* README aponta o init no quickstart e ajustes de texto no PRD ([2093384](https://github.com/franciscpd/batuta/commit/2093384dff98c0cf0515f6b6f441a11bf04194c3))
+
 ## [0.2.0](https://github.com/franciscpd/batuta/compare/v0.1.5...v0.2.0) (2026-07-20)
 
 
