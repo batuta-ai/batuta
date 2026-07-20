@@ -138,10 +138,12 @@ artefatos antigos ficam intocados.
 verificações de disponibilidade dos adapters, mostra o que encontrou e propõe o
 mapeamento das lanes a partir do setup real — a palavra final é do usuário, que
 escolhe qual CLI/provider/modelo assume cada lane. Trio completo → tabela
-default, confirmando o modelo barato da trivial (opencode) e o modelo forte +
-reasoning da complexa (codex). Sem codex → opencode cobre trivial/média, claude
-o resto. Só claude → lanes se diferenciam por modelo Claude via instância
-background (`claude -p --model …`). Tudo numa única pergunta de confirmação; o
+default, confirmando o modelo barato da trivial (opencode) e o executor da
+complexa — codex + modelo forte (default) ou modelo Claude forte via instância
+background, à preferência do usuário. Sem codex → opencode cobre trivial/média,
+complexa vai para Claude forte em background, crítica fica com a sessão. Só
+claude → lanes se diferenciam por modelo Claude via instância background
+(`claude -p --model …`). Tudo numa única pergunta de confirmação; o
 resultado vira o `.batuta/routing.md` do projeto — a cópia local nasce no
 onboarding com executores e modelos explícitos. Executor ausente é informado na
 hora, junto com o colapso de lanes, em vez de descoberto na primeira delegação.
@@ -171,10 +173,17 @@ Tabela default (editável via `routing.md` do projeto ou `/batuta:route`):
   reasoning high`), confirmados no onboarding.
 - **Complexa vs Crítica:** a divisa é o brief, não o tamanho. Brief
   autossuficiente possível (arquivos, decisões tomadas, critérios verificáveis)
-  → complexa, delegável ao codex com modelo forte. Exige contexto da conversa,
-  julgamento de segurança ou decisões em aberto → crítica, fica com o claude.
-  Na dúvida, crítica: errar para cima custa a diferença de preço; errar para
-  baixo custa um ciclo de delegação falho.
+  → complexa, delegável ao executor da lane com modelo forte. Exige contexto da
+  conversa, julgamento de segurança ou decisões em aberto → crítica, fica com o
+  claude. Na dúvida, crítica: errar para cima custa a diferença de preço; errar
+  para baixo custa um ciclo de delegação falho.
+- **Executor da lane complexa é escolha do usuário:** default codex + modelo
+  forte, mas o onboarding oferece a alternativa de um modelo Claude forte via
+  instância background (`claude -p --model opus "<brief>"`). O limite da
+  variante é contexto, não capacidade: a instância background não vê a
+  conversa, então só serve para o que passa no teste do brief — o que precisa
+  da conversa continua crítico e fica com a sessão, qualquer que seja o dono
+  da complexa.
 
 ### 6.3 Ciclo de execução (único, sem fases)
 
@@ -296,5 +305,6 @@ inegociável ao adicionar executores.
 | Adapters dormentes | Adapter só é lido quando sua linha da tabela é roteada ou adicionada; onboarding checa apenas o que a tabela referencia, nunca varre a máquina atrás de CLIs | Custo de contexto precisa ser constante conforme o catálogo de adapters cresce — com varredura, cada CLI nova (cursor, copilot, kimi CLI…) encareceria onboarding e classificação para todo mundo, mesmo quem não a usa |
 | Mapeamento de lanes é escolha do usuário | Onboarding propõe as lanes a partir dos executores instalados e o usuário confirma/ajusta qual CLI/provider/modelo assume cada uma; setups parciais viram tabelas válidas (só claude → lanes por modelo Claude) | A tabela default assume o trio completo, mas o setup real varia; impor o default a quem só tem claude ou claude+opencode quebraria o roteamento na primeira tarefa. O usuário decide, o Batuta descobre e sugere |
 | Lane complexa delegável ao codex | Tabela ganha 4 faixas: complexa (codex + modelo forte, reasoning alto) separada de crítica (claude); divisa é o brief autossuficiente, não o tamanho | Sob assinatura ChatGPT o custo por tarefa é flat — modelo forte na complexa entrega capacidade sem custo extra, reservando o Claude (lane mais cara) para o que realmente exige contexto da conversa ou julgamento. Na dúvida classifica crítica: errar para cima custa diferença de preço, errar para baixo custa ciclo de delegação falho |
+| Variante Claude na lane complexa | Onboarding oferece mapear a complexa para modelo Claude forte via instância background (`claude -p --model opus`) como alternativa ao codex + modelo forte; a crítica segue sempre com a sessão | Lógica pesada que passa no teste do brief não precisa do modelo da sessão — um Claude forte em background resolve mais barato, e há quem prefira Claude a codex para esse trabalho. O limite é contexto, não capacidade: instância background não vê a conversa, então a variante nunca absorve a crítica |
 | Registro de decisões de regência | Linha do `WORK.md` carrega executor + modelo + escaladas; agregação só sob demanda no `/batuta:status` | O valor se demonstra com fatos (taxa de delegação, taxa de escalada), não com contabilidade inventada — o Batuta não tem como saber tokens nem preços de cada CLI. Valores em dinheiro só se o usuário fornecer preços de referência na tabela de roteamento. Telemetria segue fora do escopo |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |

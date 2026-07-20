@@ -36,11 +36,20 @@ local copy is the user's choice, not this default.
 - **Complex vs Critical:** the dividing line is the brief, not the size. If a
   self-sufficient brief can carry everything the executor needs (file list,
   decisions already made, verifiable acceptance criteria), the task is Complex
-  and delegable to codex with a strong model. If the task needs the
-  conversation's context, security judgment, or decisions that are still open,
-  it is Critical and stays with claude. When in doubt, classify Critical —
-  a wrong Complex costs a failed delegation cycle; a wrong Critical only
-  costs the price difference.
+  and delegable to the Complex row's executor with a strong model. If the task
+  needs the conversation's context, security judgment, or decisions that are
+  still open, it is Critical and stays with claude. When in doubt, classify
+  Critical — a wrong Complex costs a failed delegation cycle; a wrong Critical
+  only costs the price difference.
+- **Complex-lane executor is a user choice:** the default (full trio) is codex
+  with a strong model, but at onboarding the user may map the row to a strong
+  Claude model via background instance instead (`claude -p --model opus
+  "<brief>"`, see `adapters/claude.md`) — heavy-logic work that passes the
+  brief test doesn't need the session's top model, and some users prefer
+  Claude's strong models over codex for it. Either way the row names the exact
+  model. This choice never absorbs Critical: a background instance has no
+  access to the conversation, so anything needing that context stays with the
+  session regardless of which executor owns Complex.
 - **Explicit model:** for multi-model CLIs (opencode), the row must name the
   exact `provider/model` ID — never rely on the CLI's global default, which is
   whatever the user last configured and may point at an expensive premium

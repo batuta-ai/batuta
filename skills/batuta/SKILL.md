@@ -46,13 +46,17 @@ If `.batuta/profile.md` does NOT exist in the project:
    mapping built from what is actually installed — the default table assumes
    the full trio (opencode + codex + claude), but the user's real setup rules:
    - **Full trio:** default table; confirm the trivial-lane opencode model and
-     the complex-lane codex model.
+     the complex-lane executor — codex + strong model (default) or a strong
+     Claude model via background instance (`claude -p --model opus`, see
+     `adapters/claude.md`), whichever the user prefers for briefable
+     heavy-logic work.
    - **No codex** (e.g. claude + opencode): opencode keeps trivial; suggest a
-     mid-tier opencode model for medium; complex/critical go to claude.
+     mid-tier opencode model for medium; complex goes to a strong Claude model
+     in background; critical stays with the session.
    - **claude only:** lanes differentiate by Claude model via background
      instances (`claude -p --model <model>`, see `adapters/claude.md`) — e.g.
-     haiku for trivial, sonnet for medium/complex, the session itself for
-     critical.
+     haiku for trivial, sonnet for medium, opus for complex, the session
+     itself for critical.
    The user has the final word on which CLI/provider/model owns each lane —
    present the proposal and let them adjust before writing anything. For
    multi-model CLIs, discover models yourself — the user never enumerates

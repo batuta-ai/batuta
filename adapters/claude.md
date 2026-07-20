@@ -23,12 +23,21 @@ claude -p "<brief>" --permission-mode acceptEdits
 Common case: the session's model applies — there is nothing to pin. Background
 instances accept `--model <model>` (e.g. `claude -p --model sonnet "<brief>"`);
 a routing row may use that to create an intermediate Claude lane (a cheaper
-Claude model for tasks that deserve Claude but not the top model). In
-claude-only setups this is how the whole table works: lower lanes run cheaper
-Claude models via background instances (haiku for trivial, sonnet for
-medium/complex), and only the critical lane is the session itself. If a row
-names a Claude model, it follows the explicit-model rule: the row records it,
-the invocation passes it.
+Claude model for tasks that deserve Claude but not the top model).
+
+The main use of that is the **Complex lane on a strong Claude model**: at
+onboarding the user may map the Complex row to `claude -p --model opus
+"<brief>"` instead of codex — heavy-logic work that passes the brief test
+doesn't need the session's top model. The limit is context, not capability: a
+background instance never sees the conversation, so this variant only fits
+tasks a self-sufficient brief can carry. Needing the conversation's context
+still means Critical, which is always the session itself.
+
+In claude-only setups this is how the whole table works: lower lanes run
+cheaper Claude models via background instances (haiku for trivial, sonnet for
+medium, opus for complex), and only the critical lane is the session itself.
+If a row names a Claude model, it follows the explicit-model rule: the row
+records it, the invocation passes it.
 
 Note for future orchestrator-agnostic versions: this adapter means "the
 orchestrating tool executes", whatever that tool is — nothing here may assume
@@ -46,7 +55,8 @@ prompt points at.
   conversation's full context or real judgment.
 - Avoid: anything a cheaper lane can do — check the routing table first.
   Multi-file work alone no longer lands here: if a self-sufficient brief can
-  specify it, it belongs to the Complex row (codex + strong model).
+  specify it, it belongs to the Complex row (codex + strong model, or a strong
+  Claude model in background — whichever the project's routing names).
 
 ## Cost
 
