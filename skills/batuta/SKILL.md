@@ -1,6 +1,6 @@
 ---
 name: batuta
-description: Batuta's main entry point. Use when the user requests a code task that can be delegated (feature, bugfix, refactor, config), asks where or how something lives in the codebase (research — see "The scout"), or invokes /batuta. Classifies complexity, routes to the cheapest capable executor, builds the brief, delegates, verifies and commits.
+description: Batuta's main entry point — the conducting cycle. Use when the user requests a code task that can be delegated (feature, bugfix, refactor, config), asks where or how something lives in the codebase (research — see "The scout"), or invokes /batuta. Classifies complexity, routes to the cheapest capable executor, builds the brief, delegates, verifies and commits. Setup lives in /batuta:init.
 ---
 
 # Batuta — the maestro's cycle
@@ -8,78 +8,15 @@ description: Batuta's main entry point. Use when the user requests a code task t
 > The conductor doesn't play. You (the orchestrator) spend tokens directing, not
 > writing code. Code is written by the cheapest capable executor.
 
-## Step 0 — Onboarding (first run only)
+## Step 0 — Gates
 
-If `.batuta/profile.md` does NOT exist in the project:
+Two one-line checks before anything else:
 
-1. Detect the stack (package.json, composer.json, go.mod, etc.) and suggest it
-   as the default. Read `CLAUDE.md`/`AGENTS.md` if present — the profile must
-   complement them, never duplicate what they already say. If they contradict
-   the user's onboarding answers, flag the conflict to the user — never edit
-   those files (executors like codex read `AGENTS.md` on their own; an
-   unflagged contradiction means conflicting instructions mid-task).
-2. Ask 3–5 short questions, all at once:
-   - Stack? (detected suggestion as default)
-   - Methodology: TDD or tests after? Conventional commits or free-form?
-     Trunk-based or feature branches?
-   - Test command? Build command?
-3. Save the answers to `.batuta/profile.md`, referencing the matching stack
-   template (`templates/react.md`, `templates/vue.md`, `templates/node-api.md`
-   or `templates/generic.md`).
-4. Add a **"Project map"** section to the profile: 20–40 lines of prose — key
-   directories, where routes/components/tests live, entry points, generated
-   files not to touch. Defer this initial sweep to the end of onboarding, after Step 0.6 maps the
-   lanes: delegate it to the Research lane's scout (see "The scout" below);
-   if the user left that lane unmapped or the scout fails twice, sweep it
-   yourself.
-   The map says where to start looking, not everything: details stay with
-   grep and git, which never go stale.
-5. **Takeover:** if artifacts from another framework exist (`.planning/`,
-   `TODO.md`, roadmaps…), offer a one-time import: in-progress/done work
-   becomes `WORK.md` lines, large remaining work becomes
-   `.batuta/plan-<slug>.md`, relevant decisions become profile lines. Leave
-   the old artifacts untouched — the user archives them if they want.
-6. **Executor check and lane mapping:** run the availability checks from each
-   adapter referenced by the routing table (`command -v codex`,
-   `opencode providers list`, …) and show what was found. Only what the table
-   references — never scan the machine for every CLI that might exist
-   (cursor, copilot, kimi CLI, …); those adapters stay dormant until the user
-   asks for one ("put cursor on the medium lane"), which is when its adapter
-   gets read and its row gets written. Then propose a lane
-   mapping built from what is actually installed — the default table assumes
-   the full trio (opencode + codex + claude), but the user's real setup rules:
-   - **Full trio:** default table; confirm the trivial-lane opencode model and
-     the complex-lane executor — codex + strong model (default) or a strong
-     Claude model via background instance (`claude -p --model opus`, see
-     `adapters/claude.md`), whichever the user prefers for briefable
-     heavy-logic work.
-   - **No codex** (e.g. claude + opencode): opencode keeps trivial; suggest a
-     mid-tier opencode model for medium; complex goes to a strong Claude model
-     in background; critical stays with the session.
-   - **claude only:** lanes differentiate by Claude model via background
-     instances (`claude -p --model <model>`, see `adapters/claude.md`) — e.g.
-     haiku for trivial, sonnet for medium, opus for complex, the session
-     itself for critical.
-   The same single confirmation question also covers the **Research support
-   lane** (`routing.md`, Support lanes): suggest a cheap candidate from the
-   discovery already run — filter to `kimi|haiku|mini|nano|flash|free`. Full
-   trio or no-codex → a cheap opencode model or `claude -p --model haiku`;
-   claude only → haiku via background instance.
-   The user has the final word on which CLI/provider/model owns each lane —
-   present the proposal and let them adjust before writing anything. For
-   multi-model CLIs, discover models yourself — the user never enumerates
-   anything: run the discovery from `adapters/opencode.md` (`opencode models`
-   filtered to cheap candidates) and `adapters/codex.md` (Model selection) and
-   suggest 2–3 options per lane. Ask ONE confirmation question covering the
-   whole mapping (lanes + models). Write the result as the project's
-   `.batuta/routing.md`: the local copy is born here, with the exact executors
-   and model IDs confirmed by the user. If an executor disappears later, tell
-   the user which lanes collapse upward (unavailability rule) instead of
-   letting them find out on the first delegation.
-7. Create `WORK.md` at the project root if it doesn't exist (format in Step 5
-   of the cycle).
-
-Onboarding never repeats. The user can edit the profile at any time.
+1. **No `.batuta/profile.md`** → the project is not set up: tell the user to
+   run `/batuta:init` and stop. Never run onboarding inline.
+2. **`.batuta/handoff.md` exists** → there is paused work: say so in one line
+   ("paused work from <date> — `/batuta:resume` to pick it up, or I continue
+   with the new request") and obey the user's choice. Never auto-resume.
 
 ## Step 1 — Classify and route
 
@@ -186,7 +123,7 @@ Prose + checkboxes. Never turn WORK.md into a schema-bound table.
 Codebase research is delegated to the Research support lane (`routing.md`,
 Support lanes): a cheap, read-only executor invoked per the "Research
 invocation" section of its adapter, in the background. Three triggers: the
-onboarding map sweep (Step 0.4), brief context (Step 2), and ad-hoc user
+onboarding map sweep (`skills/init/SKILL.md`), brief context (Step 2), and ad-hoc user
 questions about the codebase ("where is payment handled?") even outside a
 code task.
 
