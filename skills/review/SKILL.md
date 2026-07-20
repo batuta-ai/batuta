@@ -1,5 +1,5 @@
 ---
-name: batuta-review
+name: review
 description: Batuta's on-demand verification. Use when the user invokes /batuta:review or asks to review a diff, an executor's work, or uncommitted changes.
 ---
 

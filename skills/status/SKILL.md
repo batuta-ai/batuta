@@ -1,5 +1,5 @@
 ---
-name: batuta-status
+name: status
 description: Batuta status. Use when the user invokes /batuta:status or asks what is in progress, what is done, or how delegated background tasks are going.
 ---
 

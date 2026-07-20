@@ -1,5 +1,5 @@
 ---
-name: batuta-plan
+name: plan
 description: Batuta's formal planning. Use when the user invokes /batuta:plan or when work will span sessions and needs an approvable, persistent plan.
 ---
 

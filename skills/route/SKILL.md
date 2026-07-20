@@ -1,5 +1,5 @@
 ---
-name: batuta-route
+name: route
 description: Batuta routing. Use when the user invokes /batuta:route or wants to view or edit the complexity-to-executor routing table.
 ---
 
