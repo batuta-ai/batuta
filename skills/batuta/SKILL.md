@@ -14,7 +14,10 @@ If `.batuta/profile.md` does NOT exist in the project:
 
 1. Detect the stack (package.json, composer.json, go.mod, etc.) and suggest it
    as the default. Read `CLAUDE.md`/`AGENTS.md` if present — the profile must
-   complement them, never duplicate what they already say.
+   complement them, never duplicate what they already say. If they contradict
+   the user's onboarding answers, flag the conflict to the user — never edit
+   those files (executors like codex read `AGENTS.md` on their own; an
+   unflagged contradiction means conflicting instructions mid-task).
 2. Ask 3–5 short questions, all at once:
    - Stack? (detected suggestion as default)
    - Methodology: TDD or tests after? Conventional commits or free-form?
@@ -128,3 +131,6 @@ Prose + checkboxes. Never turn WORK.md into a schema-bound table.
 2. Every delivery goes through Step 4, even in a hurry.
 3. State is prose; brittle formats are bugs.
 4. The routing decision is yours, but the final word is the user's.
+5. Write boundary: Batuta writes to `WORK.md`, `.batuta/` and project code
+   through the cycle — nothing else. `CLAUDE.md`, `AGENTS.md` and other tools'
+   files are read-only unless the user explicitly asks.

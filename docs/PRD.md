@@ -124,7 +124,9 @@ não se toca), preenchidas no onboarding — varredura delegável a executor bar
 A manutenção é oportunista: se ao montar um brief o maestro descobrir algo que o
 mapa não tinha, acrescenta uma linha; nunca existe uma "fase de atualizar o
 mapa". Se o projeto tem `CLAUDE.md`/`AGENTS.md`, o perfil complementa sem
-duplicar.
+duplicar; contradição entre esses arquivos e o perfil é sinalizada ao usuário,
+nunca editada — executores como o codex leem `AGENTS.md` por conta própria, e
+uma contradição não sinalizada vira instrução conflitante no meio da tarefa.
 
 **Takeover de outro framework:** se o onboarding detectar artefatos de outro
 framework (`.planning/`, `TODO.md`, roadmaps), oferece importação única — o que
@@ -248,4 +250,5 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 | Onboarding | Automático na 1ª execução | Perfil de stack/metodologia alimenta briefs sem comando extra |
 | Mapa de código | Seção curta em prosa no `profile.md`, atualizada oportunisticamente | Mapa formal envelhece e vira referência errada; o custo real é redescobrir onde as coisas ficam, e isso um mapa de 20–40 linhas resolve |
 | Takeover de outro framework | Importação única no onboarding (estado → `WORK.md`/plan/perfil) | O que precisa de tradução é o estado do trabalho, não a arquitetura; artefatos antigos ficam intocados |
+| Fronteira de escrita | Batuta escreve só em `WORK.md`, `.batuta/` e no código via ciclo | Confiança e mudança cirúrgica: `CLAUDE.md`, `AGENTS.md` e configs de outras ferramentas são somente leitura, salvo pedido explícito do usuário |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |
