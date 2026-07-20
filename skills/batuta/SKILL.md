@@ -28,7 +28,7 @@ If `.batuta/profile.md` does NOT exist in the project:
    or `templates/generic.md`).
 4. Add a **"Project map"** section to the profile: 20–40 lines of prose — key
    directories, where routes/components/tests live, entry points, generated
-   files not to touch. Defer this initial sweep to the end of onboarding, after Step 6 maps the
+   files not to touch. Defer this initial sweep to the end of onboarding, after Step 0.6 maps the
    lanes: delegate it to the Research lane's scout (see "The scout" below);
    if the user left that lane unmapped or the scout fails twice, sweep it
    yourself.
