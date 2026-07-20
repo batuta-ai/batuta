@@ -232,4 +232,4 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 | Nome | Batuta | Metáfora exata (reger sem tocar), brasileiro, curto, disponível |
 | Comandos | 5 (go, plan, status, route, review) | Superfície mínima com controle de custo e verificação manual |
 | Onboarding | Automático na 1ª execução | Perfil de stack/metodologia alimenta briefs sem comando extra |
-| Idioma dos docs | Tudo em PT-BR (README, PRD, skills) | Público-alvo: desenvolvedores do Brasil |
+| Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |
