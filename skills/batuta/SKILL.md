@@ -13,7 +13,8 @@ description: Batuta's main entry point. Use when the user requests a code task t
 If `.batuta/profile.md` does NOT exist in the project:
 
 1. Detect the stack (package.json, composer.json, go.mod, etc.) and suggest it
-   as the default.
+   as the default. Read `CLAUDE.md`/`AGENTS.md` if present — the profile must
+   complement them, never duplicate what they already say.
 2. Ask 3–5 short questions, all at once:
    - Stack? (detected suggestion as default)
    - Methodology: TDD or tests after? Conventional commits or free-form?
@@ -22,7 +23,18 @@ If `.batuta/profile.md` does NOT exist in the project:
 3. Save the answers to `.batuta/profile.md`, referencing the matching stack
    template (`templates/react.md`, `templates/vue.md`, `templates/node-api.md`
    or `templates/generic.md`).
-4. Create `WORK.md` at the project root if it doesn't exist (format in Step 5).
+4. Add a **"Project map"** section to the profile: 20–40 lines of prose — key
+   directories, where routes/components/tests live, entry points, generated
+   files not to touch. This initial sweep is delegable to a cheap executor.
+   The map says where to start looking, not everything: details stay with
+   grep and git, which never go stale.
+5. **Takeover:** if artifacts from another framework exist (`.planning/`,
+   `TODO.md`, roadmaps…), offer a one-time import: in-progress/done work
+   becomes `WORK.md` lines, large remaining work becomes
+   `.batuta/plan-<slug>.md`, relevant decisions become profile lines. Leave
+   the old artifacts untouched — the user archives them if they want.
+6. Create `WORK.md` at the project root if it doesn't exist (format in Step 5
+   of the cycle).
 
 Onboarding never repeats. The user can edit the profile at any time.
 
@@ -59,6 +71,10 @@ Build the task brief with:
 - **Boundaries** — what NOT to touch.
 
 The brief must be self-sufficient: the executor has no access to the conversation.
+
+**Map upkeep (opportunistic, never a ceremony):** if building the brief required
+discovering something the profile's Project map didn't cover, add a line to the
+map. The map grows as a side effect of work — there is no "update the map" phase.
 
 ## Step 3 — Delegate
 

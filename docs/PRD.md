@@ -118,6 +118,20 @@ O resultado vira `.batuta/profile.md`. O template de stack correspondente
 automaticamente em todo task brief enviado aos executores. O usuário pode editar
 o perfil a qualquer momento; o onboarding não se repete.
 
+O perfil também ganha um **mapa do projeto**: 20–40 linhas em prosa (diretórios-
+chave, onde vivem rotas/componentes/testes, pontos de entrada, o que é gerado e
+não se toca), preenchidas no onboarding — varredura delegável a executor barato.
+A manutenção é oportunista: se ao montar um brief o maestro descobrir algo que o
+mapa não tinha, acrescenta uma linha; nunca existe uma "fase de atualizar o
+mapa". Se o projeto tem `CLAUDE.md`/`AGENTS.md`, o perfil complementa sem
+duplicar.
+
+**Takeover de outro framework:** se o onboarding detectar artefatos de outro
+framework (`.planning/`, `TODO.md`, roadmaps), oferece importação única — o que
+estava em andamento/feito vira linhas no `WORK.md`, trabalho restante grande
+vira `.batuta/plan-<slug>.md`, decisões relevantes viram linhas no perfil. Os
+artefatos antigos ficam intocados.
+
 ### 6.2 Roteamento por complexidade
 
 Tabela default (editável via `routing.md` do projeto ou `/batuta:route`):
@@ -232,4 +246,6 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 | Nome | Batuta | Metáfora exata (reger sem tocar), brasileiro, curto, disponível |
 | Comandos | 5 (go, plan, status, route, review) | Superfície mínima com controle de custo e verificação manual |
 | Onboarding | Automático na 1ª execução | Perfil de stack/metodologia alimenta briefs sem comando extra |
+| Mapa de código | Seção curta em prosa no `profile.md`, atualizada oportunisticamente | Mapa formal envelhece e vira referência errada; o custo real é redescobrir onde as coisas ficam, e isso um mapa de 20–40 linhas resolve |
+| Takeover de outro framework | Importação única no onboarding (estado → `WORK.md`/plan/perfil) | O que precisa de tradução é o estado do trabalho, não a arquitetura; artefatos antigos ficam intocados |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |

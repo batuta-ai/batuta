@@ -1,4 +1,6 @@
-# 🎼 Batuta
+<p align="center">
+  <img src="docs/assets/logo.jpg" alt="Batuta — orquestre múltiplas CLI tools. Automático. Inteligente. Seu." width="720">
+</p>
 
 > **Quem rege não toca.**
 
@@ -84,6 +86,10 @@ Na **primeira execução** em um projeto, o Batuta faz 3-5 perguntas rápidas:
 
 As respostas viram o `.batuta/profile.md`, e as convenções da sua stack (via templates inclusos) entram **automaticamente em todo brief** enviado aos executores. Ou seja: o codex e o kimi seguem as regras do *seu* projeto sem você repetir nada.
 
+O perfil também guarda um **mapa curto do projeto** (onde ficam rotas, componentes, testes…), montado no onboarding e atualizado como efeito colateral do trabalho — nada de fase de mapeamento nem mapa gigante que envelhece.
+
+**Vindo de outro framework?** Se o Batuta encontrar artefatos de um GSD da vida (`.planning/`, roadmaps), ele oferece importar o estado: o que estava em andamento vira `WORK.md`, o que falta vira plano. Seus artefatos antigos ficam intocados.
+
 ## Paralelismo
 
 Tarefas independentes rodam **em paralelo**: cada executor em background, com um git worktree próprio quando há risco de conflito. Se você tiver o plugin [superpowers](https://github.com/obra/superpowers) instalado, o Batuta usa as skills dele para reger a distribuição; sem ele, usa os recursos nativos do Claude Code. Nenhuma dependência obrigatória.
@@ -128,6 +134,10 @@ Pré-requisitos previstos:
 3. **Estado é prosa, não schema** — nada que quebre com um pipe não escapado.
 4. **Toda entrega passa por verificação** — sempre, sem exceção.
 5. **Extensível por arquivo, não por código** — novo executor = novo arquivo markdown.
+
+## Identidade visual
+
+O guia completo da marca — conceito (batuta + ferramentas CLI + orquestração), paleta, tipografia e aplicações — está em [`docs/assets/brand-guide.jpg`](docs/assets/brand-guide.jpg).
 
 ## Inspirações
 
