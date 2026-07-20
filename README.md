@@ -61,10 +61,13 @@ O coração do Batuta é uma tabela simples — que você edita como quiser:
 | Complexidade | Exemplos | Executor | Custo |
 |---|---|---|---|
 | **Trivial** | rename, config, texto, teste simples | `opencode` + Kimi/DeepSeek | centavos (API) |
-| **Média** | feature isolada, bugfix com repro clara | `codex` | assinatura ChatGPT |
-| **Complexa** | multi-arquivo, arquitetura, segurança | Claude executa | assinatura Claude |
+| **Média** | feature isolada, bugfix com repro clara | `codex` (modelo default) | assinatura ChatGPT |
+| **Complexa** | multi-arquivo especificável num brief preciso | `codex` + modelo forte, reasoning alto | assinatura ChatGPT |
+| **Crítica** | arquitetura, segurança, decisões que dependem do contexto da conversa | Claude executa | assinatura Claude |
 
 O Claude classifica e informa a decisão em uma linha (`→ codex: bugfix médio`). Não gostou? É só falar: *"usa o kimi pra isso"*.
+
+A linha divisória entre **Complexa** e **Crítica** é o brief, não o tamanho: se dá para escrever um brief autossuficiente (lista de arquivos, decisões já tomadas, critérios verificáveis), o codex com modelo forte assume — pelo custo flat da assinatura ChatGPT. Se a tarefa exige o contexto da conversa ou julgamento de segurança, fica com o Claude.
 
 ## Comandos
 
@@ -84,7 +87,7 @@ Na **primeira execução** em um projeto, o Batuta faz 3-5 perguntas rápidas:
 - Qual a metodologia? (TDD ou testes depois; conventional commits ou livre)
 - Qual o comando de testes e de build?
 
-Ele também **checa quais executores você tem** (codex? opencode? logados?) e confirma o modelo barato da lane trivial — assim a tabela de roteamento do seu projeto já nasce com modelos explícitos, e você descobre na hora (não no meio de uma tarefa) se falta instalar algo.
+Ele também **checa quais executores você tem** (codex? opencode? logados?) e propõe o mapeamento das lanes a partir do que encontrou — **mas quem decide é você**: qual CLI, provider e modelo assume cada lane. Tem o trio completo? A tabela default vale, só confirmando os modelos. Só tem Claude e opencode? O opencode cobre trivial e média, o Claude o resto. Só o Claude? As lanes se diferenciam por modelo (Haiku para trivial, Sonnet para média, a sessão para crítica). Uma pergunta de confirmação e a tabela de roteamento do seu projeto nasce com executores e modelos explícitos — e você descobre na hora (não no meio de uma tarefa) se falta instalar algo.
 
 As respostas viram o `.batuta/profile.md`, e as convenções da sua stack (via templates inclusos) entram **automaticamente em todo brief** enviado aos executores. Ou seja: o codex e o kimi seguem as regras do *seu* projeto sem você repetir nada.
 
@@ -128,7 +131,7 @@ O Batuta não inventa contabilidade: ele não tem como saber quantos tokens cada
 
 Pergunte `/batuta:status` e ele lê o `WORK.md` e responde com fatos:
 
-> 23 tarefas concluídas: 14 triviais (kimi), 6 médias (codex), 3 complexas (claude).
+> 23 tarefas concluídas: 14 triviais (kimi), 6 médias (codex), 2 complexas (codex gpt-5-codex high), 1 crítica (claude).
 > **87% do código deste projeto não gastou sua assinatura Claude.**
 > 2 escaladas saindo da lane trivial — considere um modelo mais forte ou classificação mais conservadora.
 

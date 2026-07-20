@@ -134,12 +134,17 @@ estava em andamento/feito vira linhas no `WORK.md`, trabalho restante grande
 vira `.batuta/plan-<slug>.md`, decisões relevantes viram linhas no perfil. Os
 artefatos antigos ficam intocados.
 
-**Checagem de executores:** o onboarding roda as verificações de disponibilidade
-dos adapters, mostra o que encontrou e, para CLIs multi-modelo (opencode),
-confirma o modelo barato da lane trivial. O resultado vira o `.batuta/routing.md`
-do projeto — a cópia local nasce no onboarding com modelos explícitos. Executor
-ausente é informado na hora, junto com o colapso de lanes, em vez de descoberto
-na primeira delegação.
+**Checagem de executores e mapeamento de lanes:** o onboarding roda as
+verificações de disponibilidade dos adapters, mostra o que encontrou e propõe o
+mapeamento das lanes a partir do setup real — a palavra final é do usuário, que
+escolhe qual CLI/provider/modelo assume cada lane. Trio completo → tabela
+default, confirmando o modelo barato da trivial (opencode) e o modelo forte +
+reasoning da complexa (codex). Sem codex → opencode cobre trivial/média, claude
+o resto. Só claude → lanes se diferenciam por modelo Claude via instância
+background (`claude -p --model …`). Tudo numa única pergunta de confirmação; o
+resultado vira o `.batuta/routing.md` do projeto — a cópia local nasce no
+onboarding com executores e modelos explícitos. Executor ausente é informado na
+hora, junto com o colapso de lanes, em vez de descoberto na primeira delegação.
 
 ### 6.2 Roteamento por complexidade
 
@@ -148,8 +153,9 @@ Tabela default (editável via `routing.md` do projeto ou `/batuta:route`):
 | Complexidade | Exemplos | Executor | Custo |
 |---|---|---|---|
 | Trivial | rename, config, texto, teste unitário simples | opencode + modelo barato | centavos (API) |
-| Média | feature isolada, bugfix com reprodução clara | codex | assinatura ChatGPT |
-| Complexa | multi-arquivo, arquitetura, segurança | claude (orquestrador executa) | assinatura Claude |
+| Média | feature isolada, bugfix com reprodução clara | codex (modelo default) | assinatura ChatGPT |
+| Complexa | multi-arquivo especificável num brief preciso | codex + modelo forte, reasoning alto | assinatura ChatGPT |
+| Crítica | arquitetura, segurança, contexto da conversa indispensável | claude (orquestrador executa) | assinatura Claude |
 
 - O orquestrador classifica sozinho e informa a decisão em uma linha
   ("→ codex: bugfix médio"). O usuário pode sobrescrever a qualquer momento
@@ -159,7 +165,16 @@ Tabela default (editável via `routing.md` do projeto ou `/batuta:route`):
 - **Modelo explícito:** em CLIs multi-modelo, a linha da tabela nomeia o modelo;
   o maestro nunca usa o default global do CLI, que pode apontar para um modelo
   caro e derrotar silenciosamente o roteamento de custo. Exceção: codex sob
-  assinatura tem custo flat por tarefa — default aceitável.
+  assinatura tem custo flat por tarefa — default aceitável na lane média. Na
+  lane complexa a exceção não vale: ali o modelo é botão de capacidade, então a
+  linha nomeia modelo e reasoning effort explícitos (ex.: `codex -m gpt-5-codex,
+  reasoning high`), confirmados no onboarding.
+- **Complexa vs Crítica:** a divisa é o brief, não o tamanho. Brief
+  autossuficiente possível (arquivos, decisões tomadas, critérios verificáveis)
+  → complexa, delegável ao codex com modelo forte. Exige contexto da conversa,
+  julgamento de segurança ou decisões em aberto → crítica, fica com o claude.
+  Na dúvida, crítica: errar para cima custa a diferença de preço; errar para
+  baixo custa um ciclo de delegação falho.
 
 ### 6.3 Ciclo de execução (único, sem fases)
 
@@ -270,5 +285,7 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 | Fronteira de escrita | Batuta escreve só em `WORK.md`, `.batuta/` e no código via ciclo | Confiança e mudança cirúrgica: `CLAUDE.md`, `AGENTS.md` e configs de outras ferramentas são somente leitura, salvo pedido explícito do usuário |
 | `WORK.md` na raiz | Raiz do projeto, não dentro de `.batuta/` | Público primário é humano: na raiz ele convida edição (como um `TODO.md`) e é retomável por qualquer agente ou colega sem conhecer o Batuta — estado não é refém da ferramenta. `.batuta/` fica para os bastidores do maestro. Custo aceito: um arquivo a mais na raiz |
 | Modelo explícito no roteamento | Linha da tabela nomeia executor + modelo; onboarding checa executores e gera o routing local | Default global de CLI multi-modelo é o estado que o usuário deixou lá, não uma escolha — pode apontar para modelo caro e derrotar a otimização de custo sem ninguém perceber. Codex sob assinatura é exceção (custo flat) |
+| Mapeamento de lanes é escolha do usuário | Onboarding propõe as lanes a partir dos executores instalados e o usuário confirma/ajusta qual CLI/provider/modelo assume cada uma; setups parciais viram tabelas válidas (só claude → lanes por modelo Claude) | A tabela default assume o trio completo, mas o setup real varia; impor o default a quem só tem claude ou claude+opencode quebraria o roteamento na primeira tarefa. O usuário decide, o Batuta descobre e sugere |
+| Lane complexa delegável ao codex | Tabela ganha 4 faixas: complexa (codex + modelo forte, reasoning alto) separada de crítica (claude); divisa é o brief autossuficiente, não o tamanho | Sob assinatura ChatGPT o custo por tarefa é flat — modelo forte na complexa entrega capacidade sem custo extra, reservando o Claude (lane mais cara) para o que realmente exige contexto da conversa ou julgamento. Na dúvida classifica crítica: errar para cima custa diferença de preço, errar para baixo custa ciclo de delegação falho |
 | Registro de decisões de regência | Linha do `WORK.md` carrega executor + modelo + escaladas; agregação só sob demanda no `/batuta:status` | O valor se demonstra com fatos (taxa de delegação, taxa de escalada), não com contabilidade inventada — o Batuta não tem como saber tokens nem preços de cada CLI. Valores em dinheiro só se o usuário fornecer preços de referência na tabela de roteamento. Telemetria segue fora do escopo |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |

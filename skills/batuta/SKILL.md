@@ -36,15 +36,29 @@ If `.batuta/profile.md` does NOT exist in the project:
    becomes `WORK.md` lines, large remaining work becomes
    `.batuta/plan-<slug>.md`, relevant decisions become profile lines. Leave
    the old artifacts untouched — the user archives them if they want.
-6. **Executor check:** run the availability checks from each adapter referenced
-   by the routing table (`command -v codex`, `opencode providers list`, …) and
-   show what was found. For multi-model CLIs (opencode), map the cheap model
-   yourself — the user never enumerates anything: run the model discovery from
-   `adapters/opencode.md` (`opencode models` filtered to cheap candidates),
-   suggest 2–3 options and ask ONE confirmation question. Write the result as
-   the project's `.batuta/routing.md`: the local copy is born here, with the
-   exact `provider/model` ID confirmed by the user. If an executor is missing,
-   tell the user which lanes collapse upward (unavailability rule) instead of
+6. **Executor check and lane mapping:** run the availability checks from each
+   adapter referenced by the routing table (`command -v codex`,
+   `opencode providers list`, …) and show what was found. Then propose a lane
+   mapping built from what is actually installed — the default table assumes
+   the full trio (opencode + codex + claude), but the user's real setup rules:
+   - **Full trio:** default table; confirm the trivial-lane opencode model and
+     the complex-lane codex model.
+   - **No codex** (e.g. claude + opencode): opencode keeps trivial; suggest a
+     mid-tier opencode model for medium; complex/critical go to claude.
+   - **claude only:** lanes differentiate by Claude model via background
+     instances (`claude -p --model <model>`, see `adapters/claude.md`) — e.g.
+     haiku for trivial, sonnet for medium/complex, the session itself for
+     critical.
+   The user has the final word on which CLI/provider/model owns each lane —
+   present the proposal and let them adjust before writing anything. For
+   multi-model CLIs, discover models yourself — the user never enumerates
+   anything: run the discovery from `adapters/opencode.md` (`opencode models`
+   filtered to cheap candidates) and `adapters/codex.md` (Model selection) and
+   suggest 2–3 options per lane. Ask ONE confirmation question covering the
+   whole mapping (lanes + models). Write the result as the project's
+   `.batuta/routing.md`: the local copy is born here, with the exact executors
+   and model IDs confirmed by the user. If an executor disappears later, tell
+   the user which lanes collapse upward (unavailability rule) instead of
    letting them find out on the first delegation.
 7. Create `WORK.md` at the project root if it doesn't exist (format in Step 5
    of the cycle).
@@ -55,7 +69,11 @@ Onboarding never repeats. The user can edit the profile at any time.
 
 1. Read the routing table: the project's `.batuta/routing.md` if it exists,
    otherwise the plugin's `routing.md`.
-2. Classify the task as **trivial / medium / complex** using the table's examples.
+2. Classify the task as **trivial / medium / complex / critical** using the
+   table's examples. The Complex/Critical line is the brief test (see
+   `routing.md`): fully specifiable in a self-sufficient brief → complex
+   (delegable); needs conversation context, security judgment, or open
+   decisions → critical (claude). When in doubt, critical.
 3. Announce the decision in ONE line: `→ codex: medium bugfix`. No further
    justification.
 4. If the user overrides ("use kimi for this"), obey without arguing.
@@ -93,7 +111,9 @@ map. The map grows as a side effect of work — there is no "update the map" pha
 
 Invoke the executor as described in its adapter at `adapters/<executor>.md`
 (non-interactive command, via Bash). The `claude.md` adapter = you execute it
-yourself (complex tasks only).
+yourself (critical tasks only). When a routing row names a model, the
+invocation must carry it — a delegation without the row's model flags is a
+routing bug, not a shortcut.
 
 **Parallelism:** independent tasks run in parallel — executors in the background
 (`run_in_background`), one git worktree per executor when file conflicts are
@@ -142,7 +162,8 @@ Prose + checkboxes. Never turn WORK.md into a schema-bound table.
 
 ## Non-negotiable principles
 
-1. Don't write code for trivial/medium tasks — delegate.
+1. Don't write code for trivial/medium/complex tasks — delegate. You only
+   write code classified critical.
 2. Every delivery goes through Step 4, even in a hurry.
 3. State is prose; brittle formats are bugs.
 4. The routing decision is yours, but the final word is the user's.

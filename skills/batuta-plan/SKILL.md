@@ -13,7 +13,7 @@ planning (2–3 questions in the conversation) or goes straight into the cycle.
 1. Understand the goal; ask the missing questions (few, all at once).
 2. Break the work into atomic-commit-sized tasks. For each one:
    - a 1–2 sentence description;
-   - estimated complexity (trivial/medium/complex) and the executor predicted by
+   - estimated complexity (trivial/medium/complex/critical) and the executor predicted by
      the routing table;
    - acceptance criteria.
 3. Save to `.batuta/plan-<slug>.md` in the project, in this format:
