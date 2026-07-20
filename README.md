@@ -72,7 +72,7 @@ O Claude classifica e informa a decisão em uma linha (`→ codex: bugfix médio
 |---|---|
 | `/batuta` | Entrada principal. Na 1ª vez no projeto, roda o onboarding; depois, classifica, roteia e executa |
 | `/batuta:plan` | Força um plano formal aprovável (para trabalhos longos, que atravessam sessões) |
-| `/batuta:status` | Mostra o `WORK.md` e as tarefas rodando em background |
+| `/batuta:status` | Mostra o `WORK.md`, as tarefas em background e a leitura de roteamento (tarefas por lane, taxa de delegação e de escalada) |
 | `/batuta:route` | Exibe e edita a tabela de roteamento |
 | `/batuta:review` | Re-executa a verificação sobre qualquer diff, sob demanda |
 
@@ -119,6 +119,24 @@ Pronto — o maestro já pode delegar para ele.
 ```
 
 Prosa e checkboxes. Sem tabelas com schema rígido, sem validação que quebra com um caractere fora do lugar.
+
+Repare que cada linha do Feito conta a história completa: **qual executor, qual modelo, e se precisou escalar**. Isso é o diário de regência do projeto — e é o que alimenta a resposta da próxima seção.
+
+## Quanto estou economizando?
+
+O Batuta não inventa contabilidade: ele não tem como saber quantos tokens cada CLI gastou nem o preço de cada um — qualquer número em reais que ele cuspisse seria chute vestido de medição. O que ele faz é melhor: **registra fatos e deixa você tirar a conta**.
+
+Pergunte `/batuta:status` e ele lê o `WORK.md` e responde com fatos:
+
+> 23 tarefas concluídas: 14 triviais (kimi), 6 médias (codex), 3 complexas (claude).
+> **87% do código deste projeto não gastou sua assinatura Claude.**
+> 2 escaladas saindo da lane trivial — considere um modelo mais forte ou classificação mais conservadora.
+
+Três leituras práticas disso:
+
+- **Taxa de delegação** — o contrafactual é evidente: sem o Batuta, 100% dessas tarefas rodariam no Claude. Cada tarefa desviada é franquia da sua assinatura que sobra para o que realmente precisa dela (e limite semanal que você para de estourar).
+- **Taxa de escalada** — o sinal acionável. Escalada frequente = você pagou duas vezes; o botão de ajuste é a tabela de roteamento, que é sua.
+- **Reais, se você quiser** — coloque seus preços de referência na coluna de custo do seu `routing.md` e o `/batuta:status` faz a multiplicação — deixando claro que as premissas são suas.
 
 ## Instalação
 

@@ -200,10 +200,16 @@ conflito de arquivos.
 - [ ] <tarefa> → codex (delegada 2026-07-19)
 
 ## Feito
-- [x] <tarefa> → kimi, commit abc123
+- [x] <tarefa> → kimi (moonshotai/kimi-k2), commit abc123
+- [x] <tarefa> → codex (escalou de kimi após 2 falhas), commit def456
 ```
 
 Formato prosa + checkboxes. Sem tabelas com schema, sem validação estrita.
+
+A linha do Feito conta a história de roteamento completa: executor + modelo e
+eventuais retries/escaladas. É o diário de regência do projeto — o
+`/batuta:status` agrega sob demanda (tarefas por lane, taxa de escalada, taxa
+de delegação); nenhum contador ou métrica é armazenado.
 
 ### 6.7 Comandos
 
@@ -264,4 +270,5 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 | Fronteira de escrita | Batuta escreve só em `WORK.md`, `.batuta/` e no código via ciclo | Confiança e mudança cirúrgica: `CLAUDE.md`, `AGENTS.md` e configs de outras ferramentas são somente leitura, salvo pedido explícito do usuário |
 | `WORK.md` na raiz | Raiz do projeto, não dentro de `.batuta/` | Público primário é humano: na raiz ele convida edição (como um `TODO.md`) e é retomável por qualquer agente ou colega sem conhecer o Batuta — estado não é refém da ferramenta. `.batuta/` fica para os bastidores do maestro. Custo aceito: um arquivo a mais na raiz |
 | Modelo explícito no roteamento | Linha da tabela nomeia executor + modelo; onboarding checa executores e gera o routing local | Default global de CLI multi-modelo é o estado que o usuário deixou lá, não uma escolha — pode apontar para modelo caro e derrotar a otimização de custo sem ninguém perceber. Codex sob assinatura é exceção (custo flat) |
+| Registro de decisões de regência | Linha do `WORK.md` carrega executor + modelo + escaladas; agregação só sob demanda no `/batuta:status` | O valor se demonstra com fatos (taxa de delegação, taxa de escalada), não com contabilidade inventada — o Batuta não tem como saber tokens nem preços de cada CLI. Valores em dinheiro só se o usuário fornecer preços de referência na tabela de roteamento. Telemetria segue fora do escopo |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |

@@ -128,8 +128,13 @@ table and the cycle restarts at Step 2 (brief enriched with what was learned).
 - [ ] <task> → codex (delegated 2026-07-19)
 
 ## Done
-- [x] <task> → kimi, commit abc123
+- [x] <task> → kimi (moonshotai/kimi-k2), commit abc123
+- [x] <task> → codex (escalated from kimi after 2 fails), commit def456
 ```
+
+The line must tell the routing story honestly: executor + model, plus any
+retry or escalation. This is the project's conducting log — `/batuta:status`
+aggregates it on demand; nothing else stores metrics.
 
 Prose + checkboxes. Never turn WORK.md into a schema-bound table.
 
