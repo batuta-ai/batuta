@@ -1,6 +1,6 @@
 ---
 name: batuta
-description: Batuta's main entry point. Use when the user requests a code task that can be delegated (feature, bugfix, refactor, config) or invokes /batuta. Classifies complexity, routes to the cheapest capable executor, builds the brief, delegates, verifies and commits.
+description: Batuta's main entry point. Use when the user requests a code task that can be delegated (feature, bugfix, refactor, config), asks where or how something lives in the codebase (research — see "The scout"), or invokes /batuta. Classifies complexity, routes to the cheapest capable executor, builds the brief, delegates, verifies and commits.
 ---
 
 # Batuta — the maestro's cycle
@@ -28,7 +28,9 @@ If `.batuta/profile.md` does NOT exist in the project:
    or `templates/generic.md`).
 4. Add a **"Project map"** section to the profile: 20–40 lines of prose — key
    directories, where routes/components/tests live, entry points, generated
-   files not to touch. This initial sweep is delegable to a cheap executor.
+   files not to touch. This initial sweep is delegated to the Research lane's scout (see "The
+   scout" below) when the lane is mapped; the maestro only sweeps itself if
+   the lane is unmapped or the scout fails twice.
    The map says where to start looking, not everything: details stay with
    grep and git, which never go stale.
 5. **Takeover:** if artifacts from another framework exist (`.planning/`,
@@ -57,6 +59,11 @@ If `.batuta/profile.md` does NOT exist in the project:
      instances (`claude -p --model <model>`, see `adapters/claude.md`) — e.g.
      haiku for trivial, sonnet for medium, opus for complex, the session
      itself for critical.
+   The same single confirmation question also covers the **Research support
+   lane** (`routing.md`, Support lanes): suggest a cheap candidate from the
+   discovery already run — filter to `kimi|haiku|mini|nano|flash|free`. Full
+   trio or no-codex → a cheap opencode model or `claude -p --model haiku`;
+   claude only → haiku via background instance.
    The user has the final word on which CLI/provider/model owns each lane —
    present the proposal and let them adjust before writing anything. For
    multi-model CLIs, discover models yourself — the user never enumerates
@@ -110,6 +117,11 @@ Build the task brief with:
 - **Boundaries** — what NOT to touch.
 
 The brief must be self-sufficient: the executor has no access to the conversation.
+
+**Research first:** when building Context requires discovery ("where is X
+handled, which files touch Y, how is Z tested"), dispatch the scout (see "The
+scout") instead of reading the codebase yourself — the verified report feeds
+the Context section; only its distillate enters your context.
 
 **Map upkeep (opportunistic, never a ceremony):** if building the brief required
 discovering something the profile's Project map didn't cover, add a line to the
@@ -167,6 +179,50 @@ retry or escalation. This is the project's conducting log — `/batuta:status`
 aggregates it on demand; nothing else stores metrics.
 
 Prose + checkboxes. Never turn WORK.md into a schema-bound table.
+
+## The scout — research delegation
+
+Codebase research is delegated to the Research support lane (`routing.md`,
+Support lanes): a cheap, read-only executor invoked per the "Research
+invocation" section of its adapter, in the background. Three triggers: the
+onboarding map sweep (Step 0.4), brief context (Step 2), and ad-hoc user
+questions about the codebase ("where is payment handled?") even outside a
+code task.
+
+**Research brief** — always contains:
+
+- The question(s), objective and answerable.
+- Starting points from the profile's Project map.
+- Boundaries: ignore `node_modules`, build output, generated files.
+- The report contract below, verbatim — small models follow literal formats.
+
+**Report contract** — 4 fixed sections:
+
+- `## Answer` — short prose answering the question.
+- `## Files` — `path:line — why it matters`, one per line.
+- `## Evidence` — minimal snippets backing the answer.
+- `## Uncertain` — what was not found or stayed ambiguous. Mandatory: the
+  honest escape hatch that reduces hallucination.
+
+**Background and fan-out:** dispatch scouts with `run_in_background`;
+independent questions become parallel scouts; keep conducting and collect
+reports as they land. A short ad-hoc question may run in foreground.
+
+**Structural verification** — before consuming any report (feeding a brief or
+answering the user):
+
+1. Every cited path exists (`ls`).
+2. Every cited symbol greps in the file it is attributed to.
+
+Ghost anchor → 1 retry carrying the specific feedback ("path X does not
+exist"). Failed again → do the research yourself; that is the lane's only
+fallback. Semantic claims with valid anchors are accepted — in the brief
+flow, Step 4 still catches them indirectly.
+
+**Read-only guard (universal):** run `git status --porcelain` before and
+after every scout; a dirtied tree → revert the changes and count the run as a
+scout failure. The adapters' native read-only modes are defense in depth, not
+the guarantee.
 
 ## Non-negotiable principles
 
