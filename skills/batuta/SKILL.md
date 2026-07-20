@@ -37,13 +37,15 @@ If `.batuta/profile.md` does NOT exist in the project:
    `.batuta/plan-<slug>.md`, relevant decisions become profile lines. Leave
    the old artifacts untouched — the user archives them if they want.
 6. **Executor check:** run the availability checks from each adapter referenced
-   by the routing table (`command -v codex`, `opencode auth list`, …) and show
-   what was found. For multi-model CLIs (opencode), confirm which cheap model
-   the trivial lane uses — suggest Kimi/DeepSeek based on detected credentials.
-   Write the result as the project's `.batuta/routing.md`: the local copy is
-   born here, with explicit models. If an executor is missing, tell the user
-   which lanes collapse upward (unavailability rule) instead of letting them
-   find out on the first delegation.
+   by the routing table (`command -v codex`, `opencode providers list`, …) and
+   show what was found. For multi-model CLIs (opencode), map the cheap model
+   yourself — the user never enumerates anything: run the model discovery from
+   `adapters/opencode.md` (`opencode models` filtered to cheap candidates),
+   suggest 2–3 options and ask ONE confirmation question. Write the result as
+   the project's `.batuta/routing.md`: the local copy is born here, with the
+   exact `provider/model` ID confirmed by the user. If an executor is missing,
+   tell the user which lanes collapse upward (unavailability rule) instead of
+   letting them find out on the first delegation.
 7. Create `WORK.md` at the project root if it doesn't exist (format in Step 5
    of the cycle).
 

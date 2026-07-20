@@ -6,7 +6,7 @@ precedence. Edit freely: it is just a markdown table.
 
 | Complexity | Examples | Executor | Cost |
 |---|---|---|---|
-| Trivial | rename, config, copy change, simple unit test | opencode + `moonshotai/kimi-k2` | cents (API) |
+| Trivial | rename, config, copy change, simple unit test | opencode + `<provider/model>` set at onboarding (e.g. kimi, deepseek) | cents (API) |
 | Medium | isolated feature, bugfix with clear repro | codex (default model) | ChatGPT subscription |
 | Complex | multi-file, architecture, security | claude | Claude subscription |
 
@@ -20,7 +20,11 @@ precedence. Edit freely: it is just a markdown table.
 - Executor unavailable (CLI not installed / not logged in) → use the next row up.
 - Each executor maps to an adapter at `adapters/<executor>.md`.
 - **Explicit model:** for multi-model CLIs (opencode), the row must name the
-  model — never rely on the CLI's global default, which is whatever the user
-  last configured and may point at an expensive premium model, silently
-  defeating the cost routing. Exception: codex under a subscription has flat
-  per-task cost, so its default model is acceptable there.
+  exact `provider/model` ID — never rely on the CLI's global default, which is
+  whatever the user last configured and may point at an expensive premium
+  model, silently defeating the cost routing. IDs vary per installation, so
+  they are discovered via `opencode models` (see `adapters/opencode.md`) and
+  confirmed once at onboarding — this default table carries a placeholder;
+  the project's `.batuta/routing.md` carries the real ID. Exception: codex
+  under a subscription has flat per-task cost, so its default model is
+  acceptable there.
