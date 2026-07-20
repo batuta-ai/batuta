@@ -140,12 +140,28 @@ Três leituras práticas disso:
 
 ## Instalação
 
-> 🚧 **Em desenvolvimento** — o Batuta está em fase de definição (veja o [PRD](docs/PRD.md)). Instruções de instalação chegam com a v1.
+Dentro do Claude Code:
 
-Pré-requisitos previstos:
+```
+/plugin marketplace add franciscpd/batuta
+/plugin install batuta@batuta
+```
+
+Ou pelo terminal:
+
+```bash
+claude plugin marketplace add franciscpd/batuta
+claude plugin install batuta@batuta
+```
+
+Depois é só abrir um projeto e invocar `/batuta` — a primeira execução roda o onboarding.
+
+Pré-requisitos:
 
 - [Claude Code](https://claude.com/claude-code) (o maestro)
-- Pelo menos um executor: [codex CLI](https://github.com/openai/codex), [opencode](https://opencode.ai) ou apenas o próprio Claude
+- Pelo menos um executor instalado e logado: [codex CLI](https://github.com/openai/codex), [opencode](https://opencode.ai) ou apenas o próprio Claude — sem um executor barato, tudo colapsa para a lane do Claude e você perde justamente a graça
+
+> 🚧 **v0.1.0 em fase de teste** — o desenho está no [PRD](docs/PRD.md); feedback e issues são bem-vindos.
 
 ## Filosofia
 
