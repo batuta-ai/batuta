@@ -38,6 +38,13 @@ codex exec --sandbox workspace-write "Follow the instructions in $batuta_brief"
 Covered by the user's ChatGPT subscription (or OpenAI API key). Cheaper than
 the orchestrator; more expensive than budget API models.
 
+Model choice here is a capability/speed knob, not a cost knob — the
+subscription makes per-task cost flat, so the CLI's default model is
+acceptable. To pin one anyway, add `-m <model>` to the invocation and record
+it in the routing row. Caveat: if the user runs codex on an API key instead of
+a subscription, cost is no longer flat — treat the model like opencode's
+(explicit in the routing row).
+
 ## Availability check
 
 ```bash

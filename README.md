@@ -84,6 +84,8 @@ Na **primeira execução** em um projeto, o Batuta faz 3-5 perguntas rápidas:
 - Qual a metodologia? (TDD ou testes depois; conventional commits ou livre)
 - Qual o comando de testes e de build?
 
+Ele também **checa quais executores você tem** (codex? opencode? logados?) e confirma o modelo barato da lane trivial — assim a tabela de roteamento do seu projeto já nasce com modelos explícitos, e você descobre na hora (não no meio de uma tarefa) se falta instalar algo.
+
 As respostas viram o `.batuta/profile.md`, e as convenções da sua stack (via templates inclusos) entram **automaticamente em todo brief** enviado aos executores. Ou seja: o codex e o kimi seguem as regras do *seu* projeto sem você repetir nada.
 
 O perfil também guarda um **mapa curto do projeto** (onde ficam rotas, componentes, testes…), montado no onboarding e atualizado como efeito colateral do trabalho — nada de fase de mapeamento nem mapa gigante que envelhece.

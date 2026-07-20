@@ -10,8 +10,11 @@ opencode run --model <provider/model> "<brief>"
 ```
 
 - Run from the project root.
-- The model comes from the routing table row or a user override
-  ("use kimi for this"). If none is given, use the CLI's configured default.
+- The model MUST come from the routing table row or a user override
+  ("use kimi for this"). Never fall back to the CLI's global default — it is
+  whatever the user last configured and may point at an expensive premium
+  model, silently defeating the cost routing. If the routing row has no model,
+  ask the user once and record the answer in `.batuta/routing.md`.
 - Examples: `opencode run --model moonshotai/kimi-k2 "<brief>"`,
   `opencode run --model deepseek/deepseek-chat "<brief>"`.
 

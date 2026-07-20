@@ -36,7 +36,15 @@ If `.batuta/profile.md` does NOT exist in the project:
    becomes `WORK.md` lines, large remaining work becomes
    `.batuta/plan-<slug>.md`, relevant decisions become profile lines. Leave
    the old artifacts untouched — the user archives them if they want.
-6. Create `WORK.md` at the project root if it doesn't exist (format in Step 5
+6. **Executor check:** run the availability checks from each adapter referenced
+   by the routing table (`command -v codex`, `opencode auth list`, …) and show
+   what was found. For multi-model CLIs (opencode), confirm which cheap model
+   the trivial lane uses — suggest Kimi/DeepSeek based on detected credentials.
+   Write the result as the project's `.batuta/routing.md`: the local copy is
+   born here, with explicit models. If an executor is missing, tell the user
+   which lanes collapse upward (unavailability rule) instead of letting them
+   find out on the first delegation.
+7. Create `WORK.md` at the project root if it doesn't exist (format in Step 5
    of the cycle).
 
 Onboarding never repeats. The user can edit the profile at any time.

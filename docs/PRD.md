@@ -134,6 +134,13 @@ estava em andamento/feito vira linhas no `WORK.md`, trabalho restante grande
 vira `.batuta/plan-<slug>.md`, decisões relevantes viram linhas no perfil. Os
 artefatos antigos ficam intocados.
 
+**Checagem de executores:** o onboarding roda as verificações de disponibilidade
+dos adapters, mostra o que encontrou e, para CLIs multi-modelo (opencode),
+confirma o modelo barato da lane trivial. O resultado vira o `.batuta/routing.md`
+do projeto — a cópia local nasce no onboarding com modelos explícitos. Executor
+ausente é informado na hora, junto com o colapso de lanes, em vez de descoberto
+na primeira delegação.
+
 ### 6.2 Roteamento por complexidade
 
 Tabela default (editável via `routing.md` do projeto ou `/batuta:route`):
@@ -149,6 +156,10 @@ Tabela default (editável via `routing.md` do projeto ou `/batuta:route`):
   ("usa kimi pra isso").
 - **Escalada automática:** executor falhou na verificação 2× → tarefa sobe um
   nível de executor.
+- **Modelo explícito:** em CLIs multi-modelo, a linha da tabela nomeia o modelo;
+  o maestro nunca usa o default global do CLI, que pode apontar para um modelo
+  caro e derrotar silenciosamente o roteamento de custo. Exceção: codex sob
+  assinatura tem custo flat por tarefa — default aceitável.
 
 ### 6.3 Ciclo de execução (único, sem fases)
 
@@ -252,4 +263,5 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 | Takeover de outro framework | Importação única no onboarding (estado → `WORK.md`/plan/perfil) | O que precisa de tradução é o estado do trabalho, não a arquitetura; artefatos antigos ficam intocados |
 | Fronteira de escrita | Batuta escreve só em `WORK.md`, `.batuta/` e no código via ciclo | Confiança e mudança cirúrgica: `CLAUDE.md`, `AGENTS.md` e configs de outras ferramentas são somente leitura, salvo pedido explícito do usuário |
 | `WORK.md` na raiz | Raiz do projeto, não dentro de `.batuta/` | Público primário é humano: na raiz ele convida edição (como um `TODO.md`) e é retomável por qualquer agente ou colega sem conhecer o Batuta — estado não é refém da ferramenta. `.batuta/` fica para os bastidores do maestro. Custo aceito: um arquivo a mais na raiz |
+| Modelo explícito no roteamento | Linha da tabela nomeia executor + modelo; onboarding checa executores e gera o routing local | Default global de CLI multi-modelo é o estado que o usuário deixou lá, não uma escolha — pode apontar para modelo caro e derrotar a otimização de custo sem ninguém perceber. Codex sob assinatura é exceção (custo flat) |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |
