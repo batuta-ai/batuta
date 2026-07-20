@@ -70,11 +70,14 @@ estruturada de equilibrá-las.
 batuta/
 ├── .claude-plugin/plugin.json
 ├── skills/
-│   ├── batuta/            # entrada principal — classifica, roteia, executa o ciclo
-│   ├── batuta-plan/       # planejamento formal opcional
-│   ├── batuta-status/     # exibe WORK.md e tarefas em andamento
-│   ├── batuta-route/      # exibe/edita a tabela de roteamento
-│   └── batuta-review/     # re-executa a verificação sobre qualquer diff
+│   ├── batuta/            # entrada principal — o ciclo: classifica, roteia, delega, verifica
+│   ├── init/              # onboarding (1ª vez) e reconfiguração
+│   ├── plan/              # planejamento formal opcional
+│   ├── pause/             # pausa com handoff de sessão
+│   ├── resume/            # retomada consumindo o handoff
+│   ├── status/            # exibe WORK.md e tarefas em andamento
+│   ├── route/             # exibe/edita as tabelas de roteamento
+│   └── review/            # re-executa a verificação sobre qualquer diff
 ├── routing.md             # tabela de roteamento default (editável)
 ├── adapters/
 │   ├── codex.md           # invocação não-interativa, passagem de contexto, limites
@@ -102,10 +105,11 @@ batuta/
 
 ## 6. Funcionalidades
 
-### 6.1 Onboarding de projeto (primeira execução)
+### 6.1 Onboarding e reconfiguração (/batuta:init)
 
-Na primeira invocação de `/batuta` em um projeto sem `.batuta/profile.md`, o
-orquestrador conduz um onboarding curto (3–5 perguntas):
+O onboarding é o modo primeira-execução do `/batuta:init` (3–5 perguntas).
+`/batuta` num projeto sem `.batuta/profile.md` aponta para o init e para — o
+ciclo nunca faz onboarding inline:
 
 - **Tipo de projeto / stack** — React, Vue, Node API, outro (com detecção
   automática pelo package.json/composer.json etc. como sugestão default).
@@ -116,7 +120,10 @@ orquestrador conduz um onboarding curto (3–5 perguntas):
 O resultado vira `.batuta/profile.md`. O template de stack correspondente
 (`templates/react.md` etc.) é referenciado no perfil e suas convenções entram
 automaticamente em todo task brief enviado aos executores. O usuário pode editar
-o perfil a qualquer momento; o onboarding não se repete.
+o perfil a qualquer momento; `/batuta:init` num projeto já configurado entra
+em modo **reconfiguração** — re-checa os executores referenciados pela tabela,
+mostra o mapeamento e o perfil atuais e reescreve só o que o usuário pedir
+(lane/modelo, respostas do perfil, re-sweep do mapa), sem tocar o `WORK.md`.
 
 O perfil também ganha um **mapa do projeto**: 20–40 linhas em prosa (diretórios-
 chave, onde vivem rotas/componentes/testes, pontos de entrada, o que é gerado e
@@ -243,10 +250,13 @@ de delegação); nenhum contador ou métrica é armazenado.
 
 | Comando | Função |
 |---|---|
-| `/batuta` | Entrada principal: onboarding (se 1ª vez), classifica, roteia e executa o ciclo |
+| `/batuta` | Entrada principal: o ciclo (classifica, roteia, delega, verifica). Gates: sem perfil → aponta pro init; handoff pendente → oferece o resume |
+| `/batuta:init` | Onboarding (1ª vez) e reconfiguração (depois) |
 | `/batuta:plan` | Força planejamento formal aprovável |
+| `/batuta:pause` | Pausa: `WORK.md` honesto + handoff de sessão |
+| `/batuta:resume` | Retoma do ponto exato e consome o handoff |
 | `/batuta:status` | Mostra `WORK.md` e tarefas em background |
-| `/batuta:route` | Exibe/edita a tabela de roteamento |
+| `/batuta:route` | Exibe/edita as tabelas de roteamento |
 | `/batuta:review` | Re-executa a verificação (passo 3) sobre qualquer diff |
 
 ### 6.8 Contrato de adapter
@@ -294,6 +304,19 @@ ad-hoc do usuário sobre a base.
 - Execução em background com fan-out: perguntas independentes viram batedores
   paralelos enquanto o maestro segue conduzindo.
 
+### 6.10 Pausa e retomada (`/batuta:pause` / `/batuta:resume`)
+
+O `WORK.md` diz *o quê* estava em andamento; o handoff diz *onde no ciclo* a
+sessão parou. `/batuta:pause` atualiza o `WORK.md` com estado honesto, trata
+as background tasks e escreve `.batuta/handoff.md` em prosa com 4 seções:
+ponto do ciclo, decisões ainda não escritas, background e pendências com o
+usuário. `/batuta:resume` lê perfil + routing + `WORK.md` + handoff, confere
+o git (a árvore vence o handoff em divergência), resume a situação, confirma
+e retoma — absorvendo o handoff no `WORK.md` e **apagando-o**: é nota de
+passagem, não estado. Um handoff por projeto; pausar de novo sobrescreve.
+`/batuta` com handoff pendente avisa em uma linha e obedece a escolha do
+usuário — nunca auto-resume.
+
 ## 7. Fora de escopo (v1)
 
 - Instalador próprio ou binário — distribuição é via plugin marketplace/git.
@@ -335,5 +358,6 @@ ad-hoc do usuário sobre a base.
 | Lane complexa delegável ao codex | Tabela ganha 4 faixas: complexa (codex + modelo forte, reasoning alto) separada de crítica (claude); divisa é o brief autossuficiente, não o tamanho | Sob assinatura ChatGPT o custo por tarefa é flat — modelo forte na complexa entrega capacidade sem custo extra, reservando o Claude (lane mais cara) para o que realmente exige contexto da conversa ou julgamento. Na dúvida classifica crítica: errar para cima custa diferença de preço, errar para baixo custa ciclo de delegação falho |
 | Variante Claude na lane complexa | Onboarding oferece mapear a complexa para modelo Claude forte via instância background (`claude -p --model opus`) como alternativa ao codex + modelo forte; a crítica segue sempre com a sessão | Lógica pesada que passa no teste do brief não precisa do modelo da sessão — um Claude forte em background resolve mais barato, e há quem prefira Claude a codex para esse trabalho. O limite é contexto, não capacidade: instância background não vê a conversa, então a variante nunca absorve a crítica |
 | Batedor (lane de pesquisa) | Segunda tabela "Support lanes" no `routing.md` com executor barato read-only para varredura de mapa, contexto de brief e perguntas ad-hoc; relatório de contrato fixo, verificação estrutural (`ls`/`grep`), guarda de git e fallback para o maestro | Pesquisa era paga pelo modelo caro da sessão; um modelo de centavos em background devolve o destilado. Ortogonal à escada (falha não escala — volta ao maestro); modo de falha silencioso de modelo pequeno (referência inventada) é coberto pela verificação estrutural, que custa centavos e não traz conteúdo ao contexto premium |
+| Superfície de comandos revista | 8 comandos: `/batuta` (só o ciclo, com gates) + init (onboarding/reconfiguração como único caminho), pause/resume (handoff transitório) e renames plan/status/route/review sem prefixo | O skill principal acumulava setup + ciclo e não havia como reconfigurar nem pausar; comando real (`plugin:skill`) divergia do documentado. Revisa a decisão "Comandos: 5". Breaking rename aceito em 0.x com um usuário; CHANGELOG avisa |
 | Registro de decisões de regência | Linha do `WORK.md` carrega executor + modelo + escaladas; agregação só sob demanda no `/batuta:status` | O valor se demonstra com fatos (taxa de delegação, taxa de escalada), não com contabilidade inventada — o Batuta não tem como saber tokens nem preços de cada CLI. Valores em dinheiro só se o usuário fornecer preços de referência na tabela de roteamento. Telemetria segue fora do escopo |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |
