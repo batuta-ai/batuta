@@ -249,6 +249,14 @@ Cada adapter em `adapters/*.md` define:
 
 Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md`.
 
+**Adapters dormentes:** a tabela referencia, o adapter dorme. Um adapter só é
+lido quando sua linha é roteada (delegação) ou adicionada à tabela
+(onboarding/`/batuta:route`) — nunca há varredura de todos os adapters nem de
+todas as CLIs da máquina. É isso que mantém o custo de contexto constante
+conforme o catálogo cresce: suportar cursor, copilot, kimi CLI etc. é um
+arquivo de ~50 linhas que ninguém paga para ter, só para usar. Propriedade
+inegociável ao adicionar executores.
+
 ## 7. Fora de escopo (v1)
 
 - Instalador próprio ou binário — distribuição é via plugin marketplace/git.
@@ -285,6 +293,7 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 | Fronteira de escrita | Batuta escreve só em `WORK.md`, `.batuta/` e no código via ciclo | Confiança e mudança cirúrgica: `CLAUDE.md`, `AGENTS.md` e configs de outras ferramentas são somente leitura, salvo pedido explícito do usuário |
 | `WORK.md` na raiz | Raiz do projeto, não dentro de `.batuta/` | Público primário é humano: na raiz ele convida edição (como um `TODO.md`) e é retomável por qualquer agente ou colega sem conhecer o Batuta — estado não é refém da ferramenta. `.batuta/` fica para os bastidores do maestro. Custo aceito: um arquivo a mais na raiz |
 | Modelo explícito no roteamento | Linha da tabela nomeia executor + modelo; onboarding checa executores e gera o routing local | Default global de CLI multi-modelo é o estado que o usuário deixou lá, não uma escolha — pode apontar para modelo caro e derrotar a otimização de custo sem ninguém perceber. Codex sob assinatura é exceção (custo flat) |
+| Adapters dormentes | Adapter só é lido quando sua linha da tabela é roteada ou adicionada; onboarding checa apenas o que a tabela referencia, nunca varre a máquina atrás de CLIs | Custo de contexto precisa ser constante conforme o catálogo de adapters cresce — com varredura, cada CLI nova (cursor, copilot, kimi CLI…) encareceria onboarding e classificação para todo mundo, mesmo quem não a usa |
 | Mapeamento de lanes é escolha do usuário | Onboarding propõe as lanes a partir dos executores instalados e o usuário confirma/ajusta qual CLI/provider/modelo assume cada uma; setups parciais viram tabelas válidas (só claude → lanes por modelo Claude) | A tabela default assume o trio completo, mas o setup real varia; impor o default a quem só tem claude ou claude+opencode quebraria o roteamento na primeira tarefa. O usuário decide, o Batuta descobre e sugere |
 | Lane complexa delegável ao codex | Tabela ganha 4 faixas: complexa (codex + modelo forte, reasoning alto) separada de crítica (claude); divisa é o brief autossuficiente, não o tamanho | Sob assinatura ChatGPT o custo por tarefa é flat — modelo forte na complexa entrega capacidade sem custo extra, reservando o Claude (lane mais cara) para o que realmente exige contexto da conversa ou julgamento. Na dúvida classifica crítica: errar para cima custa diferença de preço, errar para baixo custa ciclo de delegação falho |
 | Registro de decisões de regência | Linha do `WORK.md` carrega executor + modelo + escaladas; agregação só sob demanda no `/batuta:status` | O valor se demonstra com fatos (taxa de delegação, taxa de escalada), não com contabilidade inventada — o Batuta não tem como saber tokens nem preços de cada CLI. Valores em dinheiro só se o usuário fornecer preços de referência na tabela de roteamento. Telemetria segue fora do escopo |

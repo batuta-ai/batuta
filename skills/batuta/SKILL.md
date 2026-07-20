@@ -38,7 +38,11 @@ If `.batuta/profile.md` does NOT exist in the project:
    the old artifacts untouched — the user archives them if they want.
 6. **Executor check and lane mapping:** run the availability checks from each
    adapter referenced by the routing table (`command -v codex`,
-   `opencode providers list`, …) and show what was found. Then propose a lane
+   `opencode providers list`, …) and show what was found. Only what the table
+   references — never scan the machine for every CLI that might exist
+   (cursor, copilot, kimi CLI, …); those adapters stay dormant until the user
+   asks for one ("put cursor on the medium lane"), which is when its adapter
+   gets read and its row gets written. Then propose a lane
    mapping built from what is actually installed — the default table assumes
    the full trio (opencode + codex + claude), but the user's real setup rules:
    - **Full trio:** default table; confirm the trivial-lane opencode model and

@@ -109,6 +109,8 @@ Sem código, sem PR no framework. Adicionar um executor é:
 
 Pronto — o maestro já pode delegar para ele.
 
+E não se preocupe em acumular adapters: eles são **dormentes**. Um adapter só é lido quando a linha dele na tabela é usada — ter cursor, copilot, kimi CLI e mais dez no catálogo custa zero contexto até você colocar um deles numa lane. A tabela referencia, o adapter dorme.
+
 ## Estado: um arquivo, zero cerimônia
 
 ```markdown

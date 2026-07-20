@@ -26,6 +26,13 @@ local copy is the user's choice, not this default.
   attempt + 1 retry with feedback), the task moves one row up the table.
 - Executor unavailable (CLI not installed / not logged in) → use the next row up.
 - Each executor maps to an adapter at `adapters/<executor>.md`.
+- **Dormant adapters:** the table references, the adapter sleeps. An adapter
+  is only read when its row is routed to (delegation) or explicitly added to
+  the table (onboarding/`/batuta:route`). Never scan, check, or load adapters
+  the active table doesn't reference — extra CLIs on the user's machine
+  (cursor, copilot, kimi CLI, …) cost zero context until the user opts a row
+  in. This is what keeps Batuta cheap as the adapter catalog grows; don't
+  break it when adding executors.
 - **Complex vs Critical:** the dividing line is the brief, not the size. If a
   self-sufficient brief can carry everything the executor needs (file list,
   decisions already made, verifiable acceptance criteria), the task is Complex

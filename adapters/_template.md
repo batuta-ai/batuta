@@ -4,6 +4,11 @@ Contract for a Batuta executor. Copy this file to `adapters/<name>.md` (or
 `.batuta/adapters/<name>.md` in a project — that path takes precedence), fill in
 every section, then add a row to the routing table.
 
+Adapters are dormant: this file is only read when its routing row is used, so
+an unused adapter costs zero context. Keep it that way — stay around 50 lines
+(discovery commands over hardcoded catalogs; no model lists pasted in), and
+never make any skill load adapters the routing table doesn't reference.
+
 ## Invocation
 
 Exact non-interactive command the orchestrator runs via Bash. The command must
