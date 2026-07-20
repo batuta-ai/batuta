@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.0](https://github.com/franciscpd/batuta/compare/v0.1.5...v0.2.0) (2026-07-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* comandos renomeados — plan, status, route e review sem prefixo
+
+### Features
+
+* skill init — onboarding movido e modo reconfiguração ([ecc6e94](https://github.com/franciscpd/batuta/commit/ecc6e94c014af2acce65ffd19ec65178c8b4b2ee))
+* skills pause e resume — handoff de sessão consumível ([1f4c32e](https://github.com/franciscpd/batuta/commit/1f4c32e589e77abf03239cb01731a36621a56455))
+
+
+### Code Refactoring
+
+* comandos renomeados — plan, status, route e review sem prefixo ([4a0b2d0](https://github.com/franciscpd/batuta/commit/4a0b2d020126e0de0102fe9fdb4b8f6873650136))
+
 ## [0.1.5](https://github.com/franciscpd/batuta/compare/v0.1.4...v0.1.5) (2026-07-20)
 
 
