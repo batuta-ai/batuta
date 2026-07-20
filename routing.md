@@ -63,3 +63,27 @@ local copy is the user's choice, not this default.
   reasoning effort (see `adapters/codex.md`), confirmed at onboarding —
   delegating complex work to codex's default model silently downgrades the
   lane's capability.
+
+## Support lanes
+
+Support lanes route work that serves the cycle but is not code writing. They
+are orthogonal to the complexity ladder above — the escalation rule ("moves
+one row up") does not apply here.
+
+| Role | Examples | Executor | Cost |
+|---|---|---|---|
+| Research | project map sweep, brief context, "where does X live?" | `<CLI + cheap model>` set at onboarding (e.g. opencode + kimi, `claude -p --model haiku`) | cents (API) |
+
+### Research rules
+
+- The scout is read-only: it answers questions about the codebase and returns
+  a structured report (protocol in `skills/batuta/SKILL.md`, "The scout").
+  It never writes code, never commits, never appears in `WORK.md`.
+- **No ladder:** scout failed twice (original + 1 retry) or executor
+  unavailable → the maestro does the research itself. Nothing escalates.
+- **Explicit model**, like the trivial lane: the row names the exact CLI and
+  model, discovered via the adapter and confirmed once at onboarding — this
+  default table carries a placeholder; the project's `.batuta/routing.md`
+  carries the real ID.
+- **Dormant adapters** apply unchanged: only the adapter this row references
+  is read.
