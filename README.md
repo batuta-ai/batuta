@@ -71,6 +71,22 @@ A linha divisória entre **Complexa** e **Crítica** é o brief, não o tamanho:
 
 E o executor da lane Complexa é **escolha sua no onboarding**: o default é codex + modelo forte (custo flat da assinatura ChatGPT), mas quem prefere um modelo Claude forte para lógica pesada pode mapear a lane para uma instância em background (`claude -p --model opus`). O limite dessa variante é contexto, não capacidade: a instância em background não enxerga a conversa — por isso ela só serve para o que cabe num brief, e o que precisa da conversa continua Crítico, com a sessão.
 
+## O batedor: pesquisa de arquivos por centavos
+
+Além das lanes de execução, o Batuta tem uma **lane de apoio**: a pesquisa.
+Quem varre a base atrás de "onde mora X?" não é o maestro — é o *batedor*, um
+modelo barato (Kimi, Haiku…) rodando **read-only em background**, que devolve
+um relatório curto: resposta, arquivos com linha, evidência e incertezas.
+
+O maestro não confia de olhos fechados: todo path citado passa por `ls`, todo
+símbolo por `grep`. Referência fantasma → o batedor tenta de novo com o
+feedback; falhou de novo → o maestro pesquisa ele mesmo (pesquisa não sobe a
+escada de escalação — o fallback é o maestro).
+
+Isso vale para o mapa do projeto no onboarding, para o contexto dos briefs e
+para perguntas suas do tipo "onde é tratado o pagamento?". E pesquisa nunca
+escreve código: a árvore git é conferida antes e depois de cada batedor.
+
 ## Comandos
 
 | Comando | O que faz |
@@ -89,7 +105,7 @@ Na **primeira execução** em um projeto, o Batuta faz 3-5 perguntas rápidas:
 - Qual a metodologia? (TDD ou testes depois; conventional commits ou livre)
 - Qual o comando de testes e de build?
 
-Ele também **checa quais executores você tem** (codex? opencode? logados?) e propõe o mapeamento das lanes a partir do que encontrou — **mas quem decide é você**: qual CLI, provider e modelo assume cada lane. Tem o trio completo? A tabela default vale, só confirmando os modelos — inclusive quem assume a lane Complexa: codex com modelo forte ou um modelo Claude forte em background (`claude -p --model opus`). Só tem Claude e opencode? O opencode cobre trivial e média, a Complexa vai para um Claude forte em background e a Crítica fica com a sessão. Só o Claude? As lanes se diferenciam por modelo (Haiku para trivial, Sonnet para média, Opus em background para complexa, a sessão para crítica). Uma pergunta de confirmação e a tabela de roteamento do seu projeto nasce com executores e modelos explícitos — e você descobre na hora (não no meio de uma tarefa) se falta instalar algo.
+Ele também **checa quais executores você tem** (codex? opencode? logados?) e propõe o mapeamento das lanes a partir do que encontrou — **mas quem decide é você**: qual CLI, provider e modelo assume cada lane. Tem o trio completo? A tabela default vale, só confirmando os modelos — inclusive quem assume a lane Complexa: codex com modelo forte ou um modelo Claude forte em background (`claude -p --model opus`). Só tem Claude e opencode? O opencode cobre trivial e média, a Complexa vai para um Claude forte em background e a Crítica fica com a sessão. Só o Claude? As lanes se diferenciam por modelo (Haiku para trivial, Sonnet para média, Opus em background para complexa, a sessão para crítica). A mesma proposta cobre a lane de pesquisa: um modelo de centavos para o batedor (Kimi via opencode, ou Haiku em background). Uma pergunta de confirmação e a tabela de roteamento do seu projeto nasce com executores e modelos explícitos — e você descobre na hora (não no meio de uma tarefa) se falta instalar algo.
 
 As respostas viram o `.batuta/profile.md`, e as convenções da sua stack (via templates inclusos) entram **automaticamente em todo brief** enviado aos executores. Ou seja: o codex e o kimi seguem as regras do *seu* projeto sem você repetir nada.
 
