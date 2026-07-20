@@ -91,21 +91,26 @@ escreve código: a árvore git é conferida antes e depois de cada batedor.
 
 | Comando | O que faz |
 |---|---|
-| `/batuta` | Entrada principal. Na 1ª vez no projeto, roda o onboarding; depois, classifica, roteia e executa |
+| `/batuta` | Entrada principal: entende o pedido, classifica, roteia, delega e verifica. Projeto sem configuração → aponta pro `/batuta:init`; trabalho pausado → oferece o `/batuta:resume` |
+| `/batuta:init` | Onboarding na primeira vez; reconfiguração depois (lanes, modelos, perfil, mapa) |
 | `/batuta:plan` | Força um plano formal aprovável (para trabalhos longos, que atravessam sessões) |
+| `/batuta:pause` | Pausa o trabalho: `WORK.md` honesto + handoff da sessão em `.batuta/handoff.md` |
+| `/batuta:resume` | Retoma do ponto exato: lê estado + handoff, confirma com você e segue; o handoff é consumido |
 | `/batuta:status` | Mostra o `WORK.md`, as tarefas em background e a leitura de roteamento (tarefas por lane, taxa de delegação e de escalada) |
-| `/batuta:route` | Exibe e edita a tabela de roteamento |
+| `/batuta:route` | Exibe e edita as tabelas de roteamento (lanes de execução e de apoio) |
 | `/batuta:review` | Re-executa a verificação sobre qualquer diff, sob demanda |
 
 ## Onboarding: o Batuta conhece o seu projeto
 
-Na **primeira execução** em um projeto, o Batuta faz 3-5 perguntas rápidas:
+O onboarding é o `/batuta:init`: na primeira vez em um projeto, ele faz 3-5 perguntas rápidas (chamou `/batuta` antes de configurar? Ele te aponta o init e para):
 
 - Qual a stack? (React, Vue, Node API... — ele detecta pelo `package.json` e sugere)
 - Qual a metodologia? (TDD ou testes depois; conventional commits ou livre)
 - Qual o comando de testes e de build?
 
 Ele também **checa quais executores você tem** (codex? opencode? logados?) e propõe o mapeamento das lanes a partir do que encontrou — **mas quem decide é você**: qual CLI, provider e modelo assume cada lane. Tem o trio completo? A tabela default vale, só confirmando os modelos — inclusive quem assume a lane Complexa: codex com modelo forte ou um modelo Claude forte em background (`claude -p --model opus`). Só tem Claude e opencode? O opencode cobre trivial e média, a Complexa vai para um Claude forte em background e a Crítica fica com a sessão. Só o Claude? As lanes se diferenciam por modelo (Haiku para trivial, Sonnet para média, Opus em background para complexa, a sessão para crítica). A mesma proposta cobre a lane de pesquisa: um modelo de centavos para o batedor (Kimi via opencode, ou Haiku em background). Uma pergunta de confirmação e a tabela de roteamento do seu projeto nasce com executores e modelos explícitos — e você descobre na hora (não no meio de uma tarefa) se falta instalar algo.
+
+Instalou um executor novo depois? `/batuta:init` de novo entra em modo **reconfiguração**: re-checa os executores da tabela, mostra o mapeamento atual e muda só o que você pedir — sem refazer o onboarding e sem tocar o `WORK.md`.
 
 As respostas viram o `.batuta/profile.md`, e as convenções da sua stack (via templates inclusos) entram **automaticamente em todo brief** enviado aos executores. Ou seja: o codex e o kimi seguem as regras do *seu* projeto sem você repetir nada.
 
@@ -144,6 +149,8 @@ E não se preocupe em acumular adapters: eles são **dormentes**. Um adapter só
 Prosa e checkboxes. Sem tabelas com schema rígido, sem validação que quebra com um caractere fora do lugar.
 
 Repare que cada linha do Feito conta a história completa: **qual executor, qual modelo, e se precisou escalar**. Isso é o diário de regência do projeto — e é o que alimenta a resposta da próxima seção.
+
+Entre sessões, `/batuta:pause` deixa o `WORK.md` honesto e escreve um handoff curto (`.batuta/handoff.md`) com o ponto exato do ciclo, as decisões que ainda não viraram código e o estado dos executores em background. `/batuta:resume` lê tudo, confere o git, confirma com você e retoma — consumindo o handoff, que é nota de passagem, não estado.
 
 ## Quanto estou economizando?
 

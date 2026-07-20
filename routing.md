@@ -7,7 +7,7 @@ precedence. Edit freely: it is just a markdown table.
 The table assumes the full trio (opencode + codex + claude). Onboarding adapts
 it to what the user actually has and prefers — a claude-only setup, for
 instance, maps lanes to different Claude models instead (see
-`skills/batuta/SKILL.md`, Step 0.6). The executor column of the project's
+`skills/init/SKILL.md`). The executor column of the project's
 local copy is the user's choice, not this default.
 
 | Complexity | Examples | Executor | Cost |
