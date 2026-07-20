@@ -19,6 +19,12 @@ artefatos obrigatórios) por um ciclo único e enxuto que preserva as garantias 
 importam: rastreabilidade via git, estado retomável, planejamento quando necessário
 e verificação sempre.
 
+O v1 é focado no Claude Code como orquestrador, mas o papel de maestro é uma
+posição na arquitetura, não uma dependência: a direção do projeto é permitir
+configurar qualquer ferramenta como orquestrador no futuro. Decisões de design
+que acoplem o ciclo (brief → delegar → verificar → commitar) ao Claude devem ser
+evitadas quando houver alternativa de custo equivalente.
+
 ## 2. Problema
 
 Frameworks de orquestração existentes (ex.: GSD) entregam disciplina ao custo de:
@@ -202,6 +208,9 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 - Fases, milestones, roadmaps e cadeias de agentes especializados.
 - Orquestração de CLIs interativos (só modo não-interativo/exec).
 - Gestão de credenciais dos executores (cada CLI cuida do próprio login).
+- Orquestradores alternativos ao Claude Code — no v1 o maestro é sempre o Claude.
+  É direção futura declarada (ver §1); o que o v1 deve garantir é apenas não
+  acoplar o ciclo ao Claude de forma que inviabilize a troca depois.
 
 ## 8. Critérios de sucesso
 
@@ -217,6 +226,7 @@ Novo executor = copiar `_template.md`, preencher, adicionar linha no `routing.md
 | Decisão | Escolha | Motivo |
 |---|---|---|
 | Formato | Plugin Claude Code | Instalável, versionado, formato que a comunidade consome |
+| Orquestrador | Claude Code no v1; agnóstico no futuro | Foco inicial em um maestro só; o papel de orquestrador deve poder ser assumido por qualquer ferramenta configurada |
 | Roteamento | Automático com override | Menos fricção; usuário mantém controle verbal |
 | Estado | Prosa + checkboxes | Tabelas com schema rígido foram fonte de quebra no GSD |
 | Nome | Batuta | Metáfora exata (reger sem tocar), brasileiro, curto, disponível |

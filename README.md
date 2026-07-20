@@ -6,6 +6,8 @@
 
 O resultado: você usa a inteligência do Claude onde ela importa (decidir, revisar, garantir qualidade) e gasta centavos onde qualquer modelo resolve (escrever o código de uma tarefa bem especificada).
 
+> **Nota:** o v1 usa o Claude como maestro fixo, mas essa é uma decisão de foco, não de arquitetura — a direção do projeto é permitir configurar qualquer ferramenta como orquestrador no futuro.
+
 ## Por que o Batuta existe
 
 Frameworks de orquestração para agentes de IA costumam cair em dois extremos:
