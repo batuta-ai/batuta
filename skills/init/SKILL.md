@@ -20,6 +20,9 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    - Methodology: TDD or tests after? Conventional commits or free-form?
      Trunk-based or feature branches?
    - Test command? Build command?
+   - Batch execution: sequential (default) or parallel? (how decomposed
+     multi-item requests run — see Step 1.5 of the cycle; the answer becomes
+     the profile's Execution line)
 3. Save the answers to `.batuta/profile.md`, referencing the matching stack
    template (`templates/react.md`, `templates/vue.md`, `templates/node-api.md`
    or `templates/generic.md`).
@@ -89,6 +92,7 @@ run `/batuta:init` again — that is the reconfigure mode below.
    looks.
 3. Ask what to change — one question: lane/model ("codex is installed now",
    "swap the Research model"), profile answers (test command, methodology),
+   the batch execution mode (sequential ↔ parallel, the profile's Execution line),
    or a fresh map sweep (delegated to the scout, like first-run step 4).
 4. Rewrite only what changed (`.batuta/routing.md` and/or
    `.batuta/profile.md`), reusing first-run step 6's discovery and single
