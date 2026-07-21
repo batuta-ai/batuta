@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.2](https://github.com/franciscpd/batuta/compare/v0.2.1...v0.2.2) (2026-07-21)
+
+
+### Features
+
+* init asks batch execution mode (sequential default) ([b0fb6c6](https://github.com/franciscpd/batuta/commit/b0fb6c6ace7c71233fcc9a758e2ab6afcf5081fa))
+* Step 1.5 Decompose — full cycle and atomic commit per item ([6b7c31e](https://github.com/franciscpd/batuta/commit/6b7c31e2e9296a0690efb239a007faf92119044b))
+
 ## [0.2.1](https://github.com/franciscpd/batuta/compare/v0.2.0...v0.2.1) (2026-07-20)
 
 
