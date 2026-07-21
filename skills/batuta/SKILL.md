@@ -38,6 +38,30 @@ in plain text in the conversation (inline planning — no artifact). If the work
 spans sessions, suggest `/batuta:plan`. A plan is never a prerequisite: a clear
 task goes straight into the cycle.
 
+## Step 1.5 — Decompose
+
+A task is the smallest deliverable that can be verified and committed on its
+own. When the request contains more than one such deliverable (a list of
+components, "X, Y and Z", plural scope), decompose before briefing:
+
+1. Split the request by the unit rule above: 6 components = 6 tasks, each
+   getting its own full cycle — brief → delegate → verify → commit.
+2. Classify and route each task individually (Step 1): a batch may mix
+   trivial and medium items, each going to its own lane.
+3. Order by dependency: items that depend on each other run in the order the
+   dependency imposes; independent items keep the list's order.
+4. Announce one line per item and start the first cycle immediately — no
+   confirmation stop: `1/6 → codex: medium — Card component`.
+5. Coupled items that cannot be verified separately stay as one task — a
+   declared exception in the announcement, never the silent default.
+
+**Execution mode:** sequential by default — one item at a time on the main
+checkout, each cycle ending in its own commit before the next begins. The
+profile's Execution line (`.batuta/profile.md`) may set `parallel`, and the
+user can override per request ("run these in parallel"). Parallel batches
+follow Step 3's parallelism, but verification and commit remain per item,
+as each executor returns.
+
 ## Step 2 — Brief
 
 Build the task brief with:
@@ -65,6 +89,11 @@ the Context section; only its distillate enters your context.
 discovering something the profile's Project map didn't cover, add a line to the
 map. The map grows as a side effect of work — there is no "update the map" phase.
 
+**Batch economy:** in a decomposed batch (Step 1.5), build Context +
+Conventions once — including any scout dispatch — and reuse the block across
+the batch's briefs; only Goal, acceptance criteria and boundaries vary per
+item. Six cycles must not cost six times the research.
+
 ## Step 3 — Delegate
 
 Invoke the executor as described in its adapter at `adapters/<executor>.md`
@@ -73,7 +102,9 @@ yourself (critical tasks only). When a routing row names a model, the
 invocation must carry it — a delegation without the row's model flags is a
 routing bug, not a shortcut.
 
-**Parallelism:** independent tasks run in parallel — executors in the background
+**Parallelism:** when the execution mode calls for it (Step 1.5 — profile set
+to `parallel`, or the user asks), independent tasks run in parallel —
+executors in the background
 (`run_in_background`), one git worktree per executor when file conflicts are
 likely. If the superpowers plugin is installed, use its
 `dispatching-parallel-agents` and `using-git-worktrees` skills to conduct the
@@ -95,10 +126,16 @@ Failed → send the diff + specific feedback back to the executor and allow
 **1 retry**. Failed again → **escalate**: the task moves one row up the routing
 table and the cycle restarts at Step 2 (brief enriched with what was learned).
 
+In a batch (Step 1.5), a task that fails even after escalation is skipped:
+continue with the remaining independent items and report the failure at the
+end. Items that depended on the failed one are blocked and reported — never
+executed blindly.
+
 ## Step 5 — Commit and record
 
 1. Atomic commit: one verified task = one commit (message per the profile's
-   methodology).
+   methodology). N tasks delivered = N commits — batching multiple tasks
+   into one commit is a cycle violation, not a shortcut.
 2. One line in `WORK.md` (entries in the user's language):
 
 ```markdown
