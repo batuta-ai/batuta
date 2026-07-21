@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/franciscpd/batuta/compare/v0.2.2...v0.2.3) (2026-07-21)
+
+
+### Bug Fixes
+
+* alinha docs e skills ao default sequencial da decomposição ([0a29f1c](https://github.com/franciscpd/batuta/commit/0a29f1cb1c03a0ee01851019283d90fd692aa487))
+
 ## [0.2.2](https://github.com/franciscpd/batuta/compare/v0.2.1...v0.2.2) (2026-07-21)
 
 
