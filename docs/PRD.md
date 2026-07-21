@@ -198,6 +198,15 @@ Tabela default (editável via `routing.md` do projeto ou `/batuta:route`):
 
 ### 6.3 Ciclo de execução (único, sem fases)
 
+Um task é o menor entregável que pode ser verificado e commitado sozinho.
+Pedido com mais de um entregável (lista de componentes, escopo plural) é
+decomposto antes do brief: cada item percorre o ciclo inteiro abaixo e
+termina no próprio commit — sequencial por default; `parallel` opcional via
+perfil, com override verbal por tarefa. Itens acoplados que não podem ser
+verificados separadamente permanecem um task só, como exceção declarada no
+anúncio. Falha de um item (mesmo após escalada) pula o item e bloqueia só os
+dependentes; os independentes seguem.
+
 1. **Brief** — orquestrador monta o task brief: objetivo, contexto, arquivos
    relevantes, convenções do perfil/template, critérios de aceite.
 2. **Delegar** — invoca o adapter via Bash (`codex exec …`, `opencode run …`).
@@ -225,6 +234,9 @@ conflito de arquivos.
   `using-git-worktrees` para reger a distribuição.
 - **Sem superpowers:** fallback para background tasks nativos do Claude Code.
 - Detecção em runtime; nenhuma dependência rígida.
+- Lotes decompostos (§6.3) são sequenciais por default; paralelismo entra
+  pela linha Execution do perfil ou por pedido verbal. Mesmo em paralelo,
+  verificação e commit são por item.
 
 ### 6.6 Estado (`WORK.md`)
 
@@ -361,3 +373,4 @@ usuário — nunca auto-resume.
 | Superfície de comandos revista | 8 comandos: `/batuta` (só o ciclo, com gates) + init (onboarding/reconfiguração como único caminho), pause/resume (handoff transitório) e renames plan/status/route/review sem prefixo | O skill principal acumulava setup + ciclo e não havia como reconfigurar nem pausar; comando real (`plugin:skill`) divergia do documentado. Revisa as decisões "Comandos: 5" e "Onboarding automático na 1ª execução" (onboarding agora mora no `/batuta:init`). Breaking rename aceito em 0.x com um usuário; CHANGELOG avisa |
 | Registro de decisões de regência | Linha do `WORK.md` carrega executor + modelo + escaladas; agregação só sob demanda no `/batuta:status` | O valor se demonstra com fatos (taxa de delegação, taxa de escalada), não com contabilidade inventada — o Batuta não tem como saber tokens nem preços de cada CLI. Valores em dinheiro só se o usuário fornecer preços de referência na tabela de roteamento. Telemetria segue fora do escopo |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |
+| Decomposição no ciclo | Step 1.5: pedido multi-entregável vira N tasks (menor unidade verificável e commitável), ciclo inteiro e commit por item; sequencial default com `parallel` no perfil; anuncia e executa sem parada de confirmação | Feedback de uso real (2026-07-20): a lista inteira virava um brief e um commit no final — o commit atômico do §6.3 só se sustenta se a decomposição definir o que é "um task", e a verificação por item impede que uma falha contamine o lote |
