@@ -113,6 +113,7 @@ O onboarding é o `/batuta:init`: na primeira vez em um projeto, ele faz 3-5 per
 - Qual a stack? (React, Vue, Node API... — ele detecta pelo `package.json` e sugere)
 - Qual a metodologia? (TDD ou testes depois; conventional commits ou livre)
 - Qual o comando de testes e de build?
+- Lotes: execução sequencial (default) ou paralela?
 
 Ele também **checa quais executores você tem** (codex? opencode? logados?) e propõe o mapeamento das lanes a partir do que encontrou — **mas quem decide é você**: qual CLI, provider e modelo assume cada lane. Tem o trio completo? A tabela default vale, só confirmando os modelos — inclusive quem assume a lane Complexa: codex com modelo forte ou um modelo Claude forte em background (`claude -p --model opus`). Só tem Claude e opencode? O opencode cobre trivial e média, a Complexa vai para um Claude forte em background e a Crítica fica com a sessão. Só o Claude? As lanes se diferenciam por modelo (Haiku para trivial, Sonnet para média, Opus em background para complexa, a sessão para crítica). A mesma proposta cobre a lane de pesquisa: um modelo de centavos para o batedor (Kimi via opencode, ou Haiku em background). Uma pergunta de confirmação e a tabela de roteamento do seu projeto nasce com executores e modelos explícitos — e você descobre na hora (não no meio de uma tarefa) se falta instalar algo.
 
@@ -126,7 +127,7 @@ O perfil também guarda um **mapa curto do projeto** (onde ficam rotas, componen
 
 ## Paralelismo
 
-Tarefas independentes rodam **em paralelo**: cada executor em background, com um git worktree próprio quando há risco de conflito. Se você tiver o plugin [superpowers](https://github.com/obra/superpowers) instalado, o Batuta usa as skills dele para reger a distribuição; sem ele, usa os recursos nativos do Claude Code. Nenhuma dependência obrigatória.
+Tarefas independentes rodam **em paralelo**: cada executor em background, com um git worktree próprio quando há risco de conflito. Se você tiver o plugin [superpowers](https://github.com/obra/superpowers) instalado, o Batuta usa as skills dele para reger a distribuição; sem ele, usa os recursos nativos do Claude Code. Nenhuma dependência obrigatória. Lotes decompostos são sequenciais por default; o paralelo entra pela configuração do perfil ou por pedido seu — e mesmo em paralelo, verificação e commit continuam por item.
 
 ## Adicionando um executor novo
 

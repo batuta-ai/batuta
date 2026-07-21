@@ -116,6 +116,7 @@ ciclo nunca faz onboarding inline:
 - **Metodologia** — TDD ou testes depois; conventional commits ou livre;
   trunk-based ou feature branches.
 - **Comando de testes e de build** — para a etapa de verificação.
+- Lotes decompostos: execução sequencial (default) ou paralela?
 
 O resultado vira `.batuta/profile.md`. O template de stack correspondente
 (`templates/react.md` etc.) é referenciado no perfil e suas convenções entram

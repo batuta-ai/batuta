@@ -22,7 +22,8 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    - Test command? Build command?
    - Batch execution: sequential (default) or parallel? (how decomposed
      multi-item requests run — see Step 1.5 of the cycle; the answer becomes
-     the profile's Execution line)
+     the profile's Execution line, written as a literal line, e.g.
+     `Execution: sequential`)
 3. Save the answers to `.batuta/profile.md`, referencing the matching stack
    template (`templates/react.md`, `templates/vue.md`, `templates/node-api.md`
    or `templates/generic.md`).

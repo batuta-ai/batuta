@@ -28,7 +28,8 @@ Two one-line checks before anything else:
    (delegable); needs conversation context, security judgment, or open
    decisions → critical (claude). When in doubt, critical.
 3. Announce the decision in ONE line: `→ codex: medium bugfix`. No further
-   justification.
+   justification. For a multi-deliverable request, skip this single-line
+   announcement — Step 1.5 announces per item instead.
 4. If the user overrides ("use kimi for this"), obey without arguing.
 5. Check executor availability as described in its adapter
    (`adapters/<executor>.md`). Unavailable → move one row up the table and say so.
