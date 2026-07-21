@@ -54,6 +54,12 @@ O Batuta fica no meio: **um ciclo único e enxuto** que preserva as quatro garan
 
 Se a verificação falhar, o executor recebe o feedback e tenta **uma vez** de novo. Falhou de novo? A tarefa **escala automaticamente** para um executor mais capaz.
 
+E se o pedido for uma lista — 6 componentes, por exemplo? O maestro
+**decompõe antes de delegar**: cada item vira um ciclo próprio (brief →
+delegação → verificação → commit), um de cada vez. 6 componentes = 6 commits
+atômicos, não um commitzão no final. Prefere paralelo? Configura no
+onboarding ou pede na hora ("roda em paralelo").
+
 ## Roteamento por complexidade
 
 O coração do Batuta é uma tabela simples — que você edita como quiser:
