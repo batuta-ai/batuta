@@ -54,6 +54,16 @@ Em seguida, o mapa momento → skill → adaptação:
 | Bugfix crítico ou falha pós-escalação | `systematic-debugging` | Achados alimentam o re-brief; a escalação segue o routing table |
 | Lane claude (tarefas críticas) | `test-driven-development`, `verification-before-completion` | Commit atômico e registro no `WORK.md` do Step 5 |
 
+**Método no brief (executores externos):** codex e opencode também podem ter
+o superpowers instalado no lado deles — mas o Batuta não enxerga o ambiente do
+executor. A solução é a instrução condicional dentro do brief: todo brief de
+código ganha uma linha de método — "se as skills do superpowers estiverem
+disponíveis no seu ambiente, conduza por elas (`test-driven-development` para
+implementação; `systematic-debugging` para investigação de bug); caso
+contrário, trabalhe test-first pelos critérios de aceite". Degrada sozinha:
+executor sem superpowers ignora a condição e segue o baseline. Nenhuma
+detecção, nenhuma configuração por executor.
+
 Cada linha da tabela ganha um parágrafo curto de adaptação — por exemplo: em
 `/batuta:plan`, a decomposição e a análise de dependências seguem o método de
 `writing-plans`, mas o artefato final é `.batuta/plan-<slug>.md` no formato
@@ -70,6 +80,8 @@ coleta, mas quem implementa é o executor da lane roteada.
     pela linha de TDD da tabela.
   - Step 4 — verificação conduz pelo checklist de review; falha que vira
     investigação (retry/escalação de bugfix) conduz por `systematic-debugging`.
+  - Step 2 — o brief ganha a linha de método condicional (ver "Método no
+    brief" em `superpowers.md`).
 - `skills/plan/SKILL.md` — método de `writing-plans`, artefato do Batuta.
 - `skills/review/SKILL.md` — checklist de `requesting-code-review` /
   `verification-before-completion` sobre os passos existentes.
@@ -99,3 +111,6 @@ coleta, mas quem implementa é o executor da lane roteada.
 3. Com o superpowers ausente, nenhuma skill muda de comportamento (leitura dos
    textos confirma que os ponteiros são condicionais).
 4. README e PRD registram a integração de forma consistente com as skills.
+5. O template de brief do Step 2 inclui a linha de método condicional para o
+   executor externo, com degradação explícita (sem superpowers → test-first
+   pelos critérios de aceite).
