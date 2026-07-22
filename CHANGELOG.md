@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.5](https://github.com/franciscpd/batuta/compare/v0.2.4...v0.2.5) (2026-07-22)
+
+
+### Features
+
+* ciclo ganha o caminho worktree por tarefa (Steps 1.5, 3–5) ([f2a1a42](https://github.com/franciscpd/batuta/commit/f2a1a42b5f4a7d134f4578d784cdbaa1d6e7acde))
+* init pergunta modo worktree e comando de instalação ([e2f0b86](https://github.com/franciscpd/batuta/commit/e2f0b86870f22c6f24b9199101e58f178268734c))
+
+
+### Bug Fixes
+
+* achados do review final do worktree por tarefa (wording, contagens, fallback e guardas) ([98aada6](https://github.com/franciscpd/batuta/commit/98aada68244a7b12a0af381e79676e0e6c261480))
+
 ## [0.2.4](https://github.com/franciscpd/batuta/compare/v0.2.3...v0.2.4) (2026-07-22)
 
 
