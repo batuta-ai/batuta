@@ -63,7 +63,8 @@ checkout, each cycle ending in its own commit before the next begins. The
 profile's Execution line (`.batuta/profile.md`) may set `parallel`, and the
 user can override per request ("run these in parallel"). Parallel batches
 follow Step 3's parallelism, but verification and commit remain per item,
-as each executor returns.
+as each executor returns. The profile's Worktree line (Step 3) also applies
+per item: each task's cycle gets its own worktree when its lane calls for it.
 
 ## Step 2 — Brief
 
@@ -111,10 +112,24 @@ yourself (critical tasks only) — with superpowers installed, test-first per
 invocation must carry it — a delegation without the row's model flags is a
 routing bug, not a shortcut.
 
+**Worktree (per profile):** the profile's Worktree line — `off | medium+ |
+always`, no line = `off` — decides where the executor works. When the task's
+lane triggers it (`medium+` = medium lane and above; `always` = every lane),
+create a worktree and branch for the task: ensure `.batuta/worktrees/` is
+listed in `.git/info/exclude` (never `.gitignore` — that file is the
+user's), then `git worktree add .batuta/worktrees/<slug> -b batuta/<slug>`,
+and invoke the executor with the worktree as its working directory. The
+executor may commit freely there (WIP) — its commit granularity does not
+matter; the maestro rewrites history at integration (Step 5). Mode `off` or
+a non-triggering lane → the executor works on the main checkout as before.
+The user can override per request; with superpowers installed,
+`using-git-worktrees` conducts creation and cleanup (`superpowers.md`).
+
 **Parallelism:** when the execution mode calls for it (Step 1.5 — profile set
 to `parallel`, or the user asks), independent tasks run in parallel —
-executors in the background (`run_in_background`), one git worktree per
-executor when file conflicts are likely. With superpowers installed, conduct
+executors in the background (`run_in_background`). With the Worktree line
+active each task already runs in its own worktree; with it `off`, create
+one worktree per executor when file conflicts are likely. With superpowers installed, conduct
 the distribution per `superpowers.md` (batch orchestration row); without it,
 use native capabilities. Detect at runtime; no hard dependency.
 
@@ -133,9 +148,20 @@ Always, no exceptions:
 2. **Tests** — run the profile's test command.
 3. **Acceptance criteria** — check them one by one against the brief.
 
+**In a worktree** (Step 3): the diff review reads
+`git diff main...batuta/<slug>`, and tests run inside the worktree. If the
+test command fails for environment reasons (missing dependencies — not a
+red test), run the profile's Install command inside the worktree and retry
+once; no Install line → declare the fallback out loud and run the tests on
+the main checkout with the item's diff applied — never silently.
+
 Failed → send the diff + specific feedback back to the executor and allow
 **1 retry**. Failed again → **escalate**: the task moves one row up the routing
 table and the cycle restarts at Step 2 (brief enriched with what was learned).
+In a worktree, the retry happens in the same worktree; an escalation resets
+the branch (`git reset --hard main`) before the next executor takes over. An
+item that fails definitively has its worktree and branch removed — the main
+checkout was never touched.
 
 In a batch (Step 1.5), a task that fails even after escalation is skipped:
 continue with the remaining independent items and report the failure at the
@@ -146,7 +172,12 @@ executed blindly.
 
 1. Atomic commit: one verified task = one commit (message per the profile's
    methodology). N tasks delivered = N commits — batching multiple tasks
-   into one commit is a cycle violation, not a shortcut.
+   into one commit is a cycle violation, not a shortcut. In a worktree,
+   integrate by squash on the main checkout — `git merge --squash
+   batuta/<slug>`, then commit with the maestro's message: the executor's
+   WIP history never reaches main. Then remove the worktree and branch
+   (`git worktree remove .batuta/worktrees/<slug>`,
+   `git branch -D batuta/<slug>`).
 2. One line in `WORK.md` (entries in the user's language):
 
 ```markdown
