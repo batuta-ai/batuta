@@ -35,7 +35,9 @@ Two one-line checks before anything else:
    (`adapters/<executor>.md`). Unavailable → move one row up the table and say so.
 
 Ambiguous or large task? Before routing, ask 2–3 questions and sketch the plan
-in plain text in the conversation (inline planning — no artifact). If the work
+in plain text in the conversation (inline planning — no artifact); with
+superpowers installed, conduct the questions by the `brainstorming` method
+(`superpowers.md`, Step 1 row). If the work
 spans sessions, suggest `/batuta:plan`. A plan is never a prerequisite: a clear
 task goes straight into the cycle.
 
@@ -81,6 +83,11 @@ Build the task brief with:
 
 The brief must be self-sufficient: the executor has no access to the conversation.
 
+**Method line:** every code brief also carries the conditional method line
+from `superpowers.md` ("Method in the brief") — the executor may have
+superpowers on its side; without it the line degrades to test-first by the
+acceptance criteria.
+
 **Research first:** when building Context requires discovery ("where is X
 handled, which files touch Y, how is Z tested"), dispatch the scout (see "The
 scout") instead of reading the codebase yourself — the verified report feeds
@@ -99,7 +106,8 @@ item. Six cycles must not cost six times the research.
 
 Invoke the executor as described in its adapter at `adapters/<executor>.md`
 (non-interactive command, via Bash). The `claude.md` adapter = you execute it
-yourself (critical tasks only). When a routing row names a model, the
+yourself (critical tasks only) — with superpowers installed, test-first per
+`superpowers.md` (claude lane row). When a routing row names a model, the
 invocation must carry it — a delegation without the row's model flags is a
 routing bug, not a shortcut.
 
@@ -107,14 +115,18 @@ routing bug, not a shortcut.
 to `parallel`, or the user asks), independent tasks run in parallel —
 executors in the background
 (`run_in_background`), one git worktree per executor when file conflicts are
-likely. If the superpowers plugin is installed, use its
-`dispatching-parallel-agents` and `using-git-worktrees` skills to conduct the
-distribution; without it, use native capabilities. Detect at runtime; no hard
+likely. With superpowers
+installed, conduct the distribution per `superpowers.md` (batch orchestration
+row); without it, use native capabilities. Detect at runtime; no hard
 dependency.
 
 ## Step 4 — Verify
 
 Always, no exceptions:
+
+With superpowers installed, conduct this step per `superpowers.md`
+(verification row); a critical bugfix, or a failure that survives
+escalation, is investigated per its debugging row before the re-brief.
 
 1. **Diff review** — `git diff`; review the code as the maestro: correctness,
    scope (only what was asked?), adherence to the profile's conventions.
