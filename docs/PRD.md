@@ -79,6 +79,7 @@ batuta/
 │   ├── route/             # exibe/edita as tabelas de roteamento
 │   └── review/            # re-executa a verificação sobre qualquer diff
 ├── routing.md             # tabela de roteamento default (editável)
+├── superpowers.md         # integração com superpowers: método emprestado, regras do Batuta
 ├── adapters/
 │   ├── codex.md           # invocação não-interativa, passagem de contexto, limites
 │   ├── opencode.md        # idem, com modelo configurável (Kimi, DeepSeek, ...)
@@ -231,8 +232,10 @@ Tarefas independentes rodam em paralelo: executores em background
 (Bash `run_in_background`), um git worktree por executor quando houver risco de
 conflito de arquivos.
 
-- **Com superpowers instalado:** usa `dispatching-parallel-agents` e
-  `using-git-worktrees` para reger a distribuição.
+- **Com superpowers instalado:** rege a distribuição conforme o
+  `superpowers.md` do plugin (que também cobre brainstorming, planejamento,
+  review, debugging e a lane claude — método do superpowers, regras do
+  Batuta).
 - **Sem superpowers:** fallback para background tasks nativos do Claude Code.
 - Detecção em runtime; nenhuma dependência rígida.
 - Lotes decompostos (§6.3) são sequenciais por default; paralelismo entra
@@ -375,3 +378,4 @@ usuário — nunca auto-resume.
 | Registro de decisões de regência | Linha do `WORK.md` carrega executor + modelo + escaladas; agregação só sob demanda no `/batuta:status` | O valor se demonstra com fatos (taxa de delegação, taxa de escalada), não com contabilidade inventada — o Batuta não tem como saber tokens nem preços de cada CLI. Valores em dinheiro só se o usuário fornecer preços de referência na tabela de roteamento. Telemetria segue fora do escopo |
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |
 | Decomposição no ciclo | Step 1.5: pedido multi-entregável vira N tasks (menor unidade verificável e commitável), ciclo inteiro e commit por item; sequencial default com `parallel` no perfil; anuncia e executa sem parada de confirmação | Feedback de uso real (2026-07-20): a lista inteira virava um brief e um commit no final — o commit atômico do §6.3 só se sustenta se a decomposição definir o que é "um task", e a verificação por item impede que uma falha contamine o lote |
+| Integração com superpowers | Documento central `superpowers.md` na raiz; detecção em runtime, automática, sem toggle; método do superpowers, regras materiais do Batuta (artefatos, routing, verify/commit por item); linha de método condicional em todo brief para executores que tenham superpowers | Skills de processo maduras elevam a regência sem criar dependência: ausente o plugin, cada passo segue o texto baseline da skill; executores externos degradam sozinhos ignorando a condição do brief |

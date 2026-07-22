@@ -129,6 +129,21 @@ O perfil também guarda um **mapa curto do projeto** (onde ficam rotas, componen
 
 Tarefas independentes rodam **em paralelo**: cada executor em background, com um git worktree próprio quando há risco de conflito. Se você tiver o plugin [superpowers](https://github.com/obra/superpowers) instalado, o Batuta usa as skills dele para reger a distribuição; sem ele, usa os recursos nativos do Claude Code. Nenhuma dependência obrigatória. Lotes decompostos são sequenciais por default; o paralelo entra pela configuração do perfil ou por pedido seu — e mesmo em paralelo, verificação e commit continuam por item.
 
+## Integração com superpowers
+
+Se você tem o plugin [superpowers](https://github.com/obra/superpowers)
+instalado, o Batuta rege os passos do ciclo com as skills dele — brainstorming
+para pedidos ambíguos, `writing-plans` no planejamento, o loop de
+subagent-driven-development na orquestração de lotes, o rigor de code review
+na verificação, `systematic-debugging` em falhas e TDD quando o próprio
+maestro implementa. O método é do superpowers; as regras são do Batuta:
+artefatos em `.batuta/` e `WORK.md`, implementadores vêm da tabela de
+roteamento, verificação e commit por item. Todo brief ainda carrega uma
+instrução condicional para executores (codex, opencode) que tenham o
+superpowers do lado deles. Tudo automático e sem dependência: sem o plugin,
+cada passo segue exatamente como descrito acima. O mapa completo vive em
+`superpowers.md` na raiz do plugin.
+
 ## Adicionando um executor novo
 
 Sem código, sem PR no framework. Adicionar um executor é:
