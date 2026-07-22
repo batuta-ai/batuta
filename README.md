@@ -129,6 +129,19 @@ O perfil também guarda um **mapa curto do projeto** (onde ficam rotas, componen
 
 Tarefas independentes rodam **em paralelo**: cada executor em background, com um git worktree próprio quando há risco de conflito. Se você tiver o plugin [superpowers](https://github.com/obra/superpowers) instalado, o Batuta usa as skills dele para reger a distribuição; sem ele, usa os recursos nativos do Claude Code. Nenhuma dependência obrigatória. Lotes decompostos são sequenciais por default; o paralelo entra pela configuração do perfil ou por pedido seu — e mesmo em paralelo, verificação e commit continuam por item.
 
+## Worktree por tarefa
+
+Com a linha `Worktree` do perfil (`off`/`medium+`/`always`, default
+`medium+` no onboarding), o executor trabalha num git worktree isolado por
+tarefa: commita à vontade lá (WIP), o maestro revisa e testa no branch e,
+aprovado, integra com squash no main escrevendo a mensagem do commit — um
+task verificado continua sendo um commit atômico, e trabalho rejeitado é só
+deletar o worktree, sem revert no seu checkout. Em `medium+`, tarefas
+triviais ficam no checkout principal (worktree para trocar uma string é
+cerimônia demais); `always` leva tudo para worktree; `off` mantém o
+comportamento clássico. A linha opcional `Install:` do perfil prepara o
+ambiente de testes dentro do worktree quando necessário.
+
 ## Integração com superpowers
 
 Se você tem o plugin [superpowers](https://github.com/obra/superpowers)

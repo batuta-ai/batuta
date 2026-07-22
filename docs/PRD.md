@@ -101,7 +101,8 @@ batuta/
 ├── WORK.md                # estado leve: em andamento / feito
 └── .batuta/
     ├── profile.md         # perfil do projeto (onboarding da primeira execução)
-    └── plan-<slug>.md     # planos formais, quando existirem
+    ├── plan-<slug>.md     # planos formais, quando existirem
+    └── worktrees/<slug>/  # worktree transitório por tarefa (modo Worktree; ignorado via .git/info/exclude)
 ```
 
 ## 6. Funcionalidades
@@ -118,6 +119,9 @@ ciclo nunca faz onboarding inline:
   trunk-based ou feature branches.
 - **Comando de testes e de build** — para a etapa de verificação.
 - **Lotes decompostos** — execução sequencial (default) ou paralela.
+- **Worktree e instalação** — modo worktree por tarefa (`off`/`medium+`/`always`,
+  default `medium+`) e comando de instalação opcional para o ambiente de
+  testes dos worktrees.
 
 O resultado vira `.batuta/profile.md`. O template de stack correspondente
 (`templates/react.md` etc.) é referenciado no perfil e suas convenções entram
@@ -217,6 +221,18 @@ dependentes; os independentes seguem.
 4. **Commitar** — commit atômico. Falha → 1 retry com feedback ao executor →
    escalada de nível.
 5. **Registrar** — uma linha no `WORK.md`.
+
+**Worktree por tarefa:** com a linha `Worktree` do perfil
+(`off`/`medium+`/`always`; default `medium+`, perguntada no init; perfil sem
+a linha = `off`), os passos 2–4 acontecem num worktree isolado
+(`.batuta/worktrees/<slug>`, branch `batuta/<slug>`): o executor commita WIP
+livremente, a verificação lê o diff do branch e roda os testes lá — com a
+linha opcional `Install:` preparando o ambiente; sem ela, fallback declarado
+no checkout principal — e a integração é squash-merge feito pelo maestro com
+a mensagem da metodologia: o histórico WIP nunca chega ao main. Retry no
+mesmo worktree; escalada reseta o branch; falha definitiva deleta worktree e
+branch com o main intocado. Em `medium+`, a lane trivial fica no checkout
+principal.
 
 ### 6.4 Planejamento adaptativo
 
@@ -379,3 +395,4 @@ usuário — nunca auto-resume.
 | Idiomas | Instruções para ferramentas (skills, adapters, templates, routing) em inglês; docs de usuário (README, PRD) em PT-BR | Modelos seguem melhor instruções em inglês; o público-alvo (devs do Brasil) lê a documentação em PT-BR |
 | Decomposição no ciclo | Step 1.5: pedido multi-entregável vira N tasks (menor unidade verificável e commitável), ciclo inteiro e commit por item; sequencial default com `parallel` no perfil; anuncia e executa sem parada de confirmação | Feedback de uso real (2026-07-20): a lista inteira virava um brief e um commit no final — o commit atômico do §6.3 só se sustenta se a decomposição definir o que é "um task", e a verificação por item impede que uma falha contamine o lote |
 | Integração com superpowers | Documento central `superpowers.md` na raiz; detecção em runtime, automática, sem toggle; método do superpowers, regras materiais do Batuta (artefatos, routing, verify/commit por item); linha de método condicional em todo brief para executores que tenham superpowers | Skills de processo maduras elevam a regência sem criar dependência: ausente o plugin, cada passo segue o texto baseline da skill; executores externos degradam sozinhos ignorando a condição do brief |
+| Worktree por tarefa | Executor commita WIP em worktree próprio (`.batuta/worktrees/<slug>`, branch `batuta/<slug>`); maestro verifica no branch e integra por squash com a mensagem da metodologia; perfil ganha `Worktree` (`off`/`medium+`/`always`, default `medium+`) e `Install:` opcional; ignore local via `.git/info/exclude` | Isolamento de verdade: o main nunca fica sujo e rejeição é deletar o worktree, não reverter; squash preserva o commit atômico e a autoridade da mensagem com o maestro; gate por lane evita cerimônia em tarefa trivial; exclude local respeita a fronteira de escrita (`.gitignore` é do usuário) |
