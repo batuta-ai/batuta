@@ -7,6 +7,11 @@ description: Batuta's on-demand verification. Use when the user invokes /batuta:
 
 Re-runs the cycle's verification step over any diff, delegating nothing.
 
+With superpowers installed, conduct the review with the rigor of
+`requesting-code-review` and `verification-before-completion`
+(plugin root `superpowers.md`, verification row); the steps and the verdict
+below stay unchanged.
+
 1. **Determine the target:** by default, uncommitted changes (`git diff` +
    `git diff --staged`); the user may point to a range (`HEAD~3..`), a branch or
    a commit.

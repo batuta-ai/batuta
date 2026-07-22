@@ -10,6 +10,10 @@ planning (2–3 questions in the conversation) or goes straight into the cycle.
 
 ## How
 
+With superpowers installed, conduct steps 1–2 by the `writing-plans` method
+(plugin root `superpowers.md`, `/batuta:plan` row); artifact, format and
+approval below stay unchanged.
+
 1. Understand the goal; ask the missing questions (few, all at once).
 2. Break the work into atomic-commit-sized tasks. For each one:
    - a 1–2 sentence description;
