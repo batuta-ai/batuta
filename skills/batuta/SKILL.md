@@ -34,12 +34,12 @@ Two one-line checks before anything else:
 5. Check executor availability as described in its adapter
    (`adapters/<executor>.md`). Unavailable → move one row up the table and say so.
 
-Ambiguous or large task? Before routing, ask 2–3 questions and sketch the plan
-in plain text in the conversation (inline planning — no artifact); with
+Ambiguous or large task? Before routing, ask 2–3 questions and sketch the
+plan in plain text in the conversation (inline planning — no artifact); with
 superpowers installed, conduct the questions by the `brainstorming` method
-(`superpowers.md`, Step 1 row). If the work
-spans sessions, suggest `/batuta:plan`. A plan is never a prerequisite: a clear
-task goes straight into the cycle.
+(the plugin root `superpowers.md`, Step 1 row). If the work spans sessions,
+suggest `/batuta:plan`. A plan is never a prerequisite: a clear task goes
+straight into the cycle.
 
 ## Step 1.5 — Decompose
 
@@ -113,20 +113,18 @@ routing bug, not a shortcut.
 
 **Parallelism:** when the execution mode calls for it (Step 1.5 — profile set
 to `parallel`, or the user asks), independent tasks run in parallel —
-executors in the background
-(`run_in_background`), one git worktree per executor when file conflicts are
-likely. With superpowers
-installed, conduct the distribution per `superpowers.md` (batch orchestration
-row); without it, use native capabilities. Detect at runtime; no hard
-dependency.
+executors in the background (`run_in_background`), one git worktree per
+executor when file conflicts are likely. With superpowers installed, conduct
+the distribution per `superpowers.md` (batch orchestration row); without it,
+use native capabilities. Detect at runtime; no hard dependency.
 
 ## Step 4 — Verify
 
-Always, no exceptions:
-
 With superpowers installed, conduct this step per `superpowers.md`
-(verification row); a critical bugfix, or a failure that survives
+(verification row). A critical bugfix, or a failure that survives
 escalation, is investigated per its debugging row before the re-brief.
+
+Always, no exceptions:
 
 1. **Diff review** — `git diff`; review the code as the maestro: correctness,
    scope (only what was asked?), adherence to the profile's conventions.
