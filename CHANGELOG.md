@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.4](https://github.com/franciscpd/batuta/compare/v0.2.3...v0.2.4) (2026-07-22)
+
+
+### Features
+
+* ciclo aponta para superpowers.md nos Steps 1–4 ([287a945](https://github.com/franciscpd/batuta/commit/287a94548336a6759eef0f00ba79c7899569a5d0))
+* plan e review apontam para superpowers.md ([328b14f](https://github.com/franciscpd/batuta/commit/328b14f83c4dee958abc3eef5d8e2106e708a812))
+* superpowers.md — integração central (método emprestado, regras do Batuta) ([7e78fbb](https://github.com/franciscpd/batuta/commit/7e78fbbf8abfd3221b62fd60f49881b1e08d83d1))
+
+
+### Bug Fixes
+
+* prosa dos ponteiros do ciclo (Step 4 antes da lista, quebras de linha) ([ac1a0bb](https://github.com/franciscpd/batuta/commit/ac1a0bba97460110378ff418928f497cc65d0522))
+
 ## [0.2.3](https://github.com/franciscpd/batuta/compare/v0.2.2...v0.2.3) (2026-07-21)
 
 
