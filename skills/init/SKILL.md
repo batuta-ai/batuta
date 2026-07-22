@@ -24,6 +24,13 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
      multi-item requests run — see Step 1.5 of the cycle; the answer becomes
      the profile's Execution line, written as a literal line, e.g.
      `Execution: sequential`)
+   - Worktree mode: `off`, `medium+` (default) or `always`? (whether the
+     executor works in an isolated git worktree per task — see Steps 3–5 of
+     the cycle; the answer becomes the profile's literal line, e.g.
+     `Worktree: medium+`)
+   - Install command? (optional — sets up the test environment inside a
+     worktree, e.g. `npm install`; becomes the profile's `Install:` line,
+     omitted when there is none)
 3. Save the answers to `.batuta/profile.md`, referencing the matching stack
    template (`templates/react.md`, `templates/vue.md`, `templates/node-api.md`
    or `templates/generic.md`).
@@ -94,7 +101,8 @@ run `/batuta:init` again — that is the reconfigure mode below.
 3. Ask what to change — one question: lane/model ("codex is installed now",
    "swap the Research model"), profile answers (test command, methodology),
    the batch execution mode (sequential ↔ parallel, the profile's Execution line),
-   or a fresh map sweep (delegated to the scout, like first-run step 4).
+   the worktree mode or Install command (the profile's Worktree and Install
+   lines), or a fresh map sweep (delegated to the scout, like first-run step 4).
 4. Rewrite only what changed (`.batuta/routing.md` and/or
    `.batuta/profile.md`), reusing first-run step 6's discovery and single
    confirmation question for any lane/model change. Never touch `WORK.md`.
