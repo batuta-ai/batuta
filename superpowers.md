@@ -41,7 +41,7 @@ configuration.
 | --- | --- | --- |
 | Ambiguous/creative request (Step 1) | `brainstorming` | design feeds the brief or plan; artifacts in `.batuta/`, never `docs/superpowers/` |
 | `/batuta:plan` | `writing-plans` (method) | `.batuta/plan-<slug>.md` format and location; predicted executor per task; user approval before executing |
-| Batch orchestration (Steps 1.5/3) | `subagent-driven-development`, `dispatching-parallel-agents`, `using-git-worktrees` | each "subagent" is an external executor from the routing table; verify/commit per item, never batched |
+| Batch orchestration (Steps 1.5/3) | `subagent-driven-development`, `dispatching-parallel-agents`, `using-git-worktrees` | each "subagent" is an external executor from the routing table; `using-git-worktrees` also conducts the cycle's per-task worktree (Worktree mode, sequential included); verify/commit per item, never batched |
 | Verification (Step 4) and `/batuta:review` | `requesting-code-review`, `verification-before-completion` | the brief's criteria, traceability test, retry/escalation ladder, verdict |
 | Critical bugfix or post-escalation failure | `systematic-debugging` | findings feed the enriched re-brief; escalation follows the routing table |
 | claude lane (critical tasks) | `test-driven-development`, `verification-before-completion` | atomic commit and `WORK.md` record (Step 5) |
@@ -57,10 +57,12 @@ configuration.
   `.batuta/plan-<slug>.md` in the existing format, with predicted executor
   per task, and execution still waits for user approval.
 - **Batch orchestration:** `subagent-driven-development` conducts the
-  dispatch/collect/review loop; `dispatching-parallel-agents` and
-  `using-git-worktrees` conduct parallel distribution. Who implements is
-  the routed lane's executor, never a Claude subagent; verification and
-  commit remain per item as each executor returns.
+  dispatch/collect/review loop; `dispatching-parallel-agents` conducts
+  parallel distribution and `using-git-worktrees` conducts the per-task
+  worktree, parallel or sequential — the cycle's Worktree mode uses it even
+  when items run one at a time. Who implements is the routed lane's
+  executor, never a Claude subagent; verification and commit remain per
+  item as each executor returns.
 - **Verification:** run Step 4 with `requesting-code-review`'s reviewer
   rigor and `verification-before-completion`'s evidence-before-claims. The
   criteria remain the brief's; the verdict and the retry/escalation ladder

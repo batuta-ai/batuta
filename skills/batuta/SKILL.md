@@ -153,15 +153,19 @@ Always, no exceptions:
 test command fails for environment reasons (missing dependencies — not a
 red test), run the profile's Install command inside the worktree and retry
 once; no Install line → declare the fallback out loud and run the tests on
-the main checkout with the item's diff applied — never silently.
+the main checkout with the item's diff applied — never silently; revert the
+applied diff before integrating (Step 5) — the squash brings the changes
+back from the branch.
 
 Failed → send the diff + specific feedback back to the executor and allow
 **1 retry**. Failed again → **escalate**: the task moves one row up the routing
 table and the cycle restarts at Step 2 (brief enriched with what was learned).
 In a worktree, the retry happens in the same worktree; an escalation resets
-the branch (`git reset --hard main`) before the next executor takes over. An
-item that fails definitively has its worktree and branch removed — the main
-checkout was never touched.
+the branch (`git reset --hard main`, run inside the worktree) before the
+next executor takes over. An item that fails definitively has its worktree
+and branch removed — the main checkout was never touched. If the worktree
+has leftover uncommitted changes, removing it needs `git worktree remove
+--force`.
 
 In a batch (Step 1.5), a task that fails even after escalation is skipped:
 continue with the remaining independent items and report the failure at the
@@ -244,8 +248,9 @@ attributable when nothing else writes to the same tree during the window:
 never run scouts in parallel with code executors on one checkout, and for
 scout fan-out either give each scout its own worktree or accept that a
 dirtied tree fails the whole batch (revert the new entries, then retry the
-questions serially). The adapters' native read-only modes are defense in
-depth, not the guarantee.
+questions serially). Scouts never run inside a code executor's worktree —
+their fan-out worktrees are their own. The adapters' native read-only modes
+are defense in depth, not the guarantee.
 
 ## Non-negotiable principles
 

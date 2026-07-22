@@ -109,7 +109,7 @@ batuta/
 
 ### 6.1 Onboarding e reconfiguração (/batuta:init)
 
-O onboarding é o modo primeira-execução do `/batuta:init` (3–5 perguntas).
+O onboarding é o modo primeira-execução do `/batuta:init` (5–6 perguntas).
 `/batuta` num projeto sem `.batuta/profile.md` aponta para o init e interrompe — o
 ciclo nunca faz onboarding inline:
 
@@ -224,7 +224,7 @@ dependentes; os independentes seguem.
 
 **Worktree por tarefa:** com a linha `Worktree` do perfil
 (`off`/`medium+`/`always`; default `medium+`, perguntada no init; perfil sem
-a linha = `off`), os passos 2–4 acontecem num worktree isolado
+a linha = `off`), os passos 2–3 acontecem num worktree isolado
 (`.batuta/worktrees/<slug>`, branch `batuta/<slug>`): o executor commita WIP
 livremente, a verificação lê o diff do branch e roda os testes lá — com a
 linha opcional `Install:` preparando o ambiente; sem ela, fallback declarado
@@ -245,8 +245,9 @@ principal.
 ### 6.5 Paralelismo
 
 Tarefas independentes rodam em paralelo: executores em background
-(Bash `run_in_background`), um git worktree por executor quando houver risco de
-conflito de arquivos.
+(Bash `run_in_background`). Com a linha `Worktree` do perfil ativa, cada
+tarefa já roda no seu próprio worktree (ver §6.1/6.3); com ela `off`, um
+git worktree por executor quando houver risco de conflito de arquivos.
 
 - **Com superpowers instalado:** rege a distribuição conforme o
   `superpowers.md` do plugin (que também cobre brainstorming, planejamento,

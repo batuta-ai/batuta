@@ -15,7 +15,7 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    the user's onboarding answers, flag the conflict to the user — never edit
    those files (executors like codex read `AGENTS.md` on their own; an
    unflagged contradiction means conflicting instructions mid-task).
-2. Ask 3–5 short questions, all at once:
+2. Ask 5–6 short questions, all at once:
    - Stack? (detected suggestion as default)
    - Methodology: TDD or tests after? Conventional commits or free-form?
      Trunk-based or feature branches?
