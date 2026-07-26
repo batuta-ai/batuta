@@ -1,6 +1,6 @@
 # Destilação do pedronauck/skills — o que o Batuta absorve e onde
 
-**Data:** 2026-07-26 · **Status:** aprovada em conversa · Onda 1 entregue (2026-07-26); Ondas 2–4 na fila
+**Data:** 2026-07-26 · **Status:** aprovada em conversa · Ondas 1–2 entregues (2026-07-26); Ondas 3–4 na fila
 
 ## Contexto
 
@@ -82,9 +82,13 @@ packet do `herdr-orchestration`, `no-workarounds` (7 sinais), Iron Laws do
    `Desconhecido — <motivo>` em vez de sumir (lacuna silenciosa lê como
    "nada a dizer").
 
-Onde: `skills/batuta/SKILL.md` Step 2; a regra anti-workaround e as Iron
-Laws podem viver em `templates/generic.md` (herdadas por todos) se o Step 2
-ficar pesado.
+Onde (decidido na entrega, 2026-07-26): itens 1, 3, 4 e 5 no Step 2 de
+`skills/batuta/SKILL.md` (duas seções novas do brief, leis de teste
+condicionais — só quando os critérios envolvem testes —, sweep e regra do
+`Unknown`). Item 2 (anti-workaround) em `templates/generic.md`: entrada no
+bloco `Never:` (anti-padrão objetivo, visível no diff — a filosofia do
+bloco) + hint de verificação julgando marcadores `// WORKAROUND:`; a hint
+de swallowed errors existente foi absorvida pela nova (sem duplicação).
 
 ### Onda 3 — Cross-review com desenho melhor (Step 4 / `/batuta:review`)
 

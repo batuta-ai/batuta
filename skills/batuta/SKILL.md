@@ -82,8 +82,25 @@ Build the task brief with:
   inputs pass"; "refactor X" → "existing tests pass before and after". Weak
   criteria ("make it work") produce briefs no executor can act on — rewrite them.
 - **Boundaries** — what NOT to touch.
+- **Expected evidence** — what the executor reports back: files touched,
+  commands run with their actual output, uncertainty declared as such. This
+  report is what Step 4 checks against the diff — never trusts.
+- **Stop conditions** — when to stop and report instead of improvising: the
+  code's shape contradicts the brief, the same command fails twice, or the
+  fix needs edits beyond Boundaries.
 
-The brief must be self-sufficient: the executor has no access to the conversation.
+The brief must be self-sufficient: the executor has no access to the
+conversation. A section with nothing to fill carries `Unknown — <reason>`
+— a silent gap reads as "nothing to say".
+
+**Test laws:** when the acceptance criteria involve tests, the brief carries
+three laws: test the behavior, never the mock; a failing test means fix the
+code, not the test; no test-only flags or branches in production code.
+
+**Sweep (medium lane and above):** before delegating, reread the brief and
+delete any "how" that leaked — suggested approach, step-by-step plan,
+after-state code — keeping only the requirement it was smuggling. Cheap
+lanes keep prescription on purpose: a weak model needs the direction.
 
 **Method line:** every code brief also carries the conditional method line
 from `superpowers.md` ("Method in the brief") — the executor may have

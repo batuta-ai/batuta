@@ -31,6 +31,10 @@ Never:
   except from an allowed dependency.
 - Drive-by refactors or "improvements" outside the brief's scope.
 - Touch CI config, license, or anything listed under the brief's Boundaries.
+- Silence a signal instead of fixing its source: type-silencing casts, empty
+  catch blocks, sleeps/timeouts to fix ordering, copy-pasting similar code to
+  dodge the real fix. Root cause genuinely out of reach → mark
+  `// WORKAROUND: <reason>` and flag it in your report.
 
 ## Verification hints for the orchestrator
 
@@ -40,4 +44,7 @@ Never:
   comments).
 - Check for orphans the change created (now-unused imports, variables,
   functions) and for pre-existing dead code deleted without being asked.
-- Watch for silently swallowed errors (empty catch, ignored return codes).
+- Watch for silenced signals: swallowed errors (empty catch, ignored return
+  codes), type-silencing casts, sleeps added to fix ordering. A
+  `// WORKAROUND:` marker demands a justification in the report — judge it;
+  an unmarked workaround fails verification.
