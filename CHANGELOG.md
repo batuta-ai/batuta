@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.6](https://github.com/franciscpd/batuta/compare/v0.2.5...v0.2.6) (2026-07-26)
+
+
+### Features
+
+* ciclo aponta para codex-plugin.md nos Steps 2–4 ([12c4f2c](https://github.com/franciscpd/batuta/commit/12c4f2cb8a74642a707cd07c89e58df616bdc13b))
+* codex-plugin.md — integração central (músculo emprestado, regras do Batuta) ([2d5ce88](https://github.com/franciscpd/batuta/commit/2d5ce88858733113d09760ae7f62fef692d4bd95))
+* review e adapter codex apontam para codex-plugin.md ([ba45ac3](https://github.com/franciscpd/batuta/commit/ba45ac34cd119771d53fc5d285782d567176b58f))
+
+
+### Bug Fixes
+
+* achados do review final da integração do plugin codex (guarda de escrita, wording) ([073c1e0](https://github.com/franciscpd/batuta/commit/073c1e0ff1606413d78d07027b8a273dae5d779d))
+
 ## [0.2.5](https://github.com/franciscpd/batuta/compare/v0.2.4...v0.2.5) (2026-07-22)
 
 
