@@ -1,6 +1,6 @@
 # Destilação do pedronauck/skills — o que o Batuta absorve e onde
 
-**Data:** 2026-07-26 · **Status:** aprovada em conversa · Ondas 1–3 entregues (2026-07-26); Onda 4 na fila (retrô do cobaia)
+**Data:** 2026-07-26 · **Status:** aprovada em conversa · Ondas 1–4 entregues (2026-07-26); resta executar a retrô no cobaia usando o protocolo
 
 ## Contexto
 
@@ -139,9 +139,14 @@ para o v1; a destilação vira o **roteiro da retrô** no projeto cobaia:
    `ciclo com decomposição`, `falha → escalada`, `pause → resume`,
    `worktree por tarefa`.
 
-Onde: documento de retrô no cobaia (fora deste repo), guiado pelos critérios
-do PRD §8. Reavaliar o par completo como camada de QA pós-ciclo só depois do
-v1.
+Onde (revisado em conversa, 2026-07-26): o **protocolo** é metodologia de
+teste do Batuta — reusável em toda rodada e operacionalização do PRD §8 —
+e por isso vive versionado neste repo, em `docs/qa-retro.md` (inegociáveis,
+stall-é-finding, jornadas J1–J6 com estado final verdadeiro, rubrica de 5
+tiers, formato de achado, fechamento de rodada). Os **resultados** de cada
+rodada (achados, vereditos, debrief) pertencem à sessão de retrô e ficam
+com o cobaia. Reavaliar o par completo como camada de QA pós-ciclo só
+depois do v1.
 
 ## Meta — skills de autoria (fora do ciclo, dentro da oficina)
 
