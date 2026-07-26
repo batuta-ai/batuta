@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.7](https://github.com/franciscpd/batuta/compare/v0.2.6...v0.2.7) (2026-07-26)
+
+
+### Features
+
+* nota do catálogo e blocos Never nos templates existentes ([6ab46df](https://github.com/franciscpd/batuta/commit/6ab46dfd45313ca0d118504a44db7536492f131c))
+* template NestJS e catálogo completo no init ([beac9c5](https://github.com/franciscpd/batuta/commit/beac9c583099271490e6e04548c44b25303a63ac))
+* templates Next.js e React Native ([0e74b07](https://github.com/franciscpd/batuta/commit/0e74b077cb80a1af0066ba6d1dee0241f6503214))
+* templates Python e Laravel ([38f1c10](https://github.com/franciscpd/batuta/commit/38f1c10b589ced3022b499c9ab82d4033a683ebc))
+
+
+### Bug Fixes
+
+* achados do review final dos templates por stack (cadeia Extends, guardas restauradas) ([3b0426e](https://github.com/franciscpd/batuta/commit/3b0426e55fb56fc274246675ec1d540c1e15731c))
+
 ## [0.2.6](https://github.com/franciscpd/batuta/compare/v0.2.5...v0.2.6) (2026-07-26)
 
 
