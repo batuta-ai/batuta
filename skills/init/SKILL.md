@@ -32,8 +32,13 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
      worktree, e.g. `npm install`; becomes the profile's `Install:` line,
      omitted when there is none)
 3. Save the answers to `.batuta/profile.md`, referencing the matching stack
-   template (`templates/react.md`, `templates/vue.md`, `templates/node-api.md`
-   or `templates/generic.md`).
+   template — catalog: `templates/react.md`, `templates/nextjs.md`,
+   `templates/react-native.md`, `templates/vue.md`, `templates/node-api.md`,
+   `templates/nestjs.md`, `templates/python.md`, `templates/laravel.md`,
+   `templates/generic.md`. Most specific wins: detect the stack (lockfiles,
+   `composer.json`, `pyproject.toml`, framework deps in `package.json`) and
+   pick the most specific template that applies (Next.js > React > generic);
+   when in doubt between parent and child, the child.
 4. Add a **"Project map"** section to the profile: 20–40 lines of prose — key
    directories, where routes/components/tests live, entry points, generated
    files not to touch. Defer this initial sweep to the end of onboarding,
