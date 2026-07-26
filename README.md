@@ -158,6 +158,20 @@ superpowers do lado deles. Tudo automático e sem dependência: sem o plugin,
 cada passo segue exatamente como descrito acima. O mapa completo vive em
 `superpowers.md` na raiz do plugin.
 
+## Integração com o plugin codex
+
+Se você tem o [plugin do Codex](https://github.com/openai/codex-plugin-cc)
+instalado no Claude Code, o Batuta o usa em quatro momentos: redige os
+briefs da rota codex com o método de prompting do plugin, delega pelo
+runtime compartilhado (sem cold start do CLI), pede um diagnóstico ao
+`codex:rescue` antes de escalar um item que falhou e coleta um review
+cruzado do Codex em itens complex/critical antes do veredicto. O músculo é
+do plugin; as regras são do Batuta: roteamento, modelo da linha, veredicto
+e commit continuam do maestro. Tudo automático e sem dependência: sem o
+plugin, cada passo segue exatamente como descrito acima — e o plugin
+instalado não dispensa o `codex` CLI logado. O mapa completo vive em
+`codex-plugin.md` na raiz do plugin.
+
 ## Adicionando um executor novo
 
 Sem código, sem PR no framework. Adicionar um executor é:

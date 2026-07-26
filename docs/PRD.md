@@ -80,6 +80,7 @@ batuta/
 │   └── review/            # re-executa a verificação sobre qualquer diff
 ├── routing.md             # tabela de roteamento default (editável)
 ├── superpowers.md         # integração com superpowers: método emprestado, regras do Batuta
+├── codex-plugin.md        # integração com o plugin codex: músculo emprestado, regras do Batuta
 ├── adapters/
 │   ├── codex.md           # invocação não-interativa, passagem de contexto, limites
 │   ├── opencode.md        # idem, com modelo configurável (Kimi, DeepSeek, ...)
@@ -201,6 +202,16 @@ Tabela default (editável via `routing.md` do projeto ou `/batuta:route`):
   conversa, então só serve para o que passa no teste do brief — o que precisa
   da conversa continua crítico e fica com a sessão, qualquer que seja o dono
   da complexa.
+
+**Plugin codex como meio, não lane:** com o plugin do Codex instalado no
+Claude Code do maestro, a rota codex é invocada pelo runtime compartilhado
+do plugin, os briefs dessa rota seguem o método de prompting dele, um item
+que falhou o retry recebe diagnóstico do `codex:rescue` antes da escalada
+e itens complex/critical ganham review cruzado antes do veredicto. Nada
+muda na tabela de roteamento: detecção em runtime, degradação para
+`codex exec` cru, e a checagem de disponibilidade do CLI continua valendo
+(plugin sem CLI logado = lane indisponível). Mapa completo em
+`codex-plugin.md` na raiz.
 
 ### 6.3 Ciclo de execução (único, sem fases)
 
@@ -397,3 +408,4 @@ usuário — nunca auto-resume.
 | Decomposição no ciclo | Step 1.5: pedido multi-entregável vira N tasks (menor unidade verificável e commitável), ciclo inteiro e commit por item; sequencial default com `parallel` no perfil; anuncia e executa sem parada de confirmação | Feedback de uso real (2026-07-20): a lista inteira virava um brief e um commit no final — o commit atômico do §6.3 só se sustenta se a decomposição definir o que é "um task", e a verificação por item impede que uma falha contamine o lote |
 | Integração com superpowers | Documento central `superpowers.md` na raiz; detecção em runtime, automática, sem toggle; método do superpowers, regras materiais do Batuta (artefatos, routing, verify/commit por item); linha de método condicional em todo brief para executores que tenham superpowers | Skills de processo maduras elevam a regência sem criar dependência: ausente o plugin, cada passo segue o texto baseline da skill; executores externos degradam sozinhos ignorando a condição do brief |
 | Worktree por tarefa | Executor commita WIP em worktree próprio (`.batuta/worktrees/<slug>`, branch `batuta/<slug>`); maestro verifica no branch e integra por squash com a mensagem da metodologia; perfil ganha `Worktree` (`off`/`medium+`/`always`, default `medium+`) e `Install:` opcional; ignore local via `.git/info/exclude` | Isolamento de verdade: o main nunca fica sujo e rejeição é deletar o worktree, não reverter; squash preserva o commit atômico e a autoridade da mensagem com o maestro; gate por lane evita cerimônia em tarefa trivial; exclude local respeita a fronteira de escrita (`.gitignore` é do usuário) |
+| Integração com o plugin codex | Documento central `codex-plugin.md` na raiz; detecção em runtime, automática, sem toggle; quatro papéis: método de prompting no brief, transporte via runtime compartilhado, diagnóstico `codex:rescue` pré-escalação, review cruzado automático só em complex/critical; plugin nunca decide roteamento nem veredicto | Mesmo contrato de autoridade do superpowers: músculo emprestado eleva a rota codex sem criar dependência — ausente o plugin, o ciclo degrada para o `codex exec` do adapter; review cruzado restrito às lanes caras preserva trivial/medium rápidos |
