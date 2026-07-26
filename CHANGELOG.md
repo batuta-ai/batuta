@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.8](https://github.com/franciscpd/batuta/compare/v0.2.7...v0.2.8) (2026-07-26)
+
+
+### Features
+
+* brief endurecido — evidência esperada, stop conditions e anti-workaround (Onda 2 da destilação) ([59cdef9](https://github.com/franciscpd/batuta/commit/59cdef9bbb3c7db57bd1fed1ab2712a15f45c503))
+* contrato de cross-review — lentes, findings como artefato e julgamento do maestro (Onda 3 da destilação) ([5579328](https://github.com/franciscpd/batuta/commit/5579328e4af2b553f014b6bb90fc07b8c2d79bd1))
+* verificação endurecida — relato não é evidência (Onda 1 da destilação) ([217b42e](https://github.com/franciscpd/batuta/commit/217b42e932271ac1e94118eeb3e2a2295a4f1290))
+
 ## [0.2.7](https://github.com/franciscpd/batuta/compare/v0.2.6...v0.2.7) (2026-07-26)
 
 
