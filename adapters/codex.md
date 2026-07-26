@@ -88,6 +88,16 @@ a subscription, cost is no longer flat — treat every lane's model like
 opencode's (explicit in the routing row) and remember high reasoning
 multiplies token spend.
 
+## Plugin transport
+
+When the codex companion plugin is installed in the maestro's Claude Code
+(`codex:*` skills present in the session), delegation goes through the
+plugin's shared runtime instead of the raw `codex exec` commands above —
+see `codex-plugin.md` at the plugin root. Everything else in this adapter
+(model selection, context passing, capabilities, cost, availability)
+applies unchanged; the commands above remain the baseline without the
+plugin.
+
 ## Availability check
 
 ```bash

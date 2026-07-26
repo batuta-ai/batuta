@@ -12,6 +12,10 @@ With superpowers installed, conduct the review with the rigor of
 (plugin root `superpowers.md`, verification row); the steps and the verdict
 below stay unchanged.
 
+With the codex plugin installed, also request a Codex second-opinion
+review of the diff (`codex-plugin.md`, cross-review row); the verdict
+below stays the maestro's.
+
 1. **Determine the target:** by default, uncommitted changes (`git diff` +
    `git diff --staged`); the user may point to a range (`HEAD~3..`), a branch or
    a commit.
