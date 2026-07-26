@@ -259,6 +259,7 @@ O guia completo da marca — conceito (batuta + ferramentas CLI + orquestração
 
 - [andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) — princípios comportamentais contra vícios clássicos de LLMs escrevendo código, derivados das [observações do Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876). O Batuta incorpora três deles nos briefs e na verificação: critérios de aceite como metas verificáveis, o teste de rastreabilidade do diff (cada linha alterada rastreia até o pedido) e a regra dos órfãos (limpe só a bagunça que a sua mudança criou).
 - Frameworks de processo como o [GSD](https://github.com/gsd-build/get-shit-done) — pelo que ensinaram sobre garantias que valem a pena (commits atômicos, estado retomável, verificação) e sobre o peso de processo que não vale.
+- [pedronauck/skills](https://github.com/pedronauck/skills) — catálogo de skills do Pedro Nauck cujos contratos o Batuta destila em vez de instalar: o princípio "self-report não é evidência" e os red flags de higiene de teste (`agent-output-audit`), brief que carrega o quê e não o como (`to-prompt`), fix de causa raiz em vez de workaround (`no-workarounds`), delegation packets com stop conditions (`herdr-orchestration`) e o rent test para contexto residente (`writing-agents-md`). O plano completo está na [spec de destilação](docs/superpowers/specs/2026-07-26-destilacao-pedronauck-skills-design.md).
 
 ## Contribuindo
 
