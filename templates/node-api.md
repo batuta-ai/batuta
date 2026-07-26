@@ -11,15 +11,19 @@ Conventions injected into briefs for Node.js backend/API projects. Extends
 - Validate all external input at the boundary using the project's existing
   validator (zod, joi, class-validator…); never trust `req.body` shapes.
 - Errors: use the project's error-handling pattern (middleware, filters); no
-  bare `throw new Error` strings for expected failures, no swallowed rejections.
-- Async: always `await` or return promises; no fire-and-forget without explicit
-  justification in the brief.
-- Never log or return secrets, tokens or full request bodies containing
-  credentials.
-- Database access goes through the existing ORM/query layer; no raw SQL unless
-  the project already does it — and then always parameterized.
+  bare `throw new Error` strings for expected failures.
+- Async: always `await` or return promises.
+- Database access goes through the existing ORM/query layer.
 - Tests: follow the project's runner; integration tests use the project's
-  existing test-database setup, never a production connection string.
+  existing test-database setup.
+
+Never:
+
+- Unvalidated external input reaching a handler.
+- Raw SQL where the project uses an ORM/query layer — and never unparameterized.
+- Logging or returning secrets, tokens, or credential-bearing request bodies.
+- Fire-and-forget promises without explicit justification in the brief.
+- A production connection string in tests.
 
 ## Verification hints for the orchestrator
 

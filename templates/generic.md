@@ -3,13 +3,17 @@
 Baseline conventions injected into every task brief when no specific stack
 template applies. Stack-specific templates build on top of these.
 
+Catalog rules: templates are adaptive — the project's existing patterns win;
+rules never prescribe a library where the project has its own choice. Every
+template carries a `Never:` block (3–6 objective, diff-visible anti-patterns)
+and stays within ~35 lines; a child template never repeats its parent's rules.
+
 ## Conventions for briefs
 
 - Follow the existing code style of the files you touch — naming, formatting,
-  import order. Do not reformat code you were not asked to change.
-- Change only what the brief asks. No drive-by refactors, no dependency
-  additions unless the brief allows them explicitly. Every changed line must
-  trace directly back to the brief.
+  import order.
+- Change only what the brief asks. Every changed line must trace directly
+  back to the brief.
 - Clean up only your own mess: remove imports/variables/functions that YOUR
   change made unused. Leave pre-existing dead code alone — mention it in your
   output instead of deleting it.
@@ -18,8 +22,13 @@ template applies. Stack-specific templates build on top of these.
   a line does.
 - If the brief references tests, make them deterministic: no real network, no
   time-dependent assertions.
-- Never touch: lockfiles (unless adding an allowed dependency), CI config,
-  license, or anything listed under the brief's Boundaries.
+
+Never:
+
+- Reformat code you were not asked to change.
+- Add a dependency the brief does not explicitly allow (lockfiles included).
+- Drive-by refactors or "improvements" outside the brief's scope.
+- Touch CI config, license, or anything listed under the brief's Boundaries.
 
 ## Verification hints for the orchestrator
 
@@ -28,5 +37,5 @@ template applies. Stack-specific templates build on top of these.
   flag lines that don't (drive-by "improvements", reformatting, deleted
   comments).
 - Check for orphans the change created (now-unused imports, variables,
-  functions) and for pre-existing dead code that was deleted without being asked.
+  functions) and for pre-existing dead code deleted without being asked.
 - Watch for silently swallowed errors (empty catch, ignored return codes).
