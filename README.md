@@ -110,7 +110,7 @@ escreve código: a árvore git é conferida antes e depois de cada batedor.
 
 O onboarding é o `/batuta:init`: na primeira vez em um projeto, ele faz 5-6 perguntas rápidas (chamou `/batuta` antes de configurar? Ele te aponta o init e para):
 
-- Qual a stack? (React, Vue, Node API... — ele detecta pelo `package.json` e sugere)
+- Qual a stack? (React, Next.js, React Native, Vue, Node API, NestJS, Python, Laravel... — ele detecta pelos manifests do projeto e sugere o template mais específico)
 - Qual a metodologia? (TDD ou testes depois; conventional commits ou livre)
 - Qual o comando de testes e de build?
 - Lotes: execução sequencial (default) ou paralela?
@@ -120,7 +120,7 @@ Ele também **checa quais executores você tem** (codex? opencode? logados?) e p
 
 Instalou um executor novo depois? `/batuta:init` de novo entra em modo **reconfiguração**: re-checa os executores da tabela, mostra o mapeamento atual e muda só o que você pedir — sem refazer o onboarding e sem tocar o `WORK.md`.
 
-As respostas viram o `.batuta/profile.md`, e as convenções da sua stack (via templates inclusos) entram **automaticamente em todo brief** enviado aos executores. Ou seja: o codex e o kimi seguem as regras do *seu* projeto sem você repetir nada.
+As respostas viram o `.batuta/profile.md`, e as convenções da sua stack (via templates inclusos) entram **automaticamente em todo brief** enviado aos executores. Ou seja: o codex e o kimi seguem as regras do *seu* projeto sem você repetir nada. Cada template é adaptativo — o padrão do *seu* projeto manda — e traz um bloco de vetações: anti-padrões da stack que o executor nunca pode cometer.
 
 O perfil também guarda um **mapa curto do projeto** (onde ficam rotas, componentes, testes…), montado no onboarding e atualizado como efeito colateral do trabalho — nada de fase de mapeamento nem mapa gigante que envelhece.
 

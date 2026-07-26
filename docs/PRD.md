@@ -88,8 +88,13 @@ batuta/
 │   └── _template.md       # contrato para novos executores
 ├── templates/
 │   ├── react.md           # convenções e regras de stack para briefs
+│   ├── nextjs.md
+│   ├── react-native.md
 │   ├── vue.md
 │   ├── node-api.md
+│   ├── nestjs.md
+│   ├── python.md
+│   ├── laravel.md
 │   └── generic.md
 ├── docs/PRD.md
 └── README.md
@@ -126,7 +131,10 @@ ciclo nunca faz onboarding inline:
 
 O resultado vira `.batuta/profile.md`. O template de stack correspondente
 (`templates/react.md` etc.) é referenciado no perfil e suas convenções entram
-automaticamente em todo task brief enviado aos executores. O usuário pode editar
+automaticamente em todo task brief enviado aos executores. O catálogo é adaptativo com vetações: cada template segue o molde do
+`generic.md` (convenções que respeitam o padrão do projeto + bloco `Never:`
+de anti-padrões objetivos, teto de ~35 linhas), com herança filho→pai, e o
+init escolhe o mais específico que se aplica (Next.js > React > generic). O usuário pode editar
 o perfil a qualquer momento; `/batuta:init` num projeto já configurado entra
 em modo **reconfiguração** — re-checa os executores referenciados pela tabela,
 mostra o mapeamento e o perfil atuais e reescreve só o que o usuário pedir
@@ -410,3 +418,4 @@ usuário — nunca auto-resume.
 | Integração com superpowers | Documento central `superpowers.md` na raiz; detecção em runtime, automática, sem toggle; método do superpowers, regras materiais do Batuta (artefatos, routing, verify/commit por item); linha de método condicional em todo brief para executores que tenham superpowers | Skills de processo maduras elevam a regência sem criar dependência: ausente o plugin, cada passo segue o texto baseline da skill; executores externos degradam sozinhos ignorando a condição do brief |
 | Worktree por tarefa | Executor commita WIP em worktree próprio (`.batuta/worktrees/<slug>`, branch `batuta/<slug>`); maestro verifica no branch e integra por squash com a mensagem da metodologia; perfil ganha `Worktree` (`off`/`medium+`/`always`, default `medium+`) e `Install:` opcional; ignore local via `.git/info/exclude` | Isolamento de verdade: o main nunca fica sujo e rejeição é deletar o worktree, não reverter; squash preserva o commit atômico e a autoridade da mensagem com o maestro; gate por lane evita cerimônia em tarefa trivial; exclude local respeita a fronteira de escrita (`.gitignore` é do usuário) |
 | Integração com o plugin codex | Documento central `codex-plugin.md` na raiz; detecção em runtime, automática, sem toggle; quatro papéis: método de prompting no brief, transporte via runtime compartilhado, diagnóstico `codex:rescue` pré-escalação, review cruzado automático só em complex/critical; plugin nunca decide roteamento nem veredicto | Mesmo contrato de autoridade do superpowers: músculo emprestado eleva a rota codex sem criar dependência — ausente o plugin, o ciclo degrada para o `codex exec` do adapter; review cruzado restrito às lanes caras preserva trivial/medium rápidos |
+| Templates por stack (catálogo expandido) | Nove templates adaptativos (`generic`, `react`, `nextjs`, `react-native`, `vue`, `node-api`, `nestjs`, `python`, `laravel`), cada um ≤ ~35 linhas com bloco `Never:` de anti-padrões objetivos e verificáveis no diff; herança filho→pai sem repetição; init escolhe o mais específico | Convenção explícita no brief é o que impede o executor barato de inventar padrão próprio; regras adaptativas ("o projeto manda") envelhecem devagar, e vetações objetivas são a categoria de regra que mais melhora a taxa de acerto de modelos pequenos |
