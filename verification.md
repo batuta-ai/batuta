@@ -40,6 +40,30 @@ A scan hit follows the cycle's normal failure flow: specific feedback +
 1 retry, then escalation. Name the flagged pattern and file:line in the
 feedback — the executor must fix the cause, not restate the claim.
 
+## Cross-review contract
+
+When a verification includes an external reviewer (Step 4 on complex or
+critical items, `/batuta:review`, or on user demand):
+
+- **Lenses scale with the diff** — under ~50 changed lines: 1 lens; up to
+  ~200: 2; above: 3. In order: **Skeptic** (what breaks — inputs, states,
+  failure paths), **Architect** (does it fit the project's design and
+  conventions), **Minimalist** (what is here the brief didn't ask for).
+  One dispatch carries all applicable lenses.
+- **Findings are an artifact** — the dispatch names an output file outside
+  the repository (keeps the read-only guard clean); the reviewer writes
+  findings there as file:line + severity + concrete failure scenario. A
+  round with no file is invalid — stdout is operational evidence, not
+  findings.
+- **Contract parity** — when the item implements a spec or plan artifact,
+  the review material carries that artifact itself, never a paraphrase. A
+  verdict that never saw the contract is no verdict.
+- **The maestro judges** — every finding is accepted or rejected with a
+  one-line rationale; adversarial reviewers produce false positives by
+  design. Accepted findings follow the cycle's normal failure flow
+  (feedback + retry); rejected ones are recorded as declined in the
+  feedback. The verdict is always the maestro's.
+
 ## Slop checklist (inside the diff review)
 
 Flag during the diff review: comments a reader of the surrounding code

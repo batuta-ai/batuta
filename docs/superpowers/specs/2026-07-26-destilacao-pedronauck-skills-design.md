@@ -1,6 +1,6 @@
 # Destilação do pedronauck/skills — o que o Batuta absorve e onde
 
-**Data:** 2026-07-26 · **Status:** aprovada em conversa · Ondas 1–2 entregues (2026-07-26); Ondas 3–4 na fila
+**Data:** 2026-07-26 · **Status:** aprovada em conversa · Ondas 1–3 entregues (2026-07-26); Onda 4 na fila (retrô do cobaia)
 
 ## Contexto
 
@@ -112,8 +112,15 @@ Fonte: `adversarial-review`, `impl-peer-review`/`spec-peer-review`.
    round inválido. Alinha com a direção orquestrador-agnóstico: o contrato é
    o arquivo, não o transporte.
 
-Onde: `skills/review/SKILL.md` e a linha de cross-review do Step 4;
-`codex-plugin.md` (formato do material enviado ao Codex).
+Onde (decidido na entrega, 2026-07-26): contrato completo em seção
+"Cross-review contract" do `verification.md` (vale para qualquer
+transporte — alinhado à direção agnóstica); `codex-plugin.md` (linha de
+cross-review), Step 4 e `skills/review/SKILL.md` só apontam. Duas
+adaptações conscientes: (a) a escala vira número de **lentes numa única
+despacha** (1–3 conforme o diff), não N reviewers paralelos — o v1 tem um
+Codex só; (b) o arquivo de findings fica **fora do repo**, para não
+colidir com a guarda read-only que o cross-review aplica (`git status`
+limpo é parte do contrato da despacha).
 
 ### Onda 4 — Protocolo de QA para a retrô do cobaia (não entra no ciclo)
 

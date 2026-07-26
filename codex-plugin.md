@@ -67,10 +67,13 @@ one line; read this file only when a pointer fires.
   reverted and the run counts as failed.
 - **Cross-review (Step 4 / `/batuta:review`):** on items classified
   complex or critical, after the maestro's diff review and before the
-  verdict, request a Codex review of the item's diff. Valid findings are
-  treated as a normal verification failure (retry with feedback). On
-  trivial and medium items, never automatic — only when the user asks or
-  inside `/batuta:review`. Cross-review unavailable → Step 4 stands on
-  its own. The verdict is always the maestro's. The dispatch asks for an
-  opinion only, no code changes — apply the scout's universal read-only
-  guard (`skills/batuta/SKILL.md`, "The scout") the same way.
+  verdict, request a Codex review of the item's diff, conducted per the
+  cross-review contract in `verification.md` — lens count by diff size,
+  findings file outside the repo, spec artifacts included verbatim, and
+  the maestro's accept/reject judgment. Accepted findings are a normal
+  verification failure (retry with feedback). On trivial and medium
+  items, never automatic — only when the user asks or inside
+  `/batuta:review`. Cross-review unavailable → Step 4 stands on its own.
+  The verdict is always the maestro's. The dispatch asks for an opinion
+  only, no code changes — apply the scout's universal read-only guard
+  (`skills/batuta/SKILL.md`, "The scout") the same way.

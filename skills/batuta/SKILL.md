@@ -180,9 +180,11 @@ failure); slop found in the diff review goes into the retry feedback.
 
 **Cross-review (complex/critical):** with the codex plugin installed, an
 item classified complex or critical also gets a Codex review of its diff
-before the verdict (`codex-plugin.md`, cross-review row); valid findings
-count as a verification failure. Other lanes: only on user demand or via
-`/batuta:review`.
+before the verdict, per the cross-review contract in `verification.md`
+(lenses by diff size, findings as artifact, contract parity, maestro's
+judgment) and `codex-plugin.md` (cross-review row); findings the maestro
+accepts count as a verification failure. Other lanes: only on user demand
+or via `/batuta:review`.
 
 **In a worktree** (Step 3): the diff review reads
 `git diff main...batuta/<slug>`, and tests run inside the worktree. If the

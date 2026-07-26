@@ -18,7 +18,8 @@ below stays the maestro's.
 
 The hardened-verification rules in `verification.md` apply here in full:
 report ≠ evidence, test-hygiene scans when the diff touches tests, slop
-checklist inside the diff review.
+checklist inside the diff review, and the cross-review contract whenever
+a second reviewer is dispatched.
 
 1. **Determine the target:** by default, uncommitted changes (`git diff` +
    `git diff --staged`); the user may point to a range (`HEAD~3..`), a branch or
