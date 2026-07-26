@@ -26,5 +26,5 @@ Never:
 
 ## Verification hints for the orchestrator
 
-- Flag: missing `key` in `v-for`, reactivity lost through destructuring `ref`s,
-  new dependencies not requested by the brief.
+- Flag: missing `key` in `v-for`, mutation of props, reactivity lost through
+  destructuring `ref`s, new dependencies not requested by the brief.

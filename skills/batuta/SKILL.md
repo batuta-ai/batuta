@@ -73,8 +73,9 @@ Build the task brief with:
 - **Goal** — what to deliver, in 1–3 sentences.
 - **Context** — relevant files (paths), snippets that matter, decisions already
   made in the conversation.
-- **Conventions** — the rules from `.batuta/profile.md` and the stack template it
-  references. They go into every brief, always.
+- **Conventions** — the rules from `.batuta/profile.md`, the stack template it
+  references, and every template in that template's `Extends` chain (child
+  first, up to `generic.md`). They go into every brief, always.
 - **Acceptance criteria** — a verifiable list; this is what you review against.
   Transform imperative asks into verifiable goals: "fix the bug" → "a test
   reproducing the bug now passes"; "add validation" → "tests with invalid

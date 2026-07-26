@@ -26,5 +26,4 @@ Never:
 ## Verification hints for the orchestrator
 
 - Flag: providers missing from module registration, handlers taking untyped
-  bodies without a DTO, circular imports between modules, new dependencies not
-  requested by the brief.
+  bodies without a DTO, circular imports between modules.

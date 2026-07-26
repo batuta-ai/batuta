@@ -13,8 +13,8 @@ Extends `templates/generic.md`.
   the project's pattern.
 - Errors: raise specific exceptions; follow the project's own exception
   hierarchy where one exists.
-- Tests: pytest in the project's style — reuse existing fixtures and
-  `conftest.py` before writing new setup.
+- Tests: the project's runner (pytest, unittest…) in the project's style —
+  reuse existing fixtures and `conftest.py` before writing new setup.
 
 Never:
 

@@ -24,6 +24,7 @@ Never:
 - Logging or returning secrets, tokens, or credential-bearing request bodies.
 - Fire-and-forget promises without explicit justification in the brief.
 - A production connection string in tests.
+- Swallowed rejections (empty `.catch()`, ignored promise errors).
 
 ## Verification hints for the orchestrator
 

@@ -131,14 +131,16 @@ ciclo nunca faz onboarding inline:
 
 O resultado vira `.batuta/profile.md`. O template de stack correspondente
 (`templates/react.md` etc.) é referenciado no perfil e suas convenções entram
-automaticamente em todo task brief enviado aos executores. O catálogo é adaptativo com vetações: cada template segue o molde do
-`generic.md` (convenções que respeitam o padrão do projeto + bloco `Never:`
-de anti-padrões objetivos, teto de ~35 linhas), com herança filho→pai, e o
-init escolhe o mais específico que se aplica (Next.js > React > generic). O usuário pode editar
-o perfil a qualquer momento; `/batuta:init` num projeto já configurado entra
-em modo **reconfiguração** — re-checa os executores referenciados pela tabela,
-mostra o mapeamento e o perfil atuais e reescreve só o que o usuário pedir
-(lane/modelo, respostas do perfil, re-sweep do mapa), sem tocar o `WORK.md`.
+automaticamente em todo task brief enviado aos executores. O catálogo é
+adaptativo com vetações: cada template segue o molde do `generic.md`
+(convenções que respeitam o padrão do projeto + bloco `Never:` de
+anti-padrões objetivos, teto de ~35 linhas), com herança filho→pai, e o init
+escolhe o mais específico que se aplica (Next.js > React > generic). O
+usuário pode editar o perfil a qualquer momento; `/batuta:init` num projeto
+já configurado entra em modo **reconfiguração** — re-checa os executores
+referenciados pela tabela, mostra o mapeamento e o perfil atuais e reescreve
+só o que o usuário pedir (lane/modelo, respostas do perfil, re-sweep do
+mapa), sem tocar o `WORK.md`.
 
 O perfil também ganha um **mapa do projeto**: 20–40 linhas em prosa (diretórios-
 chave, onde vivem rotas/componentes/testes, pontos de entrada, o que é gerado e

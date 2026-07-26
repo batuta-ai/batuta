@@ -6,7 +6,8 @@ template applies. Stack-specific templates build on top of these.
 Catalog rules: templates are adaptive — the project's existing patterns win;
 rules never prescribe a library where the project has its own choice. Every
 template carries a `Never:` block (3–6 objective, diff-visible anti-patterns)
-and stays within ~35 lines; a child template never repeats its parent's rules.
+and stays within ~35 lines (generic, carrying this note, runs slightly
+longer); a child template never repeats its parent's rules.
 
 ## Conventions for briefs
 
@@ -26,7 +27,8 @@ and stays within ~35 lines; a child template never repeats its parent's rules.
 Never:
 
 - Reformat code you were not asked to change.
-- Add a dependency the brief does not explicitly allow (lockfiles included).
+- Add a dependency the brief does not explicitly allow; no lockfile changes
+  except from an allowed dependency.
 - Drive-by refactors or "improvements" outside the brief's scope.
 - Touch CI config, license, or anything listed under the brief's Boundaries.
 
