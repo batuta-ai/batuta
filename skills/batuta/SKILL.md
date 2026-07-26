@@ -89,6 +89,10 @@ from `superpowers.md` ("Method in the brief") — the executor may have
 superpowers on its side; without it the line degrades to test-first by the
 acceptance criteria.
 
+**Codex brief (plugin):** when the routed lane is codex and the codex
+plugin is installed, write the brief per `codex-plugin.md` (brief row) —
+the structure above is unchanged.
+
 **Research first:** when building Context requires discovery ("where is X
 handled, which files touch Y, how is Z tested"), dispatch the scout (see "The
 scout") instead of reading the codebase yourself — the verified report feeds
@@ -110,7 +114,10 @@ Invoke the executor as described in its adapter at `adapters/<executor>.md`
 yourself (critical tasks only) — with superpowers installed, test-first per
 `superpowers.md` (claude lane row). When a routing row names a model, the
 invocation must carry it — a delegation without the row's model flags is a
-routing bug, not a shortcut.
+routing bug, not a shortcut. With the codex plugin installed, a
+codex-lane delegation goes through the plugin's shared runtime instead of
+raw `codex exec` (`codex-plugin.md`, delegation row) — the row's model
+flags still apply.
 
 **Worktree (per profile):** the profile's Worktree line — `off | medium+ |
 always`, no line = `off` — decides where the executor works. When the task's
@@ -148,6 +155,12 @@ Always, no exceptions:
 2. **Tests** — run the profile's test command.
 3. **Acceptance criteria** — check them one by one against the brief.
 
+**Cross-review (complex/critical):** with the codex plugin installed, an
+item classified complex or critical also gets a Codex review of its diff
+before the verdict (`codex-plugin.md`, cross-review row); valid findings
+count as a verification failure. Other lanes: only on user demand or via
+`/batuta:review`.
+
 **In a worktree** (Step 3): the diff review reads
 `git diff main...batuta/<slug>`, and tests run inside the worktree. If the
 test command fails for environment reasons (missing dependencies — not a
@@ -160,6 +173,9 @@ back from the branch.
 Failed → send the diff + specific feedback back to the executor and allow
 **1 retry**. Failed again → **escalate**: the task moves one row up the routing
 table and the cycle restarts at Step 2 (brief enriched with what was learned).
+With the codex plugin installed, that enrichment comes from a
+`codex:rescue` diagnosis dispatched before escalating (`codex-plugin.md`,
+rescue row).
 In a worktree, the retry happens in the same worktree; an escalation resets
 the branch (`git reset --hard main`, run inside the worktree) before the
 next executor takes over. An item that fails definitively has its worktree
