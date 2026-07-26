@@ -1,6 +1,6 @@
 # Plan como spec-pipeline opcional — IDEIA → PRD → TECHSPEC → TASKS
 
-**Data:** 2026-07-26 · **Status:** proposta, aguardando discussão
+**Data:** 2026-07-26 · **Status:** aprovada em conversa (2026-07-26), aguardando implementação
 
 ## Problema
 
@@ -34,16 +34,21 @@ uma fase do ciclo:
      critérios de sucesso, não-objetivos. Prosa, 1-2 telas no máximo.
    - **⏸ Gate 1: usuário aprova o PRD** (o "quê" congela antes do "como").
    - **TECHSPEC** → como: arquitetura da solução, decisões com motivo,
-     riscos, impacto no código existente (mapa do profile alimenta).
+     riscos, impacto no código existente (mapa do profile alimenta). Com o
+     plugin codex instalado, o maestro **oferece** uma segunda opinião do
+     Codex sobre o techspec antes do Gate 2, conduzida pelo contrato de
+     cross-review do `verification.md` (findings em arquivo, julgamento do
+     maestro achado a achado); sem plugin, o gate segue só com o usuário.
    - **TASKS** → o techspec fatiado em unidades de commit atômico, cada
      uma com lane prevista pela tabela de roteamento e critérios de
      aceite — o formato de plano que já existe hoje.
    - **⏸ Gate 2: aprovação do plano** (o gate atual do `/batuta:plan`).
-3. **Artefato** — um diretório `.batuta/spec-<slug>/` com `prd.md`,
-   `techspec.md` e o `plan-<slug>.md` atual (movido para dentro quando o
-   modo spec está ativo; sozinho em `.batuta/` no modo default, como hoje).
-   Prosa + checkboxes, sem schema rígido; retomável por sessão nova a
-   partir dos arquivos.
+3. **Artefato (decidido em conversa)** — no modo spec, tudo vive junto em
+   `.batuta/spec-<slug>/`: `prd.md`, `techspec.md` e `plan.md`. No modo
+   default o plano segue sozinho em `.batuta/plan-<slug>.md`, como hoje.
+   Consequência assumida: `/batuta:resume` e `/batuta:status` varrem os
+   dois padrões (`plan-*.md` e `spec-*/plan.md`). Prosa + checkboxes, sem
+   schema rígido; retomável por sessão nova a partir dos arquivos.
 4. **Execução** — as tasks caem no ciclo normal (Step 1.5 em diante), uma
    a uma: brief → delegação roteada → verificação endurecida → commit.
    Nada do ciclo muda; o pipeline só produz tasks melhores.
@@ -56,6 +61,13 @@ uma fase do ciclo:
    profile — prosa alimentada como efeito colateral do ciclo. Nenhuma fase
    de "compactar contexto"; a lição do GSD (schema rígido quebra) vale
    dobrado para memória estruturada.
+
+7. **Migração no re-init (pedido em conversa)** — ao rodar `/batuta:init`
+   num projeto que tem planos no layout antigo (`.batuta/plan-<slug>.md`),
+   o init oferece migrar cada um para o padrão de spec
+   (`.batuta/spec-<slug>/plan.md`), preservando o conteúdo e atualizando
+   referências no `WORK.md`. Nunca migra sem confirmar; plano em andamento
+   migra com o status intacto.
 
 ## Fronteiras
 

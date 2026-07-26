@@ -1,6 +1,6 @@
 # Integração com o impeccable — polimento de frontend quando disponível
 
-**Data:** 2026-07-26 · **Status:** proposta, aguardando discussão
+**Data:** 2026-07-26 · **Status:** aprovada em conversa (2026-07-26), aguardando implementação
 
 ## Problema
 
@@ -36,6 +36,15 @@ Mapa — momento do ciclo → papel do impeccable:
 | Verificação (Step 4) | Lente de design no diff review: os critérios de design do brief são conferidos como qualquer critério de aceite; achados de slop visual entram no feedback do retry | Scans e regras do `verification.md`; veredito do maestro |
 | Execução na lane claude (crítica) | O maestro executa a tarefa de UI conduzido pelo impeccable diretamente — único caso em que a skill roda inteira, pois o executor é o próprio maestro | Test-first via superpowers quando instalado; ciclo inalterado |
 | `/batuta:review` de diff de UI | Auditoria com a rubrica do impeccable quando o usuário pede review de frontend | Formato de veredito da skill review |
+
+**Semeadura no profile (decidido em conversa):** na primeira tarefa de UI
+com o impeccable presente, o maestro consulta a skill **uma vez** e destila
+~8-10 linhas de convenções de design do projeto para uma seção própria do
+`.batuta/profile.md` (paleta/tokens se existirem, estados obrigatórios,
+piso de a11y, anti-padrões da stack visual). Briefs seguintes herdam essa
+seção como qualquer convenção e só complementam com o específico da tela —
+a consulta pesada acontece por projeto, não por tarefa. Re-init oferece
+re-semear quando o design system do projeto mudou.
 
 **Princípio-chave — critérios atravessam, skill não:** executores baratos
 não têm o impeccable do lado deles. A integração funciona porque o maestro
