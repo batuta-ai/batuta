@@ -92,11 +92,13 @@ multiplies token spend.
 
 When the codex companion plugin is installed in the maestro's Claude Code
 (`codex:*` skills present in the session), delegation goes through the
-plugin's shared runtime instead of the raw `codex exec` commands above —
-see `codex-plugin.md` at the plugin root. Everything else in this adapter
-(model selection, context passing, capabilities, cost, availability)
-applies unchanged; the commands above remain the baseline without the
-plugin.
+plugin's shared runtime instead of the raw `codex exec` delegation commands
+above — see `codex-plugin.md` at the plugin root. The Research invocation
+may also use the runtime, but keeps its read-only mode (permissive,
+matching `codex-plugin.md`). Everything else in this adapter (model
+selection, context passing, capabilities, cost, availability, sandbox/
+read-only mode) applies unchanged; the commands above remain the baseline
+without the plugin.
 
 ## Availability check
 

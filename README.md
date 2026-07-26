@@ -168,9 +168,9 @@ runtime compartilhado (sem cold start do CLI), pede um diagnóstico ao
 cruzado do Codex em itens complex/critical antes do veredicto. O músculo é
 do plugin; as regras são do Batuta: roteamento, modelo da linha, veredicto
 e commit continuam do maestro. Tudo automático e sem dependência: sem o
-plugin, cada passo segue exatamente como descrito acima — e o plugin
-instalado não dispensa o `codex` CLI logado. O mapa completo vive em
-`codex-plugin.md` na raiz do plugin.
+plugin, a rota codex volta ao `codex exec` do adapter e o ciclo segue
+como sempre — e o plugin instalado não dispensa o `codex` CLI logado. O
+mapa completo vive em `codex-plugin.md` na raiz do plugin.
 
 ## Adicionando um executor novo
 

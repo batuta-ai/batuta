@@ -379,7 +379,8 @@ usuário — nunca auto-resume.
    código pelo orquestrador em tarefas triviais/médias).
 3. Adicionar um executor novo sem tocar em nenhuma skill (só adapter + routing).
 4. `WORK.md` legível por humano e retomável por sessão nova sem contexto extra.
-5. Funciona com e sem superpowers instalado.
+5. Funciona com e sem os plugins opcionais (superpowers, plugin codex)
+   instalados.
 
 ## 9. Decisões registradas
 

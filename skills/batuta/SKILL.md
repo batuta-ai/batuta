@@ -173,7 +173,7 @@ back from the branch.
 Failed → send the diff + specific feedback back to the executor and allow
 **1 retry**. Failed again → **escalate**: the task moves one row up the routing
 table and the cycle restarts at Step 2 (brief enriched with what was learned).
-With the codex plugin installed, that enrichment comes from a
+With the codex plugin installed, that enrichment also carries a
 `codex:rescue` diagnosis dispatched before escalating (`codex-plugin.md`,
 rescue row).
 In a worktree, the retry happens in the same worktree; an escalation resets

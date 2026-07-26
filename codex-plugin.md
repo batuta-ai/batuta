@@ -22,15 +22,16 @@ one line; read this file only when a pointer fires.
   the executor check (`adapters/codex.md`: `command -v codex`,
   `codex login status`). Plugin present with the CLI missing or logged
   out → the codex lane is unavailable and routing's rule applies (one
-  row up). The plugin's stop-time review gate is the user's own setting —
-  it never participates in the cycle.
+  row up); rescue and cross-review are unavailable too and degrade per
+  their own bullets below. The plugin's stop-time review gate is the
+  user's own setting — it never participates in the cycle.
 
 ## Map — cycle moment → plugin capability → what Batuta keeps
 
 | Cycle moment | Plugin capability | What Batuta keeps |
 | --- | --- | --- |
 | Brief for the codex lane (Step 2) | `gpt-5-4-prompting` (writing method) | brief structure (Goal/Context/Conventions/Criteria/Boundaries), the superpowers method line, self-sufficiency |
-| Delegation on the codex lane (Step 3) | shared runtime (`codex-cli-runtime`, `codex-result-handling`) | the routing row's model and reasoning flags; the cycle's worktree and sandbox; without the plugin → `codex exec` per the adapter |
+| Delegation on the codex lane (Step 3) | shared runtime (`codex-cli-runtime`, `codex-result-handling`) | the routing row's model and reasoning flags; the cycle's worktree and parallelism; without the plugin → `codex exec` per the adapter |
 | Failed retry, before escalating (Step 4) | `codex:rescue` (root-cause diagnosis) | the escalation ladder (one row up); the diagnosis only enriches the re-brief |
 | Verifying a complex/critical item (Step 4) and `/batuta:review` | Codex review (second opinion) | the brief's criteria, the traceability test, the maestro's verdict |
 
@@ -59,11 +60,17 @@ one line; read this file only when a pointer fires.
   describes, without a diagnosis. With superpowers installed,
   `systematic-debugging` still conducts critical-bugfix and
   post-escalation investigation (`superpowers.md`); the rescue is the
-  earlier, cheaper rung at the first escalation.
+  earlier, cheaper rung at the first escalation. The dispatch asks for
+  diagnosis only, no code changes — apply the scout's universal read-only
+  guard (`skills/batuta/SKILL.md`, "The scout"): `git status --porcelain`
+  baseline before dispatch, compared after; any new or changed entry gets
+  reverted and the run counts as failed.
 - **Cross-review (Step 4 / `/batuta:review`):** on items classified
   complex or critical, after the maestro's diff review and before the
   verdict, request a Codex review of the item's diff. Valid findings are
   treated as a normal verification failure (retry with feedback). On
   trivial and medium items, never automatic — only when the user asks or
   inside `/batuta:review`. Cross-review unavailable → Step 4 stands on
-  its own. The verdict is always the maestro's.
+  its own. The verdict is always the maestro's. The dispatch asks for an
+  opinion only, no code changes — apply the scout's universal read-only
+  guard (`skills/batuta/SKILL.md`, "The scout") the same way.
