@@ -1,6 +1,6 @@
 # Destilação do pedronauck/skills — o que o Batuta absorve e onde
 
-**Data:** 2026-07-26 · **Status:** proposta, aguardando discussão
+**Data:** 2026-07-26 · **Status:** aprovada em conversa · Onda 1 entregue (2026-07-26); Ondas 2–4 na fila
 
 ## Contexto
 
@@ -45,8 +45,12 @@ red flags RF-1..RF-6, vocabulário `declared` vs `verified`) + `deslop`
    return, padrão inconsistente com o arquivo ao redor. Achou → feedback ao
    executor junto com o retry normal do ciclo (não é passo novo).
 
-Onde: `skills/batuta/SKILL.md` Step 4 (poucas linhas + os scans) e
-`skills/review/SKILL.md`.
+Onde (decidido em conversa, 2026-07-26): arquivo central dormante
+`verification.md` na raiz, no padrão `superpowers.md`/`codex-plugin.md` —
+Step 4 e `skills/review/SKILL.md` ganham ponteiros curtos. Scans em forma
+**descritiva** (padrões nomeados; o maestro adapta o grep à stack), não
+comandos literais. Severidade: itens 1–4 dos scans = falha de verificação;
+caminho feliz apenas = feedback no retry.
 
 ### Onda 2 — Brief endurecido (Step 2 do ciclo)
 

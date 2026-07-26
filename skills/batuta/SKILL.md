@@ -156,6 +156,11 @@ Always, no exceptions:
 2. **Tests** — run the profile's test command.
 3. **Acceptance criteria** — check them one by one against the brief.
 
+**Hardened verification (`verification.md`):** the executor's report never
+counts as evidence — re-run each criterion's smallest public proof; when
+the diff touches tests, run the hygiene scans (a hit is a verification
+failure); slop found in the diff review goes into the retry feedback.
+
 **Cross-review (complex/critical):** with the codex plugin installed, an
 item classified complex or critical also gets a Codex review of its diff
 before the verdict (`codex-plugin.md`, cross-review row); valid findings

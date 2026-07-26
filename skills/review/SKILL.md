@@ -16,6 +16,10 @@ With the codex plugin installed, also request a Codex second-opinion
 review of the diff (`codex-plugin.md`, cross-review row); the verdict
 below stays the maestro's.
 
+The hardened-verification rules in `verification.md` apply here in full:
+report ≠ evidence, test-hygiene scans when the diff touches tests, slop
+checklist inside the diff review.
+
 1. **Determine the target:** by default, uncommitted changes (`git diff` +
    `git diff --staged`); the user may point to a range (`HEAD~3..`), a branch or
    a commit.
