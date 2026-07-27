@@ -10,13 +10,19 @@ description: Batuta's main entry point — the conducting cycle. Use when the us
 
 ## Step 0 — Gates
 
-Two one-line checks before anything else:
+Three one-line checks before anything else:
 
 1. **No `.batuta/profile.md`** → the project is not set up: tell the user to
    run `/batuta:init` and stop. Never run onboarding inline.
 2. **`.batuta/handoff.md` exists** → there is paused work: say so in one line
    ("paused work from <date> — `/batuta:resume` to pick it up, or I continue
    with the new request") and obey the user's choice. Never auto-resume.
+3. **The request is a question about Batuta itself** (how it integrates with
+   a companion plugin, what a step does) → not a cycle run: read the file
+   that owns the answer before responding — integration questions read the
+   integration file (`codex-plugin.md`, `superpowers.md`). The dormant-file
+   pointers only fire while conducting a step, so a meta-question answered
+   from memory is a bug; citing a file you haven't read this session is too.
 
 ## Step 1 — Classify and route
 
