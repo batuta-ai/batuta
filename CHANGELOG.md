@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.9](https://github.com/franciscpd/batuta/compare/v0.2.8...v0.2.9) (2026-07-27)
+
+
+### Bug Fixes
+
+* gate no Step 0 — meta-perguntas sobre integrações leem o arquivo de integração antes de responder ([b21d6ae](https://github.com/franciscpd/batuta/commit/b21d6aeb042ca4f80bce3e4a97f6c8025c8b36d3))
+
 ## [0.2.8](https://github.com/franciscpd/batuta/compare/v0.2.7...v0.2.8) (2026-07-26)
 
 
