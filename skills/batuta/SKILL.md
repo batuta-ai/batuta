@@ -88,6 +88,13 @@ Build the task brief with:
   inputs pass"; "refactor X" → "existing tests pass before and after". Weak
   criteria ("make it work") produce briefs no executor can act on — rewrite them.
 - **Boundaries** — what NOT to touch.
+- **Scope** — the closed list of paths the task may change (files when
+  known; a directory or glob when discovery is part of the task). Test
+  paths and legitimately touched generated files (locks, snapshots) enter
+  the list explicitly — no implicit exemptions. Close with: *do not change
+  anything outside this list; if the task requires it, stop and report.*
+  No closable list → `Unknown — <reason>` plus the narrowest bound the
+  task admits (the module, the directory).
 - **Expected evidence** — what the executor reports back: files touched,
   commands run with their actual output, uncertainty declared as such. This
   report is what Step 4 checks against the diff — never trusts.
@@ -172,12 +179,17 @@ escalation, is investigated per its debugging row before the re-brief.
 
 Always, no exceptions:
 
-1. **Diff review** — `git diff`; review the code as the maestro: correctness,
+1. **Scope check** — `git diff --name-only` (in a worktree, `git diff
+   --name-only main...batuta/<slug>`) against the brief's Scope list. A
+   path outside the list fails verification even when the code is correct
+   — name the files in the feedback. Widening the Scope is the maestro's
+   decision at re-brief, never the executor's.
+2. **Diff review** — `git diff`; review the code as the maestro: correctness,
    scope (only what was asked?), adherence to the profile's conventions.
    Traceability test: every changed line must trace directly to the brief —
    drive-by edits fail verification even when the code is correct.
-2. **Tests** — run the profile's test command.
-3. **Acceptance criteria** — check them one by one against the brief.
+3. **Tests** — run the profile's test command.
+4. **Acceptance criteria** — check them one by one against the brief.
 
 **Hardened verification (`verification.md`):** the executor's report never
 counts as evidence — re-run each criterion's smallest public proof; when
