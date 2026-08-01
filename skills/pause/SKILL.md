@@ -9,7 +9,10 @@ description: Pause Batuta work across sessions. Use when the user invokes /batut
    ("delegated to codex, awaiting verification") — the conducting log stays
    truthful.
 2. **Background tasks:** list what is still running; note in `WORK.md` what
-   will finish on its own, stop what would be orphaned.
+   will finish on its own, stop what would be orphaned. With the Compozy
+   runtime active, Compozy sessions are not orphans — record their ids in
+   the handoff's Background section (`compozy.md`, parallelism row) instead
+   of stopping them.
 3. **Write `.batuta/handoff.md`** — prose, four fixed sections:
 
 ```markdown

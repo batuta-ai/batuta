@@ -31,6 +31,10 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    - Install command? (optional — sets up the test environment inside a
      worktree, e.g. `npm install`; becomes the profile's `Install:` line,
      omitted when there is none)
+   - Runtime? (only when the `compozy` CLI is on PATH and its daemon
+     responds — offer `Runtime: compozy` vs `direto` (default); with
+     `compozy`, delegations run as managed sessions per `compozy.md`;
+     omitted otherwise)
 3. Save the answers to `.batuta/profile.md`, referencing the matching stack
    template — catalog: `templates/react.md`, `templates/nextjs.md`,
    `templates/react-native.md`, `templates/vue.md`, `templates/node-api.md`,
