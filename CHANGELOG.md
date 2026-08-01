@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.13](https://github.com/franciscpd/batuta/compare/v0.2.12...v0.2.13) (2026-08-01)
+
+
+### Features
+
+* init oferece pointer de descoberta do Batuta no AGENTS.md ([0af191b](https://github.com/franciscpd/batuta/commit/0af191bb5100d1b51b0b2c16072d78438dde6259))
+
+
+### Bug Fixes
+
+* init — idempotência explícita do pointer e reconciliação do reconfigure ([4b2000f](https://github.com/franciscpd/batuta/commit/4b2000ff191cbd636bb6ee5bf47f4d1e9b5edfd1))
+
 ## [0.2.12](https://github.com/franciscpd/batuta/compare/v0.2.11...v0.2.12) (2026-08-01)
 
 
