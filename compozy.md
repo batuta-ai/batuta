@@ -148,3 +148,6 @@ of truth; the daemon is a lens.
 - The workspace policy must allow the executor CLIs the routing table
   names; when a dispatch is refused, tell the user which policy blocked
   it instead of degrading silently.
+- The `AGENTS.md` discovery pointer (init first-run step 3.5) is what makes
+  daemon-born maestro sessions aware of Batuta by default — recommend it
+  whenever the profile says `Runtime: compozy`.
