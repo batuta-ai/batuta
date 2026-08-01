@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.12](https://github.com/franciscpd/batuta/compare/v0.2.11...v0.2.12) (2026-08-01)
+
+
+### Features
+
+* integração Compozy runtime — compozy.md dormante e delegação como sessão gerenciada ([e1b1427](https://github.com/franciscpd/batuta/commit/e1b1427c121ca4b017441ff17f615887e7ac2f89))
+* runtime compozy no init, status e pause — oferta, listagem e handoff de sessões ([718c83a](https://github.com/franciscpd/batuta/commit/718c83ac86ace5dddf67c6cf09e020d32db39c80))
+
+
+### Bug Fixes
+
+* compozy.md — scout nunca vira sessão, reconciliando a exceção da lane crítica ([880a04c](https://github.com/franciscpd/batuta/commit/880a04c8898f21039360ca0c94681ba2d3f16239))
+* compozy.md — worktree explícito no spawn, carve-out da lane crítica e ciclo de vida das sessões ([48452f4](https://github.com/franciscpd/batuta/commit/48452f417359964c57a59e217e03c29b1f59f3a6))
+
 ## [0.2.11](https://github.com/franciscpd/batuta/compare/v0.2.10...v0.2.11) (2026-08-01)
 
 
