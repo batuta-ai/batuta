@@ -56,15 +56,16 @@ delegation; the scout never does, per the scout rule above.
 
 Name every session `batuta/<slug>` — status and resume find them by name.
 
-**Maestro outside the daemon** (profile trigger): one call carries
-everything —
+**Maestro outside the daemon** (profile trigger): create, then prompt —
+since CLI 0.3.0 the provider/model/reasoning overrides live on the
+prompt, not on session creation —
 
     compozy session new \
       --cwd "<task dir — the worktree when Worktree mode places one>" \
+      --name "batuta/<slug>" -o json
+    compozy session prompt <session id> "<the brief, verbatim>" \
       --provider <routing row executor> --model <row model> \
-      --reasoning-effort <row effort, when the row names one> \
-      --name "batuta/<slug>" \
-      --prompt "<the brief, verbatim>" -o json
+      --reasoning-effort <row effort, when the row names one>
 
 **Managed maestro** (`COMPOZY_SESSION_ID` set): spawn a child, then send
 the brief —
@@ -151,7 +152,7 @@ happens only after Step 4's verification approves, so the board shows
 
 Same slug as the session name — task and session find each other by it.
 Plan ordering maps to `compozy task dependency add`; parallel batch
-items become child tasks of the batch item (`compozy task child`).
+items become child tasks of the batch item (`compozy task child create`).
 
 **Run lifecycle (Step 3→5):** the maestro uses the operator-level run
 commands — session-bound claiming (`task next`, `heartbeat`) requires a
@@ -173,8 +174,9 @@ on the board. Escalation swaps the session (delegation row), never the
 task: fail the run, `task retry`, attach the new session — attempt
 history stays aggregated per work item.
 
-**Blockers:** `compozy task block <task-id> --reason "<typed reason>"`
-when an item blocks; `compozy task unblock <task-id>` when it clears.
+**Blockers:** `compozy task block <task-id> --kind
+<needs_input|capability|transient> --reason "<reason>"` when an item
+blocks; `compozy task unblock <task-id>` when it clears.
 
 **Rules:**
 
