@@ -25,12 +25,17 @@ a second reviewer is dispatched.
    `git diff --staged`); the user may point to a range (`HEAD~3..`), a branch or
    a commit.
 2. **Diff review** — review as the maestro: correctness, scope, adherence to the
-   conventions in `.batuta/profile.md` and the stack template. Traceability
+   conventions in `.batuta/profile.md` and the stack template. When a brief
+   with a Scope list is associated, run the scope check first: the target's
+   changed paths (`git status --porcelain` for uncommitted work, `git diff
+   --name-only <range>` otherwise) against the list — out-of-list paths are
+   findings. Traceability
    test: every changed line must trace to what the change set out to do — flag
    drive-by edits even when correct.
 3. **Tests** — run the profile's test command (if there is no profile, ask which
    command to use).
-4. **Acceptance criteria** — if a brief or plan is associated with the change,
+4. **Acceptance criteria** — if a brief or plan is associated with the change
+   (the task's run trail in `.batuta/runs/` carries the brief verbatim),
    check item by item; otherwise derive criteria from what the change appears to
    deliver and make that explicit.
 5. **Verdict** — ✅ approved or ❌ rejected, with an objective list of issues
