@@ -22,7 +22,9 @@ destilação em `docs/superpowers/specs/`.
    por caminho independente: o commit existe e é atômico (`git log`), o
    WORK.md tem a linha, o diff rastreia ao pedido. O Batuta *dizer* que fez
    não é confirmação — é exatamente a regra do `verification.md` aplicada
-   ao próprio Batuta.
+   ao próprio Batuta. A trilha da tarefa em `.batuta/runs/` é evidência de
+   primeira classe: brief enviado, relato do executor e provas
+   reproduzidas, sem depender da memória da sessão (`runs.md`).
 3. **Write back ou não aconteceu** — todo achado vira registro na sessão
    (com evidência: comando, saída, hash) antes de seguir adiante.
 
@@ -46,7 +48,7 @@ anterior, mais uma adjacente como canário. Rodada de release cobre todas:
 | J3 | Falha → retry → escalada | feedback específico no retry; escalada sobe uma linha da tabela; diagnóstico enriquece o re-brief |
 | J4 | `pause` → sessão nova → `resume` | trabalho retomado só com os arquivos, sem contexto extra (PRD §8.4) |
 | J5 | Worktree por tarefa | main limpo durante a execução; squash com mensagem do maestro; worktree removido |
-| J6 | Verificação endurecida | executor que declara sem evidência é pego; scan de higiene de teste dispara quando provocado |
+| J6 | Verificação endurecida | executor que declara sem evidência é pego; scan de higiene de teste dispara quando provocado; a trilha em `.batuta/runs/` existe e sustenta o veredito |
 
 Cada jornada caminha até o **estado final verdadeiro** — não até "parece
 que funcionou". Inclui pelo menos um caminho de abandono por rodada
