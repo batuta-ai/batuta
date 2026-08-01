@@ -46,6 +46,7 @@ delegation; the scout never does, per the scout rule above.
 | Cycle moment | Runtime behavior | What Batuta keeps |
 | --- | --- | --- |
 | Delegation (Step 3) | executor runs as a managed session, native provider | routing row's executor+model+reasoning; the brief; worktree placement |
+| Plan & lifecycle (Steps 1–5) | items mirrored as tasks, delegations as task runs (Task board row) | `WORK.md` as the only source of truth; `complete` only after verification |
 | Parallel batch (Step 1.5/3) | one session per item, waves of ≤ 5 | decomposition, per-item verify/commit |
 | Result collection (Step 3→4) | report read from the session transcript | report ≠ evidence (`verification.md`); the trail records the session id |
 | Status (`/batuta:status`) | daemon sessions listed alongside background tasks | `WORK.md` as the source of truth |
@@ -133,12 +134,71 @@ the terminal: `/batuta:pause`
 records the ids in the handoff; `/batuta:resume` reattaches
 (`compozy session status <id>`, `wait`, or `resume`).
 
+## Task board row
+
+With the runtime active, the plan itself becomes visible on the daemon's
+task board (`compozy open`): each `WORK.md` work item is mirrored as a
+Compozy task and each delegation runs as a task run. The maestro drives
+every transition — the executor never touches the board, and `complete`
+happens only after Step 4's verification approves, so the board shows
+*verified* state, never self-reported state.
+
+**Mirror (Step 1/1.5):** when an item enters `WORK.md` —
+
+    compozy task create --scope workspace \
+      --identifier "batuta/<slug>" --title "<item title>" \
+      --metadata '{"lane":"<lane>","executor":"<executor>"}' -o json
+
+Same slug as the session name — task and session find each other by it.
+Plan ordering maps to `compozy task dependency add`; parallel batch
+items become child tasks of the batch item (`compozy task child`).
+
+**Run lifecycle (Step 3→5):** the maestro uses the operator-level run
+commands — session-bound claiming (`task next`, `heartbeat`) requires a
+managed identity and would bind the lease to the *maestro's* session,
+the wrong actor; the operator path works identically inside and outside
+the daemon:
+
+    compozy task run enqueue <task-id> -o json        # at dispatch
+    compozy task run attach-session <run-id> --session "<session id>"
+    compozy task run start <run-id>
+    # after Step 4 approves:
+    compozy task run complete <run-id> --result '{"verdict":"approved","commit":"<sha>"}'
+    # retry exhausted / definitive failure:
+    compozy task fail <run-id> --reason "<what failed>"
+    compozy task retry <task-id>                      # new attempt, same task
+
+Retries within the same session keep the same run alive — nothing to do
+on the board. Escalation swaps the session (delegation row), never the
+task: fail the run, `task retry`, attach the new session — attempt
+history stays aggregated per work item.
+
+**Blockers:** `compozy task block <task-id> --reason "<typed reason>"`
+when an item blocks; `compozy task unblock <task-id>` when it clears.
+
+**Rules:**
+
+- **One-way sync** (`WORK.md` → board): `/batuta:resume` reconciles by
+  creating whatever is missing on the board; board state never flows
+  back into `WORK.md`. Divergence resolves in `WORK.md`'s favor — the
+  board is a lens, not memory.
+- **The scout never becomes a task** — same rule as sessions: research
+  dispatches are not work items.
+- **Best-effort, always:** daemon down or a task command refused → warn
+  loudly and continue the cycle on `WORK.md` alone. The cycle never
+  waits on, or fails for, the board.
+- **The trail records the task id** next to the session id (`runs.md`).
+- Confirm the exact JSON shape of `task create`/`task run enqueue` on
+  first use, as with `session history`.
+
 ## Status row
 
 `/batuta:status` also lists the project's `batuta/*` sessions
 (`compozy session list --query batuta/ -o json`, add `--all` to include
 stopped sessions) with their state,
-alongside background tasks and worktrees. `WORK.md` remains the source
+alongside background tasks and worktrees. With the task board in use, also list the project's `batuta/*` tasks
+(`compozy task list --query batuta/ -o json`); `compozy open` shows the
+same items as a kanban. `WORK.md` remains the source
 of truth; the daemon is a lens.
 
 ## Setup prerequisites (init)
