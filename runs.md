@@ -21,7 +21,7 @@ user's). Trail content follows the user's language, like `WORK.md`.
     # Run — <task title>
 
     **Date:** <date> · **Lane:** <lane> · **Executor:** <executor + model>
-    **Commit:** <sha or —> · **Verdict:** ✅ approved | ⏫ escalated from <lane> | ❌ aborted
+    **Commit:** <sha or —> · **Verdict:** ✅ approved | ⏫ escalated from <lane> | ❌ aborted · **Session:** <runtime session id, or —>
 
     ## Brief
     <the brief sent to the executor, verbatim>

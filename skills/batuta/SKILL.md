@@ -20,7 +20,7 @@ Three one-line checks before anything else:
 3. **The request is a question about Batuta itself** (how it integrates with
    a companion plugin, what a step does) → not a cycle run: read the file
    that owns the answer before responding — integration questions read the
-   integration file (`codex-plugin.md`, `superpowers.md`). The dormant-file
+   integration file (`codex-plugin.md`, `superpowers.md`, `compozy.md`). The dormant-file
    pointers only fire while conducting a step, so a meta-question answered
    from memory is a bug; citing a file you haven't read this session is too.
 

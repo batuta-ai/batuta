@@ -119,7 +119,7 @@ batuta/
 
 ### 6.1 Onboarding e reconfiguração (/batuta:init)
 
-O onboarding é o modo primeira-execução do `/batuta:init` (5–6 perguntas).
+O onboarding é o modo primeira-execução do `/batuta:init` (6–7 perguntas).
 `/batuta` num projeto sem `.batuta/profile.md` aponta para o init e interrompe — o
 ciclo nunca faz onboarding inline:
 

@@ -15,7 +15,7 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    the user's onboarding answers, flag the conflict to the user — never edit
    those files (executors like codex read `AGENTS.md` on their own; an
    unflagged contradiction means conflicting instructions mid-task).
-2. Ask 5–6 short questions, all at once:
+2. Ask 6–7 short questions, all at once:
    - Stack? (detected suggestion as default)
    - Methodology: TDD or tests after? Conventional commits or free-form?
      Trunk-based or feature branches?
@@ -111,7 +111,8 @@ run `/batuta:init` again — that is the reconfigure mode below.
    "swap the Research model"), profile answers (test command, methodology),
    the batch execution mode (sequential ↔ parallel, the profile's Execution line),
    the worktree mode or Install command (the profile's Worktree and Install
-   lines), or a fresh map sweep (delegated to the scout, like first-run step 4).
+   lines), the Runtime line (turn `compozy` on or off), or a fresh map sweep
+   (delegated to the scout, like first-run step 4).
 4. Rewrite only what changed (`.batuta/routing.md` and/or
    `.batuta/profile.md`), reusing first-run step 6's discovery and single
    confirmation question for any lane/model change. Never touch `WORK.md`.
