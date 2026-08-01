@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.10](https://github.com/franciscpd/batuta/compare/v0.2.9...v0.2.10) (2026-08-01)
+
+
+### Features
+
+* escopo declarado no brief — campo Scope no Step 2 e checagem mecânica no Step 4 ([2732076](https://github.com/franciscpd/batuta/commit/27320769da01091e56d0d2ba7cafe0e19f2cf858))
+* trilha de execução — .batuta/runs/ por tarefa com runs.md dormante ([1f47c66](https://github.com/franciscpd/batuta/commit/1f47c66560bfa1f8b94a249e6b087432cab6ae7e))
+
+
+### Bug Fixes
+
+* trilha de item abortado no Step 4, checagem de escopo path-completa e ajustes de review ([05dce2f](https://github.com/franciscpd/batuta/commit/05dce2f31e7c7b8f9568d90fda8a4c7a0172eea2))
+
 ## [0.2.9](https://github.com/franciscpd/batuta/compare/v0.2.8...v0.2.9) (2026-07-27)
 
 
