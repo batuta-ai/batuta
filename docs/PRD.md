@@ -110,7 +110,7 @@ batuta/
 └── .batuta/
     ├── profile.md         # perfil do projeto (onboarding da primeira execução)
     ├── plan-<slug>.md     # planos formais, quando existirem
-    ├── worktrees/<slug>/  # worktree transitório por tarefa (modo Worktree; ignorado via .git/info/exclude)
+    ├── worktrees/<slug>/      # worktree transitório por tarefa (modo Worktree; ignorado via .git/info/exclude)
     └── runs/<data>-<slug>.md  # trilha por tarefa: brief, relato, provas, veredito (ignorada via .git/info/exclude)
 ```
 

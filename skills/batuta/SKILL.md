@@ -100,7 +100,7 @@ Build the task brief with:
   report is what Step 4 checks against the diff — never trusts.
 - **Stop conditions** — when to stop and report instead of improvising: the
   code's shape contradicts the brief, the same command fails twice, or the
-  fix needs edits beyond Boundaries.
+  fix needs edits beyond Scope or Boundaries.
 
 The brief must be self-sufficient: the executor has no access to the
 conversation. A section with nothing to fill carries `Unknown — <reason>`
@@ -179,11 +179,12 @@ escalation, is investigated per its debugging row before the re-brief.
 
 Always, no exceptions:
 
-1. **Scope check** — `git diff --name-only` (in a worktree, `git diff
-   --name-only main...batuta/<slug>`) against the brief's Scope list. A
-   path outside the list fails verification even when the code is correct
-   — name the files in the feedback. Widening the Scope is the maestro's
-   decision at re-brief, never the executor's.
+1. **Scope check** — `git status --porcelain` (modified, staged and
+   untracked paths; in a worktree, `git diff --name-only
+   main...batuta/<slug>`) against the brief's Scope list. A path outside
+   the list fails verification even when the code is correct — name the
+   files in the feedback. Widening the Scope is the maestro's decision at
+   re-brief, never the executor's.
 2. **Diff review** — `git diff`; review the code as the maestro: correctness,
    scope (only what was asked?), adherence to the profile's conventions.
    Traceability test: every changed line must trace directly to the brief —
@@ -229,7 +230,8 @@ has leftover uncommitted changes, removing it needs `git worktree remove
 In a batch (Step 1.5), a task that fails even after escalation is skipped:
 continue with the remaining independent items and report the failure at the
 end. Items that depended on the failed one are blocked and reported — never
-executed blindly.
+executed blindly. A definitively failed item still leaves its run trail
+(`runs.md`, verdict aborted) — write it when the failure is declared.
 
 ## Step 5 — Commit and record
 
@@ -250,7 +252,7 @@ executed blindly.
 - [ ] <task> → codex (delegated 2026-07-19)
 
 ## Done
-- [x] <task> → kimi (moonshotai/kimi-k2), commit abc123
+- [x] <task> → kimi (moonshotai/kimi-k2), commit abc123 (trail: .batuta/runs/2026-07-19-<slug>.md)
 - [x] <task> → codex (escalated from kimi after 2 fails), commit def456
 ```
 
@@ -258,13 +260,13 @@ The line must tell the routing story honestly: executor + model, plus any
 retry or escalation. This is the project's conducting log — `/batuta:status`
 aggregates it on demand; nothing else stores metrics.
 
+Prose + checkboxes. Never turn WORK.md into a schema-bound table.
+
 3. Run trail: write `.batuta/runs/<date>-<slug>.md` per `runs.md` (plugin
    root) — brief and executor report verbatim, proofs re-run, verdict.
    One trail per task; an item that fails definitively also gets one
    (verdict aborted), written when the failure is declared. Append the
    trail reference to the task's `WORK.md` line.
-
-Prose + checkboxes. Never turn WORK.md into a schema-bound table.
 
 ## The scout — research delegation
 
