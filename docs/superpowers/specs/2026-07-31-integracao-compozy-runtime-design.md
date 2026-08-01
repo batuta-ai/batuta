@@ -19,9 +19,10 @@ Nenhum comando novo, nenhuma mudança no ciclo.
 Fatos verificados na doc do Compozy que sustentam o desenho:
 
 - Agentes são definidos por `AGENT.md` declarando identidade, **provider**
-  (a CLI que executa), permissões e capacidades. Providers nativos:
-  `claude`, `codex`, `gemini`, `qwen-code`; providers custom compatíveis
-  com ACP podem ser registrados.
+  (a CLI que executa), permissões e capacidades. Providers nativos: 20+,
+  incluindo **`claude`, `codex` e `opencode`** (o trio default do Batuta),
+  além de `gemini`, `cursor`, `copilot`, `goose` e outros; providers
+  custom compatíveis com ACP podem ser registrados via `config.toml`.
 - Uma sessão ativa pode criar **sessões filhas** via `compozy spawn`:
   identidade validada, TTL obrigatório, filha dentro do canal de
   coordenação do pai, permissões ⊆ pai. Defaults: profundidade máx. 1,
@@ -63,18 +64,21 @@ coisa. Reconfiguração muda a linha como qualquer outra do perfil.
 Com `Runtime: compozy`, a delegação de qualquer lane vira uma **sessão
 filha** (`compozy spawn`) em vez de subprocess:
 
-1. **O adapter continua dono do comando.** A sessão recebe como carga a
-   invocação que o adapter define — flags de modelo da tabela de
-   roteamento incluídas. Não existe "adapter do codex-sob-compozy":
-   existe `adapters/codex.md` + o transporte. Isso evita explosão
-   combinatória e mantém o contrato de adapter (PRD §6.8) intacto.
-2. **Mapeamento lane → provider quando disponível.** Para executores que
-   são providers nativos do Compozy (`claude`, `codex`), o `compozy.md`
-   pode preferir a sessão com provider nativo em vez de embrulhar o
-   comando — mesmo brief, mesma carga. `opencode` não é provider nativo:
-   entra como custom ACP **se verificado viável**; senão, transporte
-   embrulhado. A decisão por executor fica documentada no `compozy.md`,
-   não nas skills.
+1. **O adapter continua a autoridade da invocação.** No modo nativo, os
+   flags que o adapter e a tabela de roteamento definem (executor, modelo,
+   reasoning) mapeiam para os overrides da sessão; no modo embrulhado
+   (executor fora do catálogo de providers), a sessão recebe o comando do
+   adapter como carga. Não existe "adapter do codex-sob-compozy": existe
+   `adapters/codex.md` + o transporte. Isso evita explosão combinatória e
+   mantém o contrato de adapter (PRD §6.8) intacto.
+2. **Mapeamento lane → provider (verificado: cobre o trio inteiro).**
+   `claude`, `codex` e `opencode` são providers nativos do Compozy, então
+   toda lane default pode rodar como sessão com provider nativo — sem
+   embrulhar comando. Os flags de modelo da tabela de roteamento mapeiam
+   1:1 para a criação da sessão (`--provider`, `--model`,
+   `--reasoning-effort`). O transporte embrulhado fica só para executores
+   futuros fora do catálogo de providers. A decisão por executor fica
+   documentada no `compozy.md`, não nas skills.
 3. **Worktree compõe.** A sessão filha nasce com working directory no
    worktree da tarefa quando a linha Worktree o exige — as duas
    integrações são ortogonais.
@@ -128,14 +132,39 @@ capacidade exclusiva de um host.
 - **Escrita:** `compozy.md` no plugin; no projeto, só a linha `Runtime:`
   no perfil — dentro das fronteiras existentes.
 
-## Verificações pendentes (antes de implementar)
+## Verificações feitas (2026-07-31, CLI local + doc)
 
-1. Sintaxe exata de `compozy spawn` (comando, carga, working directory,
-   captura do resultado) — a doc descreve o mecanismo, não a CLI.
-2. Viabilidade do `opencode` como provider custom ACP; sem isso, a lane
-   trivial roda por transporte embrulhado.
-3. Como ler o transcript de uma sessão filha de forma não-interativa
-   (para a coleta de resultado e a trilha).
+As três pendências da primeira versão desta spec foram verificadas contra
+a CLI instalada (`compozy --help` e subcomandos) e a doc:
+
+1. **Sintaxe de delegação — resolvida, com duas formas.**
+   - *Sessão direta* (maestro rodando fora do daemon, o caso comum):
+     `compozy session new --cwd "<dir>" --provider <p> --model <m>
+     --reasoning-effort <e> --prompt "<brief>"` — a carga entra inline
+     por `--prompt`, o working directory por `--cwd` (auto-registra o
+     workspace, o que cobre o worktree da tarefa), e provider/modelo/
+     reasoning são overrides por sessão.
+   - *Sessão filha* (maestro rodando como sessão gerenciada):
+     `compozy spawn --agent <a> --provider <p> --model <m>
+     --ttl-seconds N` + átomos de permissão (`--tool`, `--skill`,
+     `--workspace-path`, `--sandbox-profile`). O spawn **não tem
+     `--prompt`**: o brief entra em seguida via
+     `compozy session prompt <id> "<brief>"`; `--prompt-overlay` é
+     complemento de instrução, não a carga.
+   - *Espera e resultado*: `compozy session wait <id>` bloqueia até a
+     sessão parar; saídas em `-o json|jsonl` para consumo mecânico.
+2. **`opencode` é provider nativo** (`npx -y opencode-ai@latest acp`) —
+   nenhum registro custom necessário; ver o item de mapeamento acima.
+3. **Leitura não-interativa de transcript — resolvida, com correção.**
+   Não existe `compozy transcript` (a doc sugeria; a CLI não tem). O
+   caminho real: `compozy session history <id> [--last N]` (turnos
+   replayáveis), `compozy session events <id>` (eventos, com `--since`/
+   `--type`) e `compozy session recap <id>` (resumo determinístico) —
+   todos com `-o json`. O `## Relato do executor` da trilha sai do
+   `history`; a referência de replay gravada na trilha é o id da sessão.
+
+Residual de implementação (não bloqueia): confirmar o formato exato do
+JSON de `session history` na versão instalada ao escrever o `compozy.md`.
 
 ## Critérios de aceite
 
