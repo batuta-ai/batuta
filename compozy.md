@@ -38,8 +38,8 @@ Compozy session with `--provider codex`. The plugin's other roles
 lane — the maestro executes itself because it needs conversation
 context) never becomes a session; it stays in the maestro's own session
 regardless of the runtime. Only claude *background instances* — a
-Complex-row `claude -p`, or the scout when the Research lane names
-claude — become managed sessions like any other delegation.
+Complex-row `claude -p` — become managed sessions like any other
+delegation; the scout never does, per the scout rule above.
 
 ## Map — cycle moment → runtime behavior → what Batuta keeps
 
