@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.11](https://github.com/franciscpd/batuta/compare/v0.2.10...v0.2.11) (2026-08-01)
+
+
+### Features
+
+* /batuta:review roda a checagem de escopo quando há brief associado ([9b89a03](https://github.com/franciscpd/batuta/commit/9b89a03471d62bac299a9c665be34d7e9ebab118))
+
+
+### Bug Fixes
+
+* lista de campos do brief no codex-plugin.md reflete o Step 2 atual ([fc50bef](https://github.com/franciscpd/batuta/commit/fc50bef715088edd84dd1b2af6d8dfb6e97a5abf))
+
 ## [0.2.10](https://github.com/franciscpd/batuta/compare/v0.2.9...v0.2.10) (2026-08-01)
 
 
