@@ -45,13 +45,15 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    `composer.json`, `pyproject.toml`, framework deps in `package.json`) and
    pick the most specific template that applies (Next.js > React > generic);
    when in doubt between parent and child, the child.
-3.5. **Discovery pointer (opt-in).** Offer to write a marked block to the
-   project's `AGENTS.md` so any maestro session born in this project —
+**Step 3.5 — Discovery pointer (opt-in).** Offer to write a marked block to
+   the project's `AGENTS.md` so any maestro session born in this project —
    including sessions started through the Compozy daemon — knows on session
    start that delegable work goes through Batuta. Fold the offer into the
    single confirmation question of step 6; declined → write nothing and do
-   not re-offer automatically. Accepted → append exactly this block (create
-   `AGENTS.md` containing only the block when the file doesn't exist):
+   not re-offer automatically. Accepted → write exactly this block (create
+   `AGENTS.md` containing only the block when the file doesn't exist), flush
+   left — the indentation below is only for legibility inside this document;
+   nothing is indented in the actual write, or the `## Batuta` heading breaks:
 
        <!-- batuta:begin — managed by /batuta:init, edit via reconfigure -->
        ## Batuta
@@ -62,11 +64,16 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
        and follow your brief only.
        <!-- batuta:end -->
 
-   The `batuta:begin`/`batuta:end` markers make every write idempotent:
-   updates and removals touch only what sits between them, never the rest of
-   the file. The block's last sentence is the anti-loop guard — executors
-   read `AGENTS.md` on their own, and without it an executor mid-brief could
-   conclude it should delegate too; the brief always wins.
+   The `batuta:begin`/`batuta:end` markers make every write idempotent —
+   but only when the write honors it: if the block already exists in
+   `AGENTS.md` (first run finding a stale copy, or reconfigure's "add" path
+   over an existing one), replace whatever sits between the markers in
+   place; never append a second copy. Same rule for the reconfigure
+   "rewrite" path. Updates and removals likewise touch only what sits
+   between the markers, never the rest of the file. The block's last
+   sentence is the anti-loop guard — executors read `AGENTS.md` on their
+   own, and without it an executor mid-brief could conclude it should
+   delegate too; the brief always wins.
 4. Add a **"Project map"** section to the profile: 20–40 lines of prose — key
    directories, where routes/components/tests live, entry points, generated
    files not to touch. Defer this initial sweep to the end of onboarding,
@@ -112,8 +119,9 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    anything: run the discovery from `adapters/opencode.md` (`opencode models`
    filtered to cheap candidates) and `adapters/codex.md` (Model selection) and
    suggest 2–3 options per lane. Ask ONE confirmation question covering the
-   whole mapping (lanes + models). Write the result as the project's
-   `.batuta/routing.md`: the local copy is born here, with the exact executors
+   whole mapping (lanes + models + the step 3.5 discovery pointer). Write the
+   result as the project's `.batuta/routing.md`: the local copy is born
+   here, with the exact executors
    and model IDs confirmed by the user. If an executor disappears later, tell
    the user which lanes collapse upward (unavailability rule) instead of
    letting them find out on the first delegation.
@@ -135,11 +143,17 @@ run `/batuta:init` again — that is the reconfigure mode below.
    "swap the Research model"), profile answers (test command, methodology),
    the batch execution mode (sequential ↔ parallel, the profile's Execution line),
    the worktree mode or Install command (the profile's Worktree and Install
-   lines), the Runtime line (turn `compozy` on or off), the discovery pointer
-   (add, rewrite or remove the `AGENTS.md` block of first-run step 3.5 — when
-   the block exists but a marker is missing or mangled, say so and offer to
-   rewrite it; never rewrite without consent), or a fresh map sweep
-   (delegated to the scout, like first-run step 4).
+   lines), the Runtime line (turn `compozy` on or off — turning it *on*
+   should also offer the discovery pointer of first-run step 3.5 when the
+   project doesn't already have it, same as first run), the discovery
+   pointer (add, rewrite or remove the `AGENTS.md` block of first-run step
+   3.5 — when the block exists but a marker is missing or mangled, say so
+   and offer to rewrite it; never rewrite without consent), or a fresh map
+   sweep (delegated to the scout, like first-run step 4).
 4. Rewrite only what changed (`.batuta/routing.md` and/or
    `.batuta/profile.md`), reusing first-run step 6's discovery and single
-   confirmation question for any lane/model change. Never touch `WORK.md`.
+   confirmation question for any lane/model change. When the discovery
+   pointer was part of what changed, the write also covers the `AGENTS.md`
+   block from first-run step 3.5, scoped strictly to what sits between its
+   `batuta:begin`/`batuta:end` markers — never touch the rest of the file.
+   Never touch `WORK.md`.
