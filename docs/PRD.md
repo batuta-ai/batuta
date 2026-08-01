@@ -82,6 +82,7 @@ batuta/
 ├── superpowers.md         # integração com superpowers: método emprestado, regras do Batuta
 ├── codex-plugin.md        # integração com o plugin codex: músculo emprestado, regras do Batuta
 ├── verification.md        # verificação endurecida: relato ≠ evidência, scans de higiene de teste, slop
+├── runs.md                # trilha de execução: formato e regras do .batuta/runs/
 ├── adapters/
 │   ├── codex.md           # invocação não-interativa, passagem de contexto, limites
 │   ├── opencode.md        # idem, com modelo configurável (Kimi, DeepSeek, ...)
@@ -109,7 +110,8 @@ batuta/
 └── .batuta/
     ├── profile.md         # perfil do projeto (onboarding da primeira execução)
     ├── plan-<slug>.md     # planos formais, quando existirem
-    └── worktrees/<slug>/  # worktree transitório por tarefa (modo Worktree; ignorado via .git/info/exclude)
+    ├── worktrees/<slug>/  # worktree transitório por tarefa (modo Worktree; ignorado via .git/info/exclude)
+    └── runs/<data>-<slug>.md  # trilha por tarefa: brief, relato, provas, veredito (ignorada via .git/info/exclude)
 ```
 
 ## 6. Funcionalidades
@@ -242,7 +244,7 @@ dependentes; os independentes seguem.
    critérios de aceite do brief.
 4. **Commitar** — commit atômico. Falha → 1 retry com feedback ao executor →
    escalada de nível.
-5. **Registrar** — uma linha no `WORK.md`.
+5. **Registrar** — uma linha no `WORK.md` + trilha da tarefa em `.batuta/runs/`.
 
 **Worktree por tarefa:** com a linha `Worktree` do perfil
 (`off`/`medium+`/`always`; default `medium+`, perguntada no init; perfil sem
@@ -427,3 +429,4 @@ usuário — nunca auto-resume.
 | Contrato de cross-review | Seção "Cross-review contract" no `verification.md`, válida para qualquer transporte: lentes escalam com o diff (<50 linhas = 1, ≤200 = 2, acima = 3 — Cético, Arquiteto, Minimalista, numa única despacha), findings como arquivo fora do repo (round sem arquivo é inválido; stdout é evidência operacional), paridade de contrato (item que implementa spec leva o artefato verbatim, nunca paráfrase), e julgamento do maestro (aceita/rejeita cada achado com rationale de uma linha; aceito = falha de verificação normal) | Reviewer adversarial produz falso positivo por design — o julgamento explícito evita retry por achado ruim; paridade de contrato previne o incidente documentado na fonte (7 rounds de SHIP contradizendo o spec que nenhum round leu); arquivo fora do repo preserva a guarda read-only da despacha; destilado do `adversarial-review` e `impl/spec-peer-review` do pedronauck/skills |
 | Protocolo de retrô versionado | `docs/qa-retro.md`: dogfooding em persona pelas superfícies públicas do Batuta; 3 inegociáveis (in persona, prova não otimismo, write back), stall-é-finding (registrar, nunca consertar no meio da sessão), 6 jornadas com estado final verdadeiro mapeadas ao §8, rubrica de impacto em 5 tiers, dedup de achados re-encontrados e fechamento com corte de cobertura declarado; resultados de cada rodada ficam com o cobaia | Protocolo é metodologia reusável do Batuta (operacionaliza o §8) e evapora se viver só na conversa da retrô; separação protocolo-aqui/resultados-lá espelha a fronteira produto vs. sessão de teste; destilado do `qa-execution`/`qa-report` do pedronauck/skills |
 | Escopo declarado no brief | Campo Scope (lista fechada de caminhos alteráveis) pareado com o Boundaries negativo; checagem mecânica `git diff --name-only` contra a lista como primeiro passo do Step 4 — caminho fora da lista reprova mesmo com código correto; ampliar a lista é decisão do maestro no re-brief, nunca do executor | Boundaries diz o que evitar, não delimita onde trabalhar — executor sem alcance declarado inventa o próprio; a checagem de caminhos é a mais barata das verificações e pega extravasamento antes do review de conteúdo; candidata a causa dos commits atômicos falhos observados em uso real; destilado das policy-filtered tools do CompozyOS — spec em `docs/superpowers/specs/` |
+| Trilha de execução | `.batuta/runs/<data>-<slug>.md` por tarefa verificada (e por abortada): brief verbatim, relato do executor verbatim, provas reproduzidas e veredito; escrita no Step 5; `WORK.md` só aponta; local via `.git/info/exclude`; formato e regras no `runs.md` dormante da raiz; findings de cross-review julgados são registrados nela | "Declared ≠ verified" exige evidência, mas ela evaporava com a sessão — o retrô julgava por memória e sintomas como commits atômicos falhos ficavam sem material de diagnóstico; verbatim porque resumir é perder a evidência; não é memória (o maestro não a lê no ciclo); destilado do transcript por sessão do CompozyOS — spec em `docs/superpowers/specs/` |

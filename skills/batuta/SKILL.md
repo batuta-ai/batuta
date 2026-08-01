@@ -258,6 +258,12 @@ The line must tell the routing story honestly: executor + model, plus any
 retry or escalation. This is the project's conducting log — `/batuta:status`
 aggregates it on demand; nothing else stores metrics.
 
+3. Run trail: write `.batuta/runs/<date>-<slug>.md` per `runs.md` (plugin
+   root) — brief and executor report verbatim, proofs re-run, verdict.
+   One trail per task; an item that fails definitively also gets one
+   (verdict aborted), written when the failure is declared. Append the
+   trail reference to the task's `WORK.md` line.
+
 Prose + checkboxes. Never turn WORK.md into a schema-bound table.
 
 ## The scout — research delegation

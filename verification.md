@@ -63,6 +63,8 @@ critical items, `/batuta:review`, or on user demand):
   design. Accepted findings follow the cycle's normal failure flow
   (feedback + retry); rejected ones are recorded as declined in the
   feedback. The verdict is always the maestro's.
+  Accepted and declined findings are then recorded one line each in the
+  task's run trail (`runs.md`).
 
 ## Slop checklist (inside the diff review)
 
