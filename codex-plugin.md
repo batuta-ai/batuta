@@ -30,7 +30,7 @@ one line; read this file only when a pointer fires.
 
 | Cycle moment | Plugin capability | What Batuta keeps |
 | --- | --- | --- |
-| Brief for the codex lane (Step 2) | `gpt-5-4-prompting` (writing method) | brief structure (Goal/Context/Conventions/Criteria/Boundaries), the superpowers method line, self-sufficiency |
+| Brief for the codex lane (Step 2) | `gpt-5-4-prompting` (writing method) | brief structure (Goal/Context/Conventions/Criteria/Boundaries/Scope/Expected evidence/Stop conditions), the superpowers method line, self-sufficiency |
 | Delegation on the codex lane (Step 3) | shared runtime (`codex-cli-runtime`, `codex-result-handling`) | the routing row's model and reasoning flags; the cycle's worktree and parallelism; without the plugin → `codex exec` per the adapter |
 | Failed retry, before escalating (Step 4) | `codex:rescue` (root-cause diagnosis) | the escalation ladder (one row up); the diagnosis only enriches the re-brief |
 | Verifying a complex/critical item (Step 4) and `/batuta:review` | Codex review (second opinion) | the brief's criteria, the traceability test, the maestro's verdict |
