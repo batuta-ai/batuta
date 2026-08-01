@@ -51,13 +51,23 @@ Um arquivo **`compozy.md` na raiz do plugin** — irmão de `superpowers.md`
 e `codex-plugin.md`, mesmo padrão: dormante, skills o referenciam em uma
 linha condicional, lido só quando a integração está ativa.
 
-### Ativação (opt-in por perfil, como o Worktree)
+### Ativação (dois gatilhos, verificados na CLI)
 
-Linha nova no `.batuta/profile.md`: `Runtime: compozy | direto` — sem
-linha = `direto`, comportamento atual. O `/batuta:init` detecta o daemon
-(CLI `compozy` no PATH + daemon respondendo) e **oferece** a linha; nunca
-liga só por detecção — o usuário pode ter o Compozy instalado para outra
-coisa. Reconfiguração muda a linha como qualquer outra do perfil.
+1. **Maestro rodando como sessão gerenciada — automático, sempre.**
+   Dentro de uma sessão Compozy o ambiente carrega `COMPOZY_SESSION_ID`
+   (e `compozy me -o json` responde a identidade; fora, erro
+   `identity_required`). Com a variável presente, toda delegação sai por
+   Compozy (sessões filhas via `spawn`), **com precedência sobre o
+   perfil**: lançar o Batuta pelo Compozy é a escolha do usuário no ato —
+   delegar por subprocess dali esconderia os instrumentistas do daemon,
+   que é exatamente o que a integração existe para evitar (pedido do
+   usuário, 2026-07-31).
+2. **Fora do daemon — opt-in por perfil, como o Worktree.** Linha nova no
+   `.batuta/profile.md`: `Runtime: compozy | direto` — sem linha =
+   `direto`, comportamento atual. O `/batuta:init` detecta o daemon (CLI
+   `compozy` no PATH + daemon respondendo) e **oferece** a linha; nunca
+   liga só por detecção — o usuário pode ter o Compozy instalado para
+   outra coisa. Reconfiguração muda a linha como qualquer outra do perfil.
 
 ### Linha de delegação (Step 3)
 
@@ -168,8 +178,10 @@ JSON de `session history` na versão instalada ao escrever o `compozy.md`.
 
 ## Critérios de aceite
 
-- Sem linha `Runtime:` (ou `direto`): comportamento byte-idêntico ao
-  atual, com ou sem Compozy instalado.
+- Sem linha `Runtime:` (ou `direto`) e fora de sessão gerenciada:
+  comportamento byte-idêntico ao atual, com ou sem Compozy instalado.
+- Com `COMPOZY_SESSION_ID` no ambiente: delegações saem por Compozy
+  mesmo sem linha no perfil (precedência do gatilho automático).
 - Com `Runtime: compozy`: cada delegação vira sessão filha com o comando
   do adapter (ou provider nativo equivalente), e o transcript alimenta
   verificação e trilha.
