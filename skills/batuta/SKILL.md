@@ -148,7 +148,10 @@ invocation must carry it — a delegation without the row's model flags is a
 routing bug, not a shortcut. With the codex plugin installed, a
 codex-lane delegation goes through the plugin's shared runtime instead of
 raw `codex exec` (`codex-plugin.md`, delegation row) — the row's model
-flags still apply.
+flags still apply. With the Compozy runtime active (`compozy.md` — automatic when
+`COMPOZY_SESSION_ID` is set, profile `Runtime: compozy` otherwise), every
+delegation runs as a managed session per its delegation row, which also
+supersedes the codex plugin's transport.
 
 **Worktree (per profile):** the profile's Worktree line — `off | medium+ |
 always`, no line = `off` — decides where the executor works. When the task's
