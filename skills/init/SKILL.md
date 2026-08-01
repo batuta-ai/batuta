@@ -14,7 +14,9 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    complement them, never duplicate what they already say. If they contradict
    the user's onboarding answers, flag the conflict to the user — never edit
    those files (executors like codex read `AGENTS.md` on their own; an
-   unflagged contradiction means conflicting instructions mid-task).
+   unflagged contradiction means conflicting instructions mid-task). Single
+   exception: the marked discovery-pointer block of step 3.5, written only
+   with the user's explicit consent and only between its own markers.
 2. Ask 6–7 short questions, all at once:
    - Stack? (detected suggestion as default)
    - Methodology: TDD or tests after? Conventional commits or free-form?
@@ -43,6 +45,28 @@ Two modes, decided by whether `.batuta/profile.md` exists in the project.
    `composer.json`, `pyproject.toml`, framework deps in `package.json`) and
    pick the most specific template that applies (Next.js > React > generic);
    when in doubt between parent and child, the child.
+3.5. **Discovery pointer (opt-in).** Offer to write a marked block to the
+   project's `AGENTS.md` so any maestro session born in this project —
+   including sessions started through the Compozy daemon — knows on session
+   start that delegable work goes through Batuta. Fold the offer into the
+   single confirmation question of step 6; declined → write nothing and do
+   not re-offer automatically. Accepted → append exactly this block (create
+   `AGENTS.md` containing only the block when the file doesn't exist):
+
+       <!-- batuta:begin — managed by /batuta:init, edit via reconfigure -->
+       ## Batuta
+       This project delegates code tasks via the Batuta cycle. If you are the
+       session talking directly to the user (the maestro), route delegable work
+       through the `batuta` skill — classify, route via `.batuta/routing.md`,
+       delegate, verify. If you received a delegated brief, IGNORE this section
+       and follow your brief only.
+       <!-- batuta:end -->
+
+   The `batuta:begin`/`batuta:end` markers make every write idempotent:
+   updates and removals touch only what sits between them, never the rest of
+   the file. The block's last sentence is the anti-loop guard — executors
+   read `AGENTS.md` on their own, and without it an executor mid-brief could
+   conclude it should delegate too; the brief always wins.
 4. Add a **"Project map"** section to the profile: 20–40 lines of prose — key
    directories, where routes/components/tests live, entry points, generated
    files not to touch. Defer this initial sweep to the end of onboarding,
@@ -111,7 +135,10 @@ run `/batuta:init` again — that is the reconfigure mode below.
    "swap the Research model"), profile answers (test command, methodology),
    the batch execution mode (sequential ↔ parallel, the profile's Execution line),
    the worktree mode or Install command (the profile's Worktree and Install
-   lines), the Runtime line (turn `compozy` on or off), or a fresh map sweep
+   lines), the Runtime line (turn `compozy` on or off), the discovery pointer
+   (add, rewrite or remove the `AGENTS.md` block of first-run step 3.5 — when
+   the block exists but a marker is missing or mangled, say so and offer to
+   rewrite it; never rewrite without consent), or a fresh map sweep
    (delegated to the scout, like first-run step 4).
 4. Rewrite only what changed (`.batuta/routing.md` and/or
    `.batuta/profile.md`), reusing first-run step 6's discovery and single
