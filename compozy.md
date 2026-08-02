@@ -167,7 +167,7 @@ the daemon:
     compozy task run complete <run-id> --result '{"verdict":"approved","commit":"<sha>"}'
     # retry exhausted / definitive failure:
     compozy task fail <run-id> --reason "<what failed>"
-    compozy task retry <task-id>                      # new attempt, same task
+    compozy task retry <run-id>                       # new attempt, same task
 
 Retries within the same session keep the same run alive — nothing to do
 on the board. Escalation swaps the session (delegation row), never the
@@ -177,6 +177,11 @@ history stays aggregated per work item.
 **Blockers:** `compozy task block <task-id> --kind
 <needs_input|capability|transient> --reason "<reason>"` when an item
 blocks; `compozy task unblock <task-id>` when it clears.
+
+**Definitive abort:** when an item is abandoned for good (trail verdict
+`❌ aborted`), fail its run and cancel the task —
+`compozy task cancel <task-id>` — so the board does not keep a live item
+the plan has dropped.
 
 **Rules:**
 
@@ -190,8 +195,9 @@ blocks; `compozy task unblock <task-id>` when it clears.
   loudly and continue the cycle on `WORK.md` alone. The cycle never
   waits on, or fails for, the board.
 - **The trail records the task id** next to the session id (`runs.md`).
-- Confirm the exact JSON shape of `task create`/`task run enqueue` on
-  first use, as with `session history`.
+- Confirm the exact JSON shape of `task create`/`task run enqueue` — and
+  the operator path's behavior end to end — on first use, as with
+  `session history`.
 
 ## Status row
 
