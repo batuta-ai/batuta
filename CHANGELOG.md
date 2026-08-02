@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.14](https://github.com/franciscpd/batuta/compare/v0.2.13...v0.2.14) (2026-08-02)
+
+
+### Features
+
+* task board Compozy — itens do WORK.md como tasks, delegação como task run ([b554838](https://github.com/franciscpd/batuta/commit/b554838869dcaca33fef3894ff17d77f9044f707))
+
+
+### Bug Fixes
+
+* compozy.md alinhado à CLI 0.3.0 — overrides no session prompt, task child create e block --kind ([9846c20](https://github.com/franciscpd/batuta/commit/9846c2046f79ddc8237b93680ff77a0f3bd5ba22))
+* task retry recebe run-id; aborto definitivo cancela a task no board ([1160af8](https://github.com/franciscpd/batuta/commit/1160af81c9cd82e594d7b31e8b2da479d3ee9932))
+
 ## [0.2.13](https://github.com/franciscpd/batuta/compare/v0.2.12...v0.2.13) (2026-08-01)
 
 
