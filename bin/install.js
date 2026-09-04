@@ -72,8 +72,8 @@ const HOSTS = [
     id: "agy",
     label: "Antigravity CLI",
     detect: () => which("agy"),
-    steps: [`npx -y skills add ${SKILLS} -g -y`],
-    note: "skills in ~/.agents/skills (agy reads the shared agents directory)",
+    steps: [`npx -y skills add ${SKILLS} -a antigravity -g -y`],
+    note: "skills in ~/.agents/skills (the shared directory every host reads)",
   },
 ];
 
