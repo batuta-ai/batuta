@@ -18,6 +18,5 @@
     "cursor",
     "agy",
     "workflow"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
