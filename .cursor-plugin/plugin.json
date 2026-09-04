@@ -1,0 +1,19 @@
+{
+  "name": "batuta",
+  "version": "0.2.14",
+  "description": "Batuta for Cursor: the conductor classifies each task, delegates to the cheapest capable executor, verifies and commits.",
+  "author": {
+    "name": "batuta-ai"
+  },
+  "homepage": "https://github.com/batuta-ai/batuta",
+  "repository": "https://github.com/batuta-ai/batuta",
+  "license": "MIT",
+  "keywords": [
+    "batuta",
+    "orchestration",
+    "delegation",
+    "workflow"
+  ],
+  "category": "Engineering",
+  "skills": "./skills/"
+}

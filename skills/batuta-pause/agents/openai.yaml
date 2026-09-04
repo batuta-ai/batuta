@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-pause"
+  short_description: "Pause Batuta work and write a handoff for the next session"
+  default_prompt: "Use $batuta-pause to pause Batuta work and write a handoff for the next session"

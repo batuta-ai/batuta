@@ -1,0 +1,12 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  batuta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tests/check.sh
+      - run: node bin/install.js --list

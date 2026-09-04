@@ -1,10 +1,23 @@
 {
   "name": "batuta",
-  "description": "Lightweight orchestration for Claude Code: the maestro classifies each task, delegates to the cheapest capable executor, verifies and commits. Quem rege não toca.",
+  "description": "Batuta for Claude Code: the conductor classifies each task, delegates to the cheapest capable executor, verifies and commits. Quem rege não toca.",
   "version": "0.2.14",
   "author": {
     "name": "Francisross Soares de Oliveira",
     "email": "franciscpd@gmail.com"
   },
-  "license": "MIT"
+  "homepage": "https://github.com/batuta-ai/batuta",
+  "repository": "https://github.com/batuta-ai/batuta",
+  "license": "MIT",
+  "keywords": [
+    "orchestration",
+    "delegation",
+    "cost-optimization",
+    "codex",
+    "opencode",
+    "cursor",
+    "agy",
+    "workflow"
+  ],
+  "hooks": "./hooks/hooks.json"
 }

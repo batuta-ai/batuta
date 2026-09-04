@@ -1,0 +1,16 @@
+{
+  "name": "batuta",
+  "owner": {
+    "name": "batuta-ai"
+  },
+  "metadata": {
+    "description": "Batuta: a conducting cycle for AI coding agents."
+  },
+  "plugins": [
+    {
+      "name": "batuta",
+      "source": "./",
+      "description": "Classifies each task, routes it to the cheapest capable executor, briefs, verifies and commits."
+    }
+  ]
+}

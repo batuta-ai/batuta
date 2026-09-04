@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-init"
+  short_description: "Set Batuta up in this project: profile, lanes, models, project map"
+  default_prompt: "Use $batuta-init to set Batuta up in this project: profile, lanes, models, project map"

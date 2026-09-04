@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-status"
+  short_description: "Show what Batuta is doing in this project"
+  default_prompt: "Use $batuta-status to show what Batuta is doing in this project"

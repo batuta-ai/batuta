@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-plan"
+  short_description: "Write an approvable plan of atomic-commit-sized tasks"
+  default_prompt: "Use $batuta-plan to write an approvable plan of atomic-commit-sized tasks"

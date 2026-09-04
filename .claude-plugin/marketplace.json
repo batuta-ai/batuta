@@ -1,26 +1,24 @@
 {
   "name": "batuta",
-  "id": "batuta",
   "owner": {
-    "name": "franciscpd"
+    "name": "batuta-ai",
+    "url": "https://github.com/batuta-ai"
   },
   "metadata": {
-    "description": "Lightweight orchestration for Claude Code: the maestro delegates to the cheapest capable executor, verifies and commits. Quem rege não toca."
+    "description": "Batuta: a conducting cycle for AI coding agents. The conductor never plays."
   },
   "plugins": [
     {
       "name": "batuta",
       "source": "./",
-      "description": "Lightweight orchestration for Claude Code: classifies each task, routes it to the cheapest capable executor (opencode, codex, claude), builds the brief, verifies and commits. Quem rege não toca.",
+      "description": "Classifies each task, routes it to the cheapest capable executor (opencode, codex, cursor-agent, agy, claude), briefs, verifies and commits.",
       "author": {
-        "name": "Francisross Soares de Oliveira"
+        "name": "batuta-ai"
       },
       "keywords": [
         "orchestration",
         "delegation",
         "cost-optimization",
-        "codex",
-        "opencode",
         "workflow"
       ],
       "category": "workflow"

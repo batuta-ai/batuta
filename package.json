@@ -1,0 +1,9 @@
+{
+  "name": "@batuta-ai/batuta",
+  "version": "0.2.14",
+  "description": "Batuta host package: one install for every AI coding agent.",
+  "private": true,
+  "bin": { "batuta-install": "bin/install.js" },
+  "repository": "github:batuta-ai/batuta",
+  "license": "MIT"
+}

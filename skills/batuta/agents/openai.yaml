@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta"
+  short_description: "Conduct a code task: route it to the cheapest capable executor, brief, delegate, verify, commit"
+  default_prompt: "Use $batuta to conduct a code task: route it to the cheapest capable executor, brief, delegate, verify, commit"

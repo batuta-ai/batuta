@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-route"
+  short_description: "View or edit the routing table"
+  default_prompt: "Use $batuta-route to view or edit the routing table"

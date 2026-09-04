@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-resume"
+  short_description: "Resume paused Batuta work from the files alone"
+  default_prompt: "Use $batuta-resume to resume paused Batuta work from the files alone"

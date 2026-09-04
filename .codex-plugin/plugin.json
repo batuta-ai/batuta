@@ -1,0 +1,37 @@
+{
+  "name": "batuta",
+  "version": "0.2.14",
+  "description": "Batuta for Codex: the conductor classifies each task, delegates to the cheapest capable executor, verifies and commits.",
+  "author": {
+    "name": "batuta-ai",
+    "url": "https://github.com/batuta-ai"
+  },
+  "homepage": "https://github.com/batuta-ai/batuta",
+  "repository": "https://github.com/batuta-ai/batuta",
+  "license": "MIT",
+  "keywords": [
+    "orchestration",
+    "delegation",
+    "cost-optimization",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Batuta",
+    "shortDescription": "Conduct code tasks through cheaper executors",
+    "longDescription": "Batuta turns the agent you talk to into a conductor: it classifies the task, routes it to the cheapest executor that can handle it (opencode, cursor-agent, agy, claude, or codex itself in the background), writes the brief, delegates, verifies the diff and commits. Use $batuta-init once per project, then just ask.",
+    "developerName": "batuta-ai",
+    "category": "Engineering",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Shell"
+    ],
+    "websiteURL": "https://github.com/batuta-ai/batuta",
+    "defaultPrompt": [
+      "Use $batuta-init to set Batuta up in this project",
+      "Fix the failing login test through batuta",
+      "Use $batuta-status to show what Batuta is doing here"
+    ]
+  }
+}

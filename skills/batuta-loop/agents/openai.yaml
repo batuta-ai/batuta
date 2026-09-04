@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-loop"
+  short_description: "Run an approved plan unattended through the batuta binary"
+  default_prompt: "Use $batuta-loop to run an approved plan unattended through the batuta binary"

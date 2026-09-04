@@ -1,270 +1,143 @@
 <p align="center">
-  <img src="docs/assets/logo.jpg" alt="Batuta — orquestre múltiplas CLI tools. Automático. Inteligente. Seu." width="720">
+  <img src="docs/assets/logo.jpg" alt="Batuta — conduct multiple CLI tools. Automatic. Smart. Yours." width="720">
 </p>
 
-> **Quem rege não toca.**
+> 🇧🇷 [Versão em português](README.pt-BR.md)
 
-**Batuta** é um framework leve de orquestração para o [Claude Code](https://claude.com/claude-code). O Claude atua como **maestro**: entende a tarefa, escolhe o executor de código mais barato que dá conta, monta o contexto, delega, verifica o resultado e faz o commit. Quem escreve o código são os **instrumentistas** — CLIs como `codex`, `opencode` (com Kimi, DeepSeek e outros modelos baratos) ou o próprio Claude, quando a tarefa exige.
+> **Quem rege não toca.** — The conductor does not play.
 
-O resultado: você usa a inteligência do Claude onde ela importa (decidir, revisar, garantir qualidade) e gasta centavos onde qualquer modelo resolve (escrever o código de uma tarefa bem especificada).
+**Batuta** turns the AI coding agent you already talk to into a **conductor**: it
+classifies the task, routes it to the cheapest executor that can handle it,
+writes the brief, delegates, verifies the diff and commits. The code is written
+by **executors** — `codex`, `opencode` (Kimi, DeepSeek, GLM…), `cursor-agent`,
+`agy` (Antigravity), a background `claude` — or by the conductor itself, only
+for critical work.
 
-> **Nota:** o v1 usa o Claude como maestro fixo, mas essa é uma decisão de foco, não de arquitetura — a direção do projeto é permitir configurar qualquer ferramenta como orquestrador no futuro.
+You spend the expensive model where it matters (deciding, reviewing, guaranteeing
+quality) and cents where any model does the job (writing the code of a
+well-specified task).
 
-## Por que o Batuta existe
+This repository is the **host package**: one install for every CLI. The skills
+and doctrine live in [batuta-ai/skills](https://github.com/batuta-ai/skills)
+(vendored here under `skills/`), the `batuta` binary in
+[batuta-ai/core](https://github.com/batuta-ai/core), and the CompozyOS
+extension in [batuta-ai/compozy](https://github.com/batuta-ai/compozy).
 
-Frameworks de orquestração para agentes de IA costumam cair em dois extremos:
+## Install
 
-- **Pesados demais** — fases obrigatórias, dezenas de subagentes, artefatos de planejamento para qualquer tarefinha, e tudo rodando no modelo mais caro.
-- **Leves demais** — nenhuma garantia: sem estado, sem verificação, sem rastreabilidade. Se der errado, boa sorte no `git reflog`.
+One command, every detected host:
 
-O Batuta fica no meio: **um ciclo único e enxuto** que preserva as quatro garantias que importam, e nada além delas.
+```bash
+npx -y github:batuta-ai/batuta
+```
 
-| Garantia | Como funciona |
-|---|---|
-| ✅ **Commits atômicos** | Cada tarefa verificada vira um commit. Desfazer é trivial. |
-| ✅ **Estado retomável** | Um único `WORK.md` em prosa. Feche o terminal, volte amanhã, continue. |
-| ✅ **Plano quando precisa** | Tarefa clara vai direto. Tarefa ambígua ganha 2-3 perguntas. Trabalho longo ganha plano formal. |
-| ✅ **Verificação sempre** | Todo diff passa por review + testes + critérios de aceite antes do commit. |
+`--list` shows the host matrix, `--dry-run` prints what would run, `--only <host>`
+targets one. Per host, the same thing by hand:
 
-## Como funciona
+| Host | Install | Entry points |
+|---|---|---|
+| Claude Code | `claude plugin marketplace add batuta-ai/batuta` · `claude plugin install batuta@batuta` | the `batuta` skill on any code task; `/batuta:init`, `/batuta:plan`, `/batuta:loop`, `/batuta:review`, `/batuta:status`, `/batuta:route`, `/batuta:pause`, `/batuta:resume` |
+| Codex CLI | `codex plugin marketplace add batuta-ai/batuta` · `codex plugin add batuta` | `$batuta`, `$batuta-init`, `$batuta-plan`, … |
+| Cursor | `npx skills add batuta-ai/skills -a cursor -g` | the skills, by name |
+| opencode | `npx skills add batuta-ai/skills -a opencode -g` + `hosts/opencode/commands/` | `/batuta`, `/batuta-init`, … |
+| Antigravity (`agy`) and any other agent | `npx skills add batuta-ai/skills -g` | the skills, by name |
+| CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | the `batuta` agent |
+
+The `batuta` binary (executor inventory, verification gates, unattended loop) is
+installed with `go install github.com/batuta-ai/core/cmd/batuta@latest` when Go
+is present; the skills work without it.
+
+Then, in a project: `/batuta:init` once, and just ask for code tasks.
+
+## How it works
 
 ```
-        você: "corrige o bug do login que dá 500 quando o email tem +"
+        you: "fix the login 500 when the email has a +"
           │
           ▼
-   ┌─────────────┐    classifica: tarefa média
-   │   CLAUDE    │──► roteia: → codex (assinatura ChatGPT, já paga)
-   │  (maestro)  │    monta o brief: contexto + arquivos + critérios de aceite
+   ┌─────────────┐    classifies: medium backend
+   │  CONDUCTOR  │──► routes: → codex (ChatGPT subscription, already paid)
+   │ (your agent)│    writes the brief: context + files + acceptance criteria
    └──────┬──────┘
-          │ delega
+          │ delegates
           ▼
    ┌─────────────┐
-   │    CODEX    │──► escreve o código
+   │    CODEX    │──► writes the code
    └──────┬──────┘
           │ diff
           ▼
-   ┌─────────────┐    revisa o diff
-   │   CLAUDE    │──► roda os testes
-   │  (maestro)  │    confere os critérios de aceite
+   ┌─────────────┐    scope check, diff review
+   │  CONDUCTOR  │──► runs the tests itself
+   │             │    re-runs each criterion's proof
    └──────┬──────┘
-          │ ✅ passou
+          │ ✅ passed
           ▼
-    commit atômico + linha no WORK.md
+    atomic commit + one line in WORK.md
 ```
 
-Se a verificação falhar, o executor recebe o feedback e tenta **uma vez** de novo. Falhou de novo? A tarefa **escala automaticamente** para um executor mais capaz.
+Verification fails → the executor gets specific feedback and **one retry**.
+Fails again → the task **escalates** one row up the routing table. A request
+that is a list — six components, say — is **decomposed** first: six cycles, six
+commits.
 
-E se o pedido for uma lista — 6 componentes, por exemplo? O maestro
-**decompõe antes de delegar**: cada item vira um ciclo próprio (brief →
-delegação → verificação → commit), um de cada vez. 6 componentes = 6 commits
-atômicos, não um commitzão no final. Prefere paralelo? Configura no
-onboarding ou pede na hora ("roda em paralelo").
+## The four guarantees
 
-## Roteamento por complexidade
-
-O coração do Batuta é uma tabela simples — que você edita como quiser:
-
-| Complexidade | Exemplos | Executor | Custo |
-|---|---|---|---|
-| **Trivial** | rename, config, texto, teste simples | `opencode` + Kimi/DeepSeek | centavos (API) |
-| **Média** | feature isolada, bugfix com repro clara | `codex` (modelo default) | assinatura ChatGPT |
-| **Complexa** | multi-arquivo especificável num brief preciso | `codex` + modelo forte, reasoning alto | assinatura ChatGPT |
-| **Crítica** | arquitetura, segurança, decisões que dependem do contexto da conversa | Claude executa | assinatura Claude |
-
-O Claude classifica e informa a decisão em uma linha (`→ codex: bugfix médio`). Não gostou? É só falar: *"usa o kimi pra isso"*.
-
-A linha divisória entre **Complexa** e **Crítica** é o brief, não o tamanho: se dá para escrever um brief autossuficiente (lista de arquivos, decisões já tomadas, critérios verificáveis), a lane Complexa assume. Se a tarefa exige o contexto da conversa ou julgamento de segurança, fica com o Claude da sessão.
-
-E o executor da lane Complexa é **escolha sua no onboarding**: o default é codex + modelo forte (custo flat da assinatura ChatGPT), mas quem prefere um modelo Claude forte para lógica pesada pode mapear a lane para uma instância em background (`claude -p --model opus`). O limite dessa variante é contexto, não capacidade: a instância em background não enxerga a conversa — por isso ela só serve para o que cabe num brief, e o que precisa da conversa continua Crítico, com a sessão.
-
-## O batedor: pesquisa de arquivos por centavos
-
-Além das lanes de execução, o Batuta tem uma **lane de apoio**: a pesquisa.
-Quem varre a base atrás de "onde mora X?" não é o maestro — é o *batedor*, um
-modelo barato (Kimi, Haiku…) rodando **read-only em background**, que devolve
-um relatório curto: resposta, arquivos com linha, evidência e incertezas.
-
-O maestro não confia de olhos fechados: todo path citado passa por `ls`, todo
-símbolo por `grep`. Referência fantasma → o batedor tenta de novo com o
-feedback; falhou de novo → o maestro pesquisa ele mesmo (pesquisa não sobe a
-escada de escalação — o fallback é o maestro).
-
-Isso vale para o mapa do projeto no onboarding, para o contexto dos briefs e
-para perguntas suas do tipo "onde é tratado o pagamento?". E pesquisa nunca
-escreve código: a árvore git é conferida antes e depois de cada batedor.
-
-## Comandos
-
-| Comando | O que faz |
+| Guarantee | How |
 |---|---|
-| `/batuta` | Entrada principal: entende o pedido, classifica, roteia, delega e verifica. Projeto sem configuração → aponta pro `/batuta:init`; trabalho pausado → oferece o `/batuta:resume` |
-| `/batuta:init` | Onboarding na primeira vez; reconfiguração depois (lanes, modelos, perfil, mapa) |
-| `/batuta:plan` | Força um plano formal aprovável (para trabalhos longos, que atravessam sessões) |
-| `/batuta:pause` | Pausa o trabalho: `WORK.md` honesto + handoff da sessão em `.batuta/handoff.md` |
-| `/batuta:resume` | Retoma do ponto exato: lê estado + handoff, confirma com você e segue; o handoff é consumido |
-| `/batuta:status` | Mostra o `WORK.md`, as tarefas em background e a leitura de roteamento (tarefas por lane, taxa de delegação e de escalada) |
-| `/batuta:route` | Exibe e edita as tabelas de roteamento (lanes de execução e de apoio) |
-| `/batuta:review` | Re-executa a verificação sobre qualquer diff, sob demanda |
+| **Atomic commits** | one verified task = one commit; undo is trivial |
+| **Resumable state** | a single `WORK.md` in prose; close the terminal, come back tomorrow |
+| **Plan when needed** | clear task goes straight in; ambiguous task gets two or three questions; long work gets `/batuta:plan` |
+| **Verification always** | scope, diff review, tests run by the conductor, criteria with re-run proof — the executor's report is never evidence |
 
-## Onboarding: o Batuta conhece o seu projeto
+## Routing
 
-O onboarding é o `/batuta:init`: na primeira vez em um projeto, ele faz 5-6 perguntas rápidas (chamou `/batuta` antes de configurar? Ele te aponta o init e para):
+| Lane | Examples | Default executor | Cost |
+|---|---|---|---|
+| `low` | rename, config, copy, simple test | opencode + a budget model | cents (API) |
+| `medium` | isolated feature, bugfix with clear repro | codex, default model | ChatGPT subscription |
+| `high` | multi-file work a precise brief can fully specify | codex, strongest model, high reasoning | ChatGPT subscription |
+| `critical` | architecture, security, anything needing the conversation | the conducting host itself | host subscription |
 
-- Qual a stack? (React, Next.js, React Native, Vue, Node API, NestJS, Python, Laravel... — ele detecta pelos manifests do projeto e sugere o template mais específico)
-- Qual a metodologia? (TDD ou testes depois; conventional commits ou livre)
-- Qual o comando de testes e de build?
-- Lotes: execução sequencial (default) ou paralela?
-- Worktree por tarefa: `off`, `medium+` (default) ou `always`?
+Rows may be split by domain (`frontend` → `cursor-agent`, say). Onboarding
+discovers what is installed and proposes the table; you confirm every row.
+Adding an executor is one markdown file: `skills/batuta/adapters/_template.md`.
 
-Ele também **checa quais executores você tem** (codex? opencode? logados?) e propõe o mapeamento das lanes a partir do que encontrou — **mas quem decide é você**: qual CLI, provider e modelo assume cada lane. Tem o trio completo? A tabela default vale, só confirmando os modelos — inclusive quem assume a lane Complexa: codex com modelo forte ou um modelo Claude forte em background (`claude -p --model opus`). Só tem Claude e opencode? O opencode cobre trivial e média, a Complexa vai para um Claude forte em background e a Crítica fica com a sessão. Só o Claude? As lanes se diferenciam por modelo (Haiku para trivial, Sonnet para média, Opus em background para complexa, a sessão para crítica). A mesma proposta cobre a lane de pesquisa: um modelo de centavos para o batedor (Kimi via opencode, ou Haiku em background). Uma pergunta de confirmação e a tabela de roteamento do seu projeto nasce com executores e modelos explícitos — e você descobre na hora (não no meio de uma tarefa) se falta instalar algo.
+`/batuta:status` reads `WORK.md` back as facts: tasks per lane, delegation
+rate, escalation rate. No invented accounting.
 
-Instalou um executor novo depois? `/batuta:init` de novo entra em modo **reconfiguração**: re-checa os executores da tabela, mostra o mapeamento atual e muda só o que você pedir — sem refazer o onboarding e sem tocar o `WORK.md`.
-
-As respostas viram o `.batuta/profile.md`, e as convenções da sua stack (via templates inclusos) entram **automaticamente em todo brief** enviado aos executores. Ou seja: o codex e o kimi seguem as regras do *seu* projeto sem você repetir nada. Cada template é adaptativo — o padrão do *seu* projeto manda — e traz um bloco de vetações: anti-padrões da stack que o executor nunca pode cometer.
-
-O perfil também guarda um **mapa curto do projeto** (onde ficam rotas, componentes, testes…), montado no onboarding e atualizado como efeito colateral do trabalho — nada de fase de mapeamento nem mapa gigante que envelhece.
-
-**Vindo de outro framework?** Se o Batuta encontrar artefatos de um GSD da vida (`.planning/`, roadmaps), ele oferece importar o estado: o que estava em andamento vira `WORK.md`, o que falta vira plano. Seus artefatos antigos ficam intocados.
-
-## Paralelismo
-
-Tarefas independentes rodam **em paralelo**: cada executor em background. Com a linha `Worktree` do perfil ativa, cada tarefa já roda no seu próprio worktree (veja abaixo); com ela `off`, um git worktree próprio por executor quando há risco de conflito. Se você tiver o plugin [superpowers](https://github.com/obra/superpowers) instalado, o Batuta usa as skills dele para reger a distribuição; sem ele, usa os recursos nativos do Claude Code. Nenhuma dependência obrigatória. Lotes decompostos são sequenciais por default; o paralelo entra pela configuração do perfil ou por pedido seu — e mesmo em paralelo, verificação e commit continuam por item.
-
-## Worktree por tarefa
-
-Com a linha `Worktree` do perfil (`off`/`medium+`/`always`, default
-`medium+` no onboarding), o executor trabalha num git worktree isolado por
-tarefa: commita à vontade lá (WIP), o maestro revisa e testa no branch e,
-aprovado, integra com squash no main escrevendo a mensagem do commit — um
-task verificado continua sendo um commit atômico, e trabalho rejeitado é só
-deletar o worktree, sem revert no seu checkout. Em `medium+`, tarefas
-triviais ficam no checkout principal (worktree para trocar uma string é
-cerimônia demais); `always` leva tudo para worktree; `off` mantém o
-comportamento clássico. A linha opcional `Install:` do perfil prepara o
-ambiente de testes dentro do worktree quando necessário.
-
-## Integração com superpowers
-
-Se você tem o plugin [superpowers](https://github.com/obra/superpowers)
-instalado, o Batuta rege os passos do ciclo com as skills dele — brainstorming
-para pedidos ambíguos, `writing-plans` no planejamento, o loop de
-subagent-driven-development na orquestração de lotes, o rigor de code review
-na verificação, `systematic-debugging` em falhas e TDD quando o próprio
-maestro implementa. O método é do superpowers; as regras são do Batuta:
-artefatos em `.batuta/` e `WORK.md`, implementadores vêm da tabela de
-roteamento, verificação e commit por item. Todo brief ainda carrega uma
-instrução condicional para executores (codex, opencode) que tenham o
-superpowers do lado deles. Tudo automático e sem dependência: sem o plugin,
-cada passo segue exatamente como descrito acima. O mapa completo vive em
-`superpowers.md` na raiz do plugin.
-
-## Integração com o plugin codex
-
-Se você tem o [plugin do Codex](https://github.com/openai/codex-plugin-cc)
-instalado no Claude Code, o Batuta o usa em quatro momentos: redige os
-briefs da rota codex com o método de prompting do plugin, delega pelo
-runtime compartilhado (sem cold start do CLI), pede um diagnóstico ao
-`codex:rescue` antes de escalar um item que falhou e coleta um review
-cruzado do Codex em itens complex/critical antes do veredicto. O músculo é
-do plugin; as regras são do Batuta: roteamento, modelo da linha, veredicto
-e commit continuam do maestro. Tudo automático e sem dependência: sem o
-plugin, a rota codex volta ao `codex exec` do adapter e o ciclo segue
-como sempre — e o plugin instalado não dispensa o `codex` CLI logado. O
-mapa completo vive em `codex-plugin.md` na raiz do plugin.
-
-## Adicionando um executor novo
-
-Sem código, sem PR no framework. Adicionar um executor é:
-
-1. Copiar `adapters/_template.md` → `adapters/meu-cli.md`
-2. Preencher: como invocar em modo não-interativo, como passar contexto, custo, limites
-3. Adicionar uma linha na tabela do `routing.md`
-
-Pronto — o maestro já pode delegar para ele.
-
-E não se preocupe em acumular adapters: eles são **dormentes**. Um adapter só é lido quando a linha dele na tabela é usada — ter cursor, copilot, kimi CLI e mais dez no catálogo custa zero contexto até você colocar um deles numa lane. A tabela referencia, o adapter dorme.
-
-## Estado: um arquivo, zero cerimônia
-
-```markdown
-# WORK — meu-projeto
-
-## Em andamento
-- [ ] refatorar auth para suportar OAuth → codex (delegada 2026-07-19)
-
-## Feito
-- [x] corrigir 500 no login com email contendo + → kimi, commit abc123
-```
-
-Prosa e checkboxes. Sem tabelas com schema rígido, sem validação que quebra com um caractere fora do lugar.
-
-Repare que cada linha do Feito conta a história completa: **qual executor, qual modelo, e se precisou escalar**. Isso é o diário de regência do projeto — e é o que alimenta a resposta da próxima seção.
-
-Entre sessões, `/batuta:pause` deixa o `WORK.md` honesto e escreve um handoff curto (`.batuta/handoff.md`) com o ponto exato do ciclo, as decisões que ainda não viraram código e o estado dos executores em background. `/batuta:resume` lê tudo, confere o git, confirma com você e retoma — consumindo o handoff, que é nota de passagem, não estado.
-
-## Quanto estou economizando?
-
-O Batuta não inventa contabilidade: ele não tem como saber quantos tokens cada CLI gastou nem o preço de cada um — qualquer número em reais que ele cuspisse seria chute vestido de medição. O que ele faz é melhor: **registra fatos e deixa você tirar a conta**.
-
-Pergunte `/batuta:status` e ele lê o `WORK.md` e responde com fatos:
-
-> 23 tarefas concluídas: 14 triviais (kimi), 6 médias (codex), 2 complexas (codex gpt-5-codex high), 1 crítica (claude).
-> **87% do código deste projeto não gastou sua assinatura Claude.**
-> 2 escaladas saindo da lane trivial — considere um modelo mais forte ou classificação mais conservadora.
-
-Três leituras práticas disso:
-
-- **Taxa de delegação** — o contrafactual é evidente: sem o Batuta, 100% dessas tarefas rodariam no Claude. Cada tarefa desviada é franquia da sua assinatura que sobra para o que realmente precisa dela (e limite semanal que você para de estourar).
-- **Taxa de escalada** — o sinal acionável. Escalada frequente = você pagou duas vezes; o botão de ajuste é a tabela de roteamento, que é sua.
-- **Reais, se você quiser** — coloque seus preços de referência na coluna de custo do seu `routing.md` e o `/batuta:status` faz a multiplicação — deixando claro que as premissas são suas.
-
-## Instalação
-
-Dentro do Claude Code:
+## Layout
 
 ```
-/plugin marketplace add franciscpd/batuta
-/plugin install batuta@batuta
+.claude-plugin/  .codex-plugin/  .cursor-plugin/  .agents/plugins/   host manifests
+commands/                thin /batuta:* routers for Claude Code
+hosts/opencode/commands/ the same routers for opencode
+hooks/ scripts/          SessionStart hook (one line of context) and the skills sync
+skills/                  vendored from batuta-ai/skills at the tag in skills-lock.json
+bin/install.js           the multi-host installer
+docs/                    design specs; docs/specs-history holds the v1 PRD and plans
 ```
 
-Ou pelo terminal:
+`scripts/sync-skills.sh <tag>` updates the vendored skills; `tests/check.sh`
+fails when `skills/` drifts from the lock.
 
-```bash
-claude plugin marketplace add franciscpd/batuta
-claude plugin install batuta@batuta
-```
+## Philosophy
 
-Depois é só abrir um projeto e rodar `/batuta:init` para configurar — daí em diante o `/batuta` conduz o ciclo.
+1. **The conductor does not play** — tokens go to directing, not typing code.
+2. **Process weighs as little as the task allows** — planning is adaptive, never a prerequisite.
+3. **State is prose, not schema** — nothing breaks on an unescaped pipe.
+4. **Every delivery is verified** — always, no exceptions.
+5. **Extensible by file, not by code** — new executor = new markdown file.
 
-Pré-requisitos:
+## Inspirations
 
-- [Claude Code](https://claude.com/claude-code) (o maestro)
-- Pelo menos um executor instalado e logado: [codex CLI](https://github.com/openai/codex), [opencode](https://opencode.ai) ou apenas o próprio Claude — sem um executor barato, tudo colapsa para a lane do Claude e você perde justamente a graça
+[andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)
+(verifiable goals, diff traceability, orphans), the
+[GSD](https://github.com/gsd-build/get-shit-done) family (which guarantees are
+worth their weight), [pedronauck/skills](https://github.com/pedronauck/skills)
+(self-report is not evidence, scoped writes, the rent test) and
+[beer-and-code-harness](https://github.com/beerandcodeteam/beer-and-code-harness)
+(mechanical gates, preflight, thin routers).
 
-> 🚧 **v0.1.0 em fase de teste** — o desenho está no [PRD](docs/PRD.md); feedback e issues são bem-vindos.
-
-## Filosofia
-
-1. **Quem rege não toca** — o orquestrador gasta tokens dirigindo, não digitando código.
-2. **O processo pesa o mínimo que a tarefa permitir** — planejamento é adaptativo, nunca pré-requisito.
-3. **Estado é prosa, não schema** — nada que quebre com um pipe não escapado.
-4. **Toda entrega passa por verificação** — sempre, sem exceção.
-5. **Extensível por arquivo, não por código** — novo executor = novo arquivo markdown.
-
-## Identidade visual
-
-O guia completo da marca — conceito (batuta + ferramentas CLI + orquestração), paleta, tipografia e aplicações — está em [`docs/assets/brand-guide.jpg`](docs/assets/brand-guide.jpg).
-
-## Inspirações
-
-- [andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) — princípios comportamentais contra vícios clássicos de LLMs escrevendo código, derivados das [observações do Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876). O Batuta incorpora três deles nos briefs e na verificação: critérios de aceite como metas verificáveis, o teste de rastreabilidade do diff (cada linha alterada rastreia até o pedido) e a regra dos órfãos (limpe só a bagunça que a sua mudança criou).
-- Frameworks de processo como o [GSD](https://github.com/gsd-build/get-shit-done) — pelo que ensinaram sobre garantias que valem a pena (commits atômicos, estado retomável, verificação) e sobre o peso de processo que não vale.
-- [pedronauck/skills](https://github.com/pedronauck/skills) — catálogo de skills do Pedro Nauck cujos contratos o Batuta destila em vez de instalar: o princípio "self-report não é evidência" e os red flags de higiene de teste (`agent-output-audit`), brief que carrega o quê e não o como (`to-prompt`), fix de causa raiz em vez de workaround (`no-workarounds`), delegation packets com stop conditions (`herdr-orchestration`) e o rent test para contexto residente (`writing-agents-md`). O plano completo está na [spec de destilação](docs/superpowers/specs/2026-07-26-destilacao-pedronauck-skills-design.md).
-
-## Contribuindo
-
-O projeto está no começo — o melhor jeito de contribuir agora é ler o [PRD](docs/PRD.md) e abrir uma issue com ideias, críticas ou casos de uso. Feito por e para desenvolvedores brasileiros 🇧🇷, mas contribuições de qualquer lugar são bem-vindas.
-
-## Licença
+## License
 
 [MIT](LICENSE)

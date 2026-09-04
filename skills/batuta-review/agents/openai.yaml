@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-review"
+  short_description: "Verify a diff: scope, traceability, tests, criteria, second reviewer"
+  default_prompt: "Use $batuta-review to verify a diff: scope, traceability, tests, criteria, second reviewer"

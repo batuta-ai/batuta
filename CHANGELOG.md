@@ -10,8 +10,8 @@
 
 ### Bug Fixes
 
-* compozy.md alinhado à CLI 0.3.0 — overrides no session prompt, task child create e block --kind ([3e81b28](https://github.com/franciscpd/batuta/commit/3e81b28259e418382d5ca8c7e084f3adf1a7eaca))
-* task retry recebe run-id; aborto definitivo cancela a task no board ([116127f](https://github.com/franciscpd/batuta/commit/116127f633aeb3e2bd50a8101fe6ce805a3856ec))
+* compozy.md aligned with CLI 0.3.0 — overrides on session prompt, task child create and block --kind ([3e81b28](https://github.com/franciscpd/batuta/commit/3e81b28259e418382d5ca8c7e084f3adf1a7eaca))
+* task retry takes the run id; a definitive abort cancels the board task ([116127f](https://github.com/franciscpd/batuta/commit/116127f633aeb3e2bd50a8101fe6ce805a3856ec))
 
 ## [0.2.13](https://github.com/franciscpd/batuta/compare/v0.2.12...v0.2.13) (2026-08-01)
 
@@ -36,7 +36,7 @@
 
 ### Bug Fixes
 
-* compozy.md — scout nunca vira sessão, reconciliando a exceção da lane crítica ([b5b107e](https://github.com/franciscpd/batuta/commit/b5b107e700509c9f5c9f8a0f7a42f2d1b20e5cdd))
+* compozy.md — the scout never becomes a session, reconciling the critical-lane exception ([b5b107e](https://github.com/franciscpd/batuta/commit/b5b107e700509c9f5c9f8a0f7a42f2d1b20e5cdd))
 * explicit worktree on spawn, critical-lane carve-out and session lifecycle ([6c860ea](https://github.com/franciscpd/batuta/commit/6c860ea8c64b9aa55e33c5a368e239501da4eeff))
 
 ## [0.2.11](https://github.com/franciscpd/batuta/compare/v0.2.10...v0.2.11) (2026-08-01)
@@ -49,7 +49,7 @@
 
 ### Bug Fixes
 
-* lista de campos do brief no codex-plugin.md reflete o Step 2 atual ([b5fca5a](https://github.com/franciscpd/batuta/commit/b5fca5a6e0ed73d9c224e287d399002645eed8d8))
+* the brief field list in codex-plugin.md reflects the current Step 2 ([b5fca5a](https://github.com/franciscpd/batuta/commit/b5fca5a6e0ed73d9c224e287d399002645eed8d8))
 
 ## [0.2.10](https://github.com/franciscpd/batuta/compare/v0.2.9...v0.2.10) (2026-08-01)
 
@@ -101,7 +101,7 @@
 ### Features
 
 * the cycle points at codex-plugin.md in Steps 2–4 ([dcd142c](https://github.com/franciscpd/batuta/commit/dcd142cfc0dbeb3b0575d296ac45742f3549414f))
-* codex-plugin.md — integração central (músculo emprestado, regras do Batuta) ([f901ceb](https://github.com/franciscpd/batuta/commit/f901ceb5a327229a2ba1e060a91ef80422781f48))
+* codex-plugin.md — central integration (borrowed muscle, Batuta's rules) ([f901ceb](https://github.com/franciscpd/batuta/commit/f901ceb5a327229a2ba1e060a91ef80422781f48))
 * review and the codex adapter point at codex-plugin.md ([118dac5](https://github.com/franciscpd/batuta/commit/118dac551a643684b23b028cc681c8705d115c49))
 
 
@@ -129,7 +129,7 @@
 
 * the cycle points at superpowers.md in Steps 1–4 ([6ba5be1](https://github.com/franciscpd/batuta/commit/6ba5be13f5fef40733644dbb98687f6d375ce98c))
 * plan and review point at superpowers.md ([8097932](https://github.com/franciscpd/batuta/commit/809793299fc400a1071f3809dc3e2b96d633230c))
-* superpowers.md — integração central (método emprestado, regras do Batuta) ([98db01d](https://github.com/franciscpd/batuta/commit/98db01d0451fca1399b04508a8af760b10eecc1f))
+* superpowers.md — central integration (borrowed method, Batuta's rules) ([98db01d](https://github.com/franciscpd/batuta/commit/98db01d0451fca1399b04508a8af760b10eecc1f))
 
 
 ### Bug Fixes
@@ -156,7 +156,7 @@
 
 ### Bug Fixes
 
-* README aponta o init no quickstart e ajustes de texto no PRD ([45ec178](https://github.com/franciscpd/batuta/commit/45ec178708b94cd278bb6164d4fe97081a2bcdae))
+* README points the quickstart at init; PRD wording adjustments ([45ec178](https://github.com/franciscpd/batuta/commit/45ec178708b94cd278bb6164d4fe97081a2bcdae))
 
 ## [0.2.0](https://github.com/franciscpd/batuta/compare/v0.1.5...v0.2.0) (2026-07-20)
 

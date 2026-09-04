@@ -1,0 +1,20 @@
+{
+  "name": "batuta",
+  "interface": {
+    "displayName": "Batuta"
+  },
+  "plugins": [
+    {
+      "name": "batuta",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
+    }
+  ]
+}
