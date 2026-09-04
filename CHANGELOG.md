@@ -5,202 +5,202 @@
 
 ### Features
 
-* task board Compozy — itens do WORK.md como tasks, delegação como task run ([b554838](https://github.com/franciscpd/batuta/commit/b554838869dcaca33fef3894ff17d77f9044f707))
+* Compozy task board — WORK.md items as tasks, delegation as task runs ([0f8cb7c](https://github.com/franciscpd/batuta/commit/0f8cb7c11fc4229f35cb2beddc247785ee04232b))
 
 
 ### Bug Fixes
 
-* compozy.md alinhado à CLI 0.3.0 — overrides no session prompt, task child create e block --kind ([9846c20](https://github.com/franciscpd/batuta/commit/9846c2046f79ddc8237b93680ff77a0f3bd5ba22))
-* task retry recebe run-id; aborto definitivo cancela a task no board ([1160af8](https://github.com/franciscpd/batuta/commit/1160af81c9cd82e594d7b31e8b2da479d3ee9932))
+* compozy.md alinhado à CLI 0.3.0 — overrides no session prompt, task child create e block --kind ([3e81b28](https://github.com/franciscpd/batuta/commit/3e81b28259e418382d5ca8c7e084f3adf1a7eaca))
+* task retry recebe run-id; aborto definitivo cancela a task no board ([116127f](https://github.com/franciscpd/batuta/commit/116127f633aeb3e2bd50a8101fe6ce805a3856ec))
 
 ## [0.2.13](https://github.com/franciscpd/batuta/compare/v0.2.12...v0.2.13) (2026-08-01)
 
 
 ### Features
 
-* init oferece pointer de descoberta do Batuta no AGENTS.md ([0af191b](https://github.com/franciscpd/batuta/commit/0af191bb5100d1b51b0b2c16072d78438dde6259))
+* offer the Batuta discovery pointer in AGENTS.md ([3bd50fd](https://github.com/franciscpd/batuta/commit/3bd50fd1b7a3ba1272a3af161c329021b5935d62))
 
 
 ### Bug Fixes
 
-* init — idempotência explícita do pointer e reconciliação do reconfigure ([4b2000f](https://github.com/franciscpd/batuta/commit/4b2000ff191cbd636bb6ee5bf47f4d1e9b5edfd1))
+* explicit pointer idempotency and reconfigure reconciliation ([d818f5d](https://github.com/franciscpd/batuta/commit/d818f5d5f04080c81f61fef4ffdd2f4ff4df1e95))
 
 ## [0.2.12](https://github.com/franciscpd/batuta/compare/v0.2.11...v0.2.12) (2026-08-01)
 
 
 ### Features
 
-* integração Compozy runtime — compozy.md dormante e delegação como sessão gerenciada ([e1b1427](https://github.com/franciscpd/batuta/commit/e1b1427c121ca4b017441ff17f615887e7ac2f89))
-* runtime compozy no init, status e pause — oferta, listagem e handoff de sessões ([718c83a](https://github.com/franciscpd/batuta/commit/718c83ac86ace5dddf67c6cf09e020d32db39c80))
+* Compozy runtime integration — dormant compozy.md and delegation as a managed session ([24e5a80](https://github.com/franciscpd/batuta/commit/24e5a80b563e5ed3d27420f097d54e8ba61b8925))
+* Compozy runtime in init, status and pause — offer, listing and session handoff ([6264d19](https://github.com/franciscpd/batuta/commit/6264d1939c42e25f55367fc9173ebd74c3a8f0c0))
 
 
 ### Bug Fixes
 
-* compozy.md — scout nunca vira sessão, reconciliando a exceção da lane crítica ([880a04c](https://github.com/franciscpd/batuta/commit/880a04c8898f21039360ca0c94681ba2d3f16239))
-* compozy.md — worktree explícito no spawn, carve-out da lane crítica e ciclo de vida das sessões ([48452f4](https://github.com/franciscpd/batuta/commit/48452f417359964c57a59e217e03c29b1f59f3a6))
+* compozy.md — scout nunca vira sessão, reconciliando a exceção da lane crítica ([b5b107e](https://github.com/franciscpd/batuta/commit/b5b107e700509c9f5c9f8a0f7a42f2d1b20e5cdd))
+* explicit worktree on spawn, critical-lane carve-out and session lifecycle ([6c860ea](https://github.com/franciscpd/batuta/commit/6c860ea8c64b9aa55e33c5a368e239501da4eeff))
 
 ## [0.2.11](https://github.com/franciscpd/batuta/compare/v0.2.10...v0.2.11) (2026-08-01)
 
 
 ### Features
 
-* /batuta:review roda a checagem de escopo quando há brief associado ([9b89a03](https://github.com/franciscpd/batuta/commit/9b89a03471d62bac299a9c665be34d7e9ebab118))
+* run the scope check when a brief is associated ([8d7145c](https://github.com/franciscpd/batuta/commit/8d7145ca5b32e39bb70ac461759441304b44d2c0))
 
 
 ### Bug Fixes
 
-* lista de campos do brief no codex-plugin.md reflete o Step 2 atual ([fc50bef](https://github.com/franciscpd/batuta/commit/fc50bef715088edd84dd1b2af6d8dfb6e97a5abf))
+* lista de campos do brief no codex-plugin.md reflete o Step 2 atual ([b5fca5a](https://github.com/franciscpd/batuta/commit/b5fca5a6e0ed73d9c224e287d399002645eed8d8))
 
 ## [0.2.10](https://github.com/franciscpd/batuta/compare/v0.2.9...v0.2.10) (2026-08-01)
 
 
 ### Features
 
-* escopo declarado no brief — campo Scope no Step 2 e checagem mecânica no Step 4 ([2732076](https://github.com/franciscpd/batuta/commit/27320769da01091e56d0d2ba7cafe0e19f2cf858))
-* trilha de execução — .batuta/runs/ por tarefa com runs.md dormante ([1f47c66](https://github.com/franciscpd/batuta/commit/1f47c66560bfa1f8b94a249e6b087432cab6ae7e))
+* declared scope in the brief — Scope field in Step 2 and mechanical check in Step 4 ([9025a03](https://github.com/franciscpd/batuta/commit/9025a03143b4038a1bb2cc16c15bfa8d95ae294a))
+* run trail — .batuta/runs/ per task with a dormant runs.md ([7c80e23](https://github.com/franciscpd/batuta/commit/7c80e2339312178201bd7b5831000c909b365bf1))
 
 
 ### Bug Fixes
 
-* trilha de item abortado no Step 4, checagem de escopo path-completa e ajustes de review ([05dce2f](https://github.com/franciscpd/batuta/commit/05dce2f31e7c7b8f9568d90fda8a4c7a0172eea2))
+* aborted-item trail in Step 4, path-complete scope check and review adjustments ([ffc4636](https://github.com/franciscpd/batuta/commit/ffc46367f580ad4852ad37201b6dbb0929bbe8ac))
 
 ## [0.2.9](https://github.com/franciscpd/batuta/compare/v0.2.8...v0.2.9) (2026-07-27)
 
 
 ### Bug Fixes
 
-* gate no Step 0 — meta-perguntas sobre integrações leem o arquivo de integração antes de responder ([b21d6ae](https://github.com/franciscpd/batuta/commit/b21d6aeb042ca4f80bce3e4a97f6c8025c8b36d3))
+* Step 0 gate — meta-questions about integrations read the integration file before answering ([e68d154](https://github.com/franciscpd/batuta/commit/e68d1547d1a0ab959be8b7f19a366573887e390c))
 
 ## [0.2.8](https://github.com/franciscpd/batuta/compare/v0.2.7...v0.2.8) (2026-07-26)
 
 
 ### Features
 
-* brief endurecido — evidência esperada, stop conditions e anti-workaround (Onda 2 da destilação) ([59cdef9](https://github.com/franciscpd/batuta/commit/59cdef9bbb3c7db57bd1fed1ab2712a15f45c503))
-* contrato de cross-review — lentes, findings como artefato e julgamento do maestro (Onda 3 da destilação) ([5579328](https://github.com/franciscpd/batuta/commit/5579328e4af2b553f014b6bb90fc07b8c2d79bd1))
-* verificação endurecida — relato não é evidência (Onda 1 da destilação) ([217b42e](https://github.com/franciscpd/batuta/commit/217b42e932271ac1e94118eeb3e2a2295a4f1290))
+* hardened brief — expected evidence, stop conditions and anti-workaround (distillation wave 2) ([7720eda](https://github.com/franciscpd/batuta/commit/7720eda846f27d6df755b6ab4ce050e0b135c25e))
+* cross-review contract — lenses, findings as artifact and the maestro's judgment (distillation wave 3) ([b1e5ac2](https://github.com/franciscpd/batuta/commit/b1e5ac2fb72d4f765a2a6643aa7cbe95df461495))
+* hardened verification — a report is not evidence (distillation wave 1) ([b1548cd](https://github.com/franciscpd/batuta/commit/b1548cdc90cfa124f07941afb41282ae010755fc))
 
 ## [0.2.7](https://github.com/franciscpd/batuta/compare/v0.2.6...v0.2.7) (2026-07-26)
 
 
 ### Features
 
-* nota do catálogo e blocos Never nos templates existentes ([6ab46df](https://github.com/franciscpd/batuta/commit/6ab46dfd45313ca0d118504a44db7536492f131c))
-* template NestJS e catálogo completo no init ([beac9c5](https://github.com/franciscpd/batuta/commit/beac9c583099271490e6e04548c44b25303a63ac))
-* templates Next.js e React Native ([0e74b07](https://github.com/franciscpd/batuta/commit/0e74b077cb80a1af0066ba6d1dee0241f6503214))
-* templates Python e Laravel ([38f1c10](https://github.com/franciscpd/batuta/commit/38f1c10b589ced3022b499c9ab82d4033a683ebc))
+* catalog note and Never blocks in the existing templates ([25600e7](https://github.com/franciscpd/batuta/commit/25600e74370e7f5b8083244aeb3e1c9202fbad37))
+* NestJS template and the full catalog in init ([8c9a9c0](https://github.com/franciscpd/batuta/commit/8c9a9c021f0857cc39a87e9734221d418fc5c23b))
+* Next.js and React Native templates ([ea87942](https://github.com/franciscpd/batuta/commit/ea87942b7235a4e40c9b93cdcd8484c7e5ae5858))
+* Python and Laravel templates ([91a00a4](https://github.com/franciscpd/batuta/commit/91a00a413a8f97e622ea526160350102fcfe32e8))
 
 
 ### Bug Fixes
 
-* achados do review final dos templates por stack (cadeia Extends, guardas restauradas) ([3b0426e](https://github.com/franciscpd/batuta/commit/3b0426e55fb56fc274246675ec1d540c1e15731c))
+* final review findings on the stack templates (Extends chain, restored guards) ([b8065fc](https://github.com/franciscpd/batuta/commit/b8065fce89ce43366c5b9d3cf63ccc54c045dac9))
 
 ## [0.2.6](https://github.com/franciscpd/batuta/compare/v0.2.5...v0.2.6) (2026-07-26)
 
 
 ### Features
 
-* ciclo aponta para codex-plugin.md nos Steps 2–4 ([12c4f2c](https://github.com/franciscpd/batuta/commit/12c4f2cb8a74642a707cd07c89e58df616bdc13b))
-* codex-plugin.md — integração central (músculo emprestado, regras do Batuta) ([2d5ce88](https://github.com/franciscpd/batuta/commit/2d5ce88858733113d09760ae7f62fef692d4bd95))
-* review e adapter codex apontam para codex-plugin.md ([ba45ac3](https://github.com/franciscpd/batuta/commit/ba45ac34cd119771d53fc5d285782d567176b58f))
+* the cycle points at codex-plugin.md in Steps 2–4 ([dcd142c](https://github.com/franciscpd/batuta/commit/dcd142cfc0dbeb3b0575d296ac45742f3549414f))
+* codex-plugin.md — integração central (músculo emprestado, regras do Batuta) ([f901ceb](https://github.com/franciscpd/batuta/commit/f901ceb5a327229a2ba1e060a91ef80422781f48))
+* review and the codex adapter point at codex-plugin.md ([118dac5](https://github.com/franciscpd/batuta/commit/118dac551a643684b23b028cc681c8705d115c49))
 
 
 ### Bug Fixes
 
-* achados do review final da integração do plugin codex (guarda de escrita, wording) ([073c1e0](https://github.com/franciscpd/batuta/commit/073c1e0ff1606413d78d07027b8a273dae5d779d))
+* final review findings on the codex plugin integration (write guard, wording) ([8dcab3c](https://github.com/franciscpd/batuta/commit/8dcab3c413770d2facf96192ac325b8241f66f28))
 
 ## [0.2.5](https://github.com/franciscpd/batuta/compare/v0.2.4...v0.2.5) (2026-07-22)
 
 
 ### Features
 
-* ciclo ganha o caminho worktree por tarefa (Steps 1.5, 3–5) ([f2a1a42](https://github.com/franciscpd/batuta/commit/f2a1a42b5f4a7d134f4578d784cdbaa1d6e7acde))
-* init pergunta modo worktree e comando de instalação ([e2f0b86](https://github.com/franciscpd/batuta/commit/e2f0b86870f22c6f24b9199101e58f178268734c))
+* the cycle gains the per-task worktree path (Steps 1.5, 3–5) ([3dfee54](https://github.com/franciscpd/batuta/commit/3dfee54ae6b114b66379b8f4f0ba1afa900c5468))
+* ask for the worktree mode and the install command ([33b11d2](https://github.com/franciscpd/batuta/commit/33b11d23bbfdf40ae048502cc5d1e64c3850d1b5))
 
 
 ### Bug Fixes
 
-* achados do review final do worktree por tarefa (wording, contagens, fallback e guardas) ([98aada6](https://github.com/franciscpd/batuta/commit/98aada68244a7b12a0af381e79676e0e6c261480))
+* final review findings on per-task worktrees (wording, counts, fallback and guards) ([24b4e10](https://github.com/franciscpd/batuta/commit/24b4e10cc733ea68a69ac5ece791a36af0288359))
 
 ## [0.2.4](https://github.com/franciscpd/batuta/compare/v0.2.3...v0.2.4) (2026-07-22)
 
 
 ### Features
 
-* ciclo aponta para superpowers.md nos Steps 1–4 ([287a945](https://github.com/franciscpd/batuta/commit/287a94548336a6759eef0f00ba79c7899569a5d0))
-* plan e review apontam para superpowers.md ([328b14f](https://github.com/franciscpd/batuta/commit/328b14f83c4dee958abc3eef5d8e2106e708a812))
-* superpowers.md — integração central (método emprestado, regras do Batuta) ([7e78fbb](https://github.com/franciscpd/batuta/commit/7e78fbbf8abfd3221b62fd60f49881b1e08d83d1))
+* the cycle points at superpowers.md in Steps 1–4 ([6ba5be1](https://github.com/franciscpd/batuta/commit/6ba5be13f5fef40733644dbb98687f6d375ce98c))
+* plan and review point at superpowers.md ([8097932](https://github.com/franciscpd/batuta/commit/809793299fc400a1071f3809dc3e2b96d633230c))
+* superpowers.md — integração central (método emprestado, regras do Batuta) ([98db01d](https://github.com/franciscpd/batuta/commit/98db01d0451fca1399b04508a8af760b10eecc1f))
 
 
 ### Bug Fixes
 
-* prosa dos ponteiros do ciclo (Step 4 antes da lista, quebras de linha) ([ac1a0bb](https://github.com/franciscpd/batuta/commit/ac1a0bba97460110378ff418928f497cc65d0522))
+* prose of the cycle pointers (Step 4 before the list, line breaks) ([8a481d9](https://github.com/franciscpd/batuta/commit/8a481d9e0e2d18b50cc1ea38b7aba83688d653cc))
 
 ## [0.2.3](https://github.com/franciscpd/batuta/compare/v0.2.2...v0.2.3) (2026-07-21)
 
 
 ### Bug Fixes
 
-* alinha docs e skills ao default sequencial da decomposição ([0a29f1c](https://github.com/franciscpd/batuta/commit/0a29f1cb1c03a0ee01851019283d90fd692aa487))
+* align docs and skills with the sequential decomposition default ([a4b2b78](https://github.com/franciscpd/batuta/commit/a4b2b78885e1ad56548d5bb8c1ab3e0d2c895b6c))
 
 ## [0.2.2](https://github.com/franciscpd/batuta/compare/v0.2.1...v0.2.2) (2026-07-21)
 
 
 ### Features
 
-* init asks batch execution mode (sequential default) ([b0fb6c6](https://github.com/franciscpd/batuta/commit/b0fb6c6ace7c71233fcc9a758e2ab6afcf5081fa))
-* Step 1.5 Decompose — full cycle and atomic commit per item ([6b7c31e](https://github.com/franciscpd/batuta/commit/6b7c31e2e9296a0690efb239a007faf92119044b))
+* init asks batch execution mode (sequential default) ([1350331](https://github.com/franciscpd/batuta/commit/135033164ab7bbe1495ad277558ecadf2b632acc))
+* Step 1.5 Decompose — full cycle and atomic commit per item ([a4506ec](https://github.com/franciscpd/batuta/commit/a4506ecb588d3e7b4e99ae82cd5f65caca029c46))
 
 ## [0.2.1](https://github.com/franciscpd/batuta/compare/v0.2.0...v0.2.1) (2026-07-20)
 
 
 ### Bug Fixes
 
-* README aponta o init no quickstart e ajustes de texto no PRD ([2093384](https://github.com/franciscpd/batuta/commit/2093384dff98c0cf0515f6b6f441a11bf04194c3))
+* README aponta o init no quickstart e ajustes de texto no PRD ([45ec178](https://github.com/franciscpd/batuta/commit/45ec178708b94cd278bb6164d4fe97081a2bcdae))
 
 ## [0.2.0](https://github.com/franciscpd/batuta/compare/v0.1.5...v0.2.0) (2026-07-20)
 
 
 ### ⚠ BREAKING CHANGES
 
-* comandos renomeados — plan, status, route e review sem prefixo
+* commands renamed — plan, status, route and review without prefix
 
 ### Features
 
-* skill init — onboarding movido e modo reconfiguração ([ecc6e94](https://github.com/franciscpd/batuta/commit/ecc6e94c014af2acce65ffd19ec65178c8b4b2ee))
-* skills pause e resume — handoff de sessão consumível ([1f4c32e](https://github.com/franciscpd/batuta/commit/1f4c32e589e77abf03239cb01731a36621a56455))
+* init skill — onboarding moved and reconfigure mode ([913e785](https://github.com/franciscpd/batuta/commit/913e785e298985c54448e1c4fbfb17a63256364c))
+* pause and resume skills — consumable session handoff ([2a0673e](https://github.com/franciscpd/batuta/commit/2a0673ec76142d6c6cc5eb04f3c21ab32f1539b8))
 
 
 ### Code Refactoring
 
-* comandos renomeados — plan, status, route e review sem prefixo ([4a0b2d0](https://github.com/franciscpd/batuta/commit/4a0b2d020126e0de0102fe9fdb4b8f6873650136))
+* commands renamed — plan, status, route and review without prefix ([d88a30b](https://github.com/franciscpd/batuta/commit/d88a30bcc84d321b624613d0532bd2fad057bcf4))
 
 ## [0.1.5](https://github.com/franciscpd/batuta/compare/v0.1.4...v0.1.5) (2026-07-20)
 
 
 ### Bug Fixes
 
-* sweep do mapa adiado pós-mapeamento e guarda do batedor sob paralelismo ([67100fc](https://github.com/franciscpd/batuta/commit/67100fcd0ec7b5031b9e84763846de5f8cb2a3dd))
+* map sweep deferred until after lane mapping, scout guard under parallelism ([974098a](https://github.com/franciscpd/batuta/commit/974098a710d9ae1a26d33416370e2f2bfca710d9))
 
 ## [0.1.4](https://github.com/franciscpd/batuta/compare/v0.1.3...v0.1.4) (2026-07-20)
 
 
 ### Features
 
-* invocação read-only de pesquisa nos adapters (sandbox, tools bloqueadas, guarda de git) ([22073ca](https://github.com/franciscpd/batuta/commit/22073ca3dcb8a33175862dee54238a699e96ec7c))
-* lane de apoio Research na tabela de roteamento — o batedor ([46e97f2](https://github.com/franciscpd/batuta/commit/46e97f2ed950ff7adee6e931061b077699d4e776))
-* protocolo do batedor no ciclo — brief de pesquisa, contrato de relatório e verificação estrutural ([b3ca28e](https://github.com/franciscpd/batuta/commit/b3ca28ee4fe8d8cd72ea13b225a9518932512ca3))
+* read-only research invocation in the adapters (sandbox, blocked tools, git guard) ([d9946c7](https://github.com/franciscpd/batuta/commit/d9946c77bfbb3c543a082490ea21e4f9f871da7a))
+* Research support lane in the routing table — the scout ([0c81b40](https://github.com/franciscpd/batuta/commit/0c81b40b486b2057c3aa411884aa273739945b5f))
+* scout protocol in the cycle — research brief, report contract and structural verification ([39b6054](https://github.com/franciscpd/batuta/commit/39b6054b410d70e7188a992ad4caad4c8871f019))
 
 ## [0.1.3](https://github.com/franciscpd/batuta/compare/v0.1.2...v0.1.3) (2026-07-20)
 
 
 ### Features
 
-* variante Claude na lane complexa — opus em background como alternativa ao codex ([2838316](https://github.com/franciscpd/batuta/commit/283831693a8d0bd930c253e9a4ce58e61e9b8e11))
+* Claude variant on the complex lane — background opus as an alternative to codex ([c009027](https://github.com/franciscpd/batuta/commit/c0090278415c3534ffef4099ea15bd609109fafe))
 
 ## [0.1.2](https://github.com/franciscpd/batuta/compare/v0.1.1...v0.1.2) (2026-07-20)
 
 
 ### Features
 
-* lane complexa delegável ao codex e mapeamento de lanes escolhido pelo usuário ([a92dd04](https://github.com/franciscpd/batuta/commit/a92dd041b9003984f517126a6590e3d7e5a341e1))
+* complex lane delegable to codex and user-chosen lane mapping ([4e757d7](https://github.com/franciscpd/batuta/commit/4e757d772ca966de202c04e4d2dade0598a3d821))
