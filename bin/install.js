@@ -8,8 +8,9 @@
 // Claude Code and Codex get their plugin; Cursor, opencode and Antigravity
 // read the shared ~/.agents/skills directory, which receives the skills
 // vendored in this package (pinned by skills-lock.json). The `batuta` binary
-// (gates, inventory, unattended loop) is installed with `go install` when
-// Go is available and skipped otherwise, loudly.
+// (gates, inventory, unattended loop) is downloaded from the pinned core
+// release on GitHub, verified against checksums.txt; `go install` is only
+// the fallback when the download fails and Go is available.
 
 "use strict";
 const { execSync, spawnSync } = require("node:child_process");
@@ -19,7 +20,13 @@ const path = require("node:path");
 
 const REPO = "batuta-ai/batuta";
 const SKILLS = "batuta-ai/skills";
-const CORE = "github.com/batuta-ai/core/cmd/batuta@latest";
+// The core release this package was tested with. Bump deliberately: a
+// batuta release names the binary it expects (see scripts/sync-skills.sh
+// for the same idea with the skills).
+const CORE_VERSION = "v1.1.0-beta.6";
+const CORE_MODULE = "github.com/batuta-ai/core/cmd/batuta";
+const CORE_RELEASES = `https://github.com/batuta-ai/core/releases/download/${CORE_VERSION}`;
+const crypto = require("node:crypto");
 const ROOT = path.resolve(__dirname, "..");
 
 function which(bin) {
@@ -144,19 +151,86 @@ function installOpencodeCommands(dryRun) {
   console.log(`  copied ${fs.readdirSync(src).length} commands to ${dst}`);
 }
 
-function installCore(dryRun) {
+// The release archive for this machine, or null when no archive is built
+// for it (the installer then says what to do by hand).
+function coreAsset(platform = process.platform, arch = process.arch) {
+  const os = { darwin: "darwin", linux: "linux" }[platform];
+  const cpu = { x64: "amd64", arm64: "arm64" }[arch];
+  if (!os || !cpu) return null;
+  return `batuta_${os}_${cpu}.tar.gz`;
+}
+
+// The sha256 listed for `name` in a goreleaser checksums.txt.
+function expectedChecksum(checksums, name) {
+  for (const line of checksums.split(/\r?\n/)) {
+    const [hash, file] = line.trim().split(/\s+/);
+    if (file === name && /^[0-9a-f]{64}$/.test(hash)) return hash;
+  }
+  return null;
+}
+
+// Downloads the pinned core release for this machine, verifies it against
+// checksums.txt and extracts `batuta` into binDir. Returns the installed
+// path. `deps` exist for the tests: fetch, exec and the bin directory.
+async function downloadCore(deps = {}) {
+  const fetcher = deps.fetch || fetch;
+  const exec = deps.exec || ((cmd, args) => spawnSync(cmd, args, { encoding: "utf8" }));
+  const binDir = deps.binDir || process.env.BATUTA_BIN_DIR || path.join(home, ".local", "bin");
+  const asset = coreAsset(deps.platform, deps.arch);
+  if (!asset) throw new Error(`no prebuilt batuta for ${deps.platform || process.platform}/${deps.arch || process.arch}; see https://github.com/batuta-ai/core/releases/tag/${CORE_VERSION}`);
+  const get = async (name) => {
+    const response = await fetcher(`${(deps.baseUrl || CORE_RELEASES)}/${name}`);
+    if (!response.ok) throw new Error(`download of ${name} failed: HTTP ${response.status}`);
+    return Buffer.from(await response.arrayBuffer());
+  };
+  const checksums = (await get("checksums.txt")).toString("utf8");
+  const want = expectedChecksum(checksums, asset);
+  if (!want) throw new Error(`${asset} is not listed in checksums.txt of ${CORE_VERSION}`);
+  const archive = await get(asset);
+  const got = crypto.createHash("sha256").update(archive).digest("hex");
+  if (got !== want) throw new Error(`${asset} checksum mismatch: expected ${want}, got ${got}`);
+  const work = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-core-"));
+  try {
+    const archivePath = path.join(work, asset);
+    fs.writeFileSync(archivePath, archive);
+    const untar = exec("tar", ["-xzf", archivePath, "-C", work, "batuta"]);
+    if (untar.status !== 0) throw new Error(`tar failed: ${(untar.stderr || "").trim()}`);
+    fs.mkdirSync(binDir, { recursive: true });
+    const target = path.join(binDir, "batuta");
+    fs.copyFileSync(path.join(work, "batuta"), target + ".new");
+    fs.chmodSync(target + ".new", 0o755);
+    fs.renameSync(target + ".new", target);
+    return target;
+  } finally {
+    fs.rmSync(work, { recursive: true, force: true });
+  }
+}
+
+async function installCore(dryRun) {
   const found = which("batuta");
+  let foundVersion = "";
   if (found) {
     const probe = spawnSync(found, ["version"], { encoding: "utf8" });
-    if (probe.status === 0) { console.log(`core: batuta ${probe.stdout.trim()} already on PATH (${found})`); return; }
-    console.log(`core: a different "batuta" is on PATH (${found}) — probably the archived batuta-cli. Remove it (cargo uninstall batuta) so the core binary wins.`);
+    if (probe.status === 0) foundVersion = probe.stdout.trim();
+    else console.log(`core: a different "batuta" is on PATH (${found}) — probably the archived batuta-cli. Remove it (cargo uninstall batuta) so the core binary wins.`);
   }
-  if (!which("go")) {
-    console.log("core: Go not found — skipping the batuta binary. Install Go and run:\n  go install " + CORE);
+  if (foundVersion === CORE_VERSION) { console.log(`core: batuta ${foundVersion} already on PATH (${found})`); return; }
+  if (foundVersion) console.log(`core: batuta ${foundVersion} on PATH (${found}); this release expects ${CORE_VERSION}`);
+  const asset = coreAsset();
+  if (dryRun) { console.log(`core: download ${CORE_RELEASES}/${asset || "(no prebuilt binary for this platform)"}`); return; }
+  try {
+    const target = await downloadCore();
+    console.log(`core: installed batuta ${CORE_VERSION} at ${target}`);
+    const onPath = which("batuta");
+    if (onPath && path.resolve(onPath) !== path.resolve(target)) console.log(`core: note — ${onPath} comes first on PATH; put ${path.dirname(target)} before it.`);
+    else if (!onPath) console.log(`core: add ${path.dirname(target)} to PATH.`);
     return;
+  } catch (e) {
+    console.log(`core: ${e.message}`);
   }
-  console.log(`core: go install ${CORE}`);
-  if (!dryRun) run(`go install ${CORE}`);
+  if (!which("go")) throw new Error(`core binary not installed; download failed and Go is not available. Manual: https://github.com/batuta-ai/core/releases/tag/${CORE_VERSION}`);
+  console.log(`core: falling back to go install ${CORE_MODULE}@${CORE_VERSION}`);
+  run(`go install ${CORE_MODULE}@${CORE_VERSION}`);
 }
 
 function run(cmd) {
@@ -164,7 +238,7 @@ function run(cmd) {
   execSync(cmd, { stdio: "inherit" });
 }
 
-function main(argv, deps = {}) {
+async function main(argv, deps = {}) {
   const exec = deps.run || run;
   const hosts = deps.hosts || HOSTS;
   const dryRun = argv.includes("--dry-run");
@@ -198,7 +272,7 @@ function main(argv, deps = {}) {
     }
   }
   if (withCore) {
-    try { (deps.installCore || installCore)(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push("core"); }
+    try { await (deps.installCore || installCore)(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push("core"); }
   }
   if (failed.length > 0) {
     console.log(`\nFailed: ${failed.join(", ")}. Fix the error above and re-run with --only <host>.`);
@@ -208,5 +282,5 @@ function main(argv, deps = {}) {
   return 0;
 }
 
-if (require.main === module) process.exitCode = main(process.argv.slice(2));
-module.exports = { main, HOSTS, installSharedSkills };
+if (require.main === module) main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
+module.exports = { main, HOSTS, installSharedSkills, downloadCore, coreAsset, expectedChecksum, CORE_VERSION };
