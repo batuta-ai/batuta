@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0](https://github.com/batuta-ai/batuta/compare/v0.2.14...v0.3.0) (2026-09-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* batuta becomes the host package for every CLI
+
+### Features
+
+* batuta becomes the host package for every CLI ([cd8957d](https://github.com/batuta-ai/batuta/commit/cd8957d1c18a9d76d4f58b572803661720ad58e0))
+
+
+### Bug Fixes
+
+* **claude:** hooks/hooks.json is auto-loaded; drop the duplicate manifest reference ([bd10c94](https://github.com/batuta-ai/batuta/commit/bd10c94fcb28327967d62ed769d6060945818368))
+* **install:** target the antigravity agent id; skills land in the shared ~/.agents/skills ([0f4df80](https://github.com/batuta-ai/batuta/commit/0f4df806b700be153247a6fe3b28ec0263ab2f36))
+
 ## [0.2.14](https://github.com/franciscpd/batuta/compare/v0.2.13...v0.2.14) (2026-08-02)
 
 
