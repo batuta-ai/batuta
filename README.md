@@ -38,9 +38,9 @@ targets one. Per host, the same thing by hand:
 |---|---|---|
 | Claude Code | `claude plugin marketplace add batuta-ai/batuta` · `claude plugin install batuta@batuta` | the `batuta` skill on any code task; `/batuta:init`, `/batuta:plan`, `/batuta:loop`, `/batuta:review`, `/batuta:status`, `/batuta:route`, `/batuta:pause`, `/batuta:resume` |
 | Codex CLI | `codex plugin marketplace add batuta-ai/batuta` · `codex plugin add batuta@batuta` | `$batuta`, `$batuta-init`, `$batuta-plan`, … |
-| Cursor | `npx skills add batuta-ai/skills -a cursor -g` | the skills, by name |
-| opencode | `npx skills add batuta-ai/skills -a opencode -g` + `hosts/opencode/commands/` | `/batuta`, `/batuta-init`, … |
-| Antigravity (`agy`) and any other agent | `npx skills add batuta-ai/skills -g` | the skills, by name |
+| Cursor | `npx -y github:batuta-ai/batuta -- --only cursor` (vendored skills → `~/.agents/skills`) | the skills, by name |
+| opencode | `npx -y github:batuta-ai/batuta -- --only opencode` (vendored skills → `~/.agents/skills` + `hosts/opencode/commands/`) | `/batuta`, `/batuta-init`, … |
+| Antigravity (`agy`) | `npx -y github:batuta-ai/batuta -- --only agy` (vendored skills → `~/.agents/skills`); any other agent: `npx skills add batuta-ai/skills -g` | the skills, by name |
 | CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | the `batuta` agent |
 
 The `batuta` binary (executor inventory, verification gates, unattended loop) is

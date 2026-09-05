@@ -55,3 +55,27 @@ test("the Codex step names the marketplace", () => {
   const codex = HOSTS.find((h) => h.id === "codex");
   assert.ok(codex.steps.includes("codex plugin add batuta@batuta"));
 });
+
+test("installSharedSkills copies the vendored tree, replaces stale files and writes the lock", () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { installSharedSkills } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-skills-"));
+  const src = path.join(tmp, "src"), dst = path.join(tmp, "dst"), lockSrc = path.join(tmp, "skills-lock.json");
+  fs.mkdirSync(path.join(src, "batuta", "references"), { recursive: true });
+  fs.writeFileSync(path.join(src, "batuta", "SKILL.md"), "new");
+  fs.writeFileSync(path.join(src, "batuta", "references", "a.md"), "a");
+  fs.writeFileSync(path.join(src, "README.md"), "not a skill dir");
+  fs.mkdirSync(path.join(dst, "batuta"), { recursive: true });
+  fs.writeFileSync(path.join(dst, "batuta", "stale.md"), "old");
+  fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v9.9.9", computedHash: "sha256:x" }));
+  quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
+  assert.equal(fs.readFileSync(path.join(dst, "batuta", "SKILL.md"), "utf8"), "new");
+  assert.equal(fs.readFileSync(path.join(dst, "batuta", "references", "a.md"), "utf8"), "a");
+  assert.ok(!fs.existsSync(path.join(dst, "batuta", "stale.md")), "stale files are removed");
+  assert.ok(!fs.existsSync(path.join(dst, "README.md")), "only skill directories are copied");
+  const lock = JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
+  assert.equal(lock.ref, "v9.9.9");
+  assert.ok(lock.installedAt);
+});
