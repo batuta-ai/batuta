@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/batuta-ai/batuta/compare/v0.3.4...v0.4.0) (2026-09-05)
+
+
+### Features
+
+* **install:** download the pinned core binary from GitHub Releases ([#37](https://github.com/batuta-ai/batuta/issues/37)) ([8ff86b3](https://github.com/batuta-ai/batuta/commit/8ff86b319975ce4f2d19d08406167171bf7e9dea))
+
 ## [0.3.4](https://github.com/batuta-ai/batuta/compare/v0.3.3...v0.3.4) (2026-09-05)
 
 
