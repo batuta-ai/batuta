@@ -102,7 +102,10 @@ test("installSharedSkills keeps the previous installation when the copy fails an
   fs.writeFileSync(path.join(src, "batuta-second", "SKILL.md"), "x");
   fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v2" }));
   let calls = 0;
-  const copy = (from, to) => { calls++; if (calls === 2) throw new Error("EIO"); fs.cpSync(from, to, { recursive: true }); };
+  // The second copy writes half a tree, then fails: the partial staging directory must go too.
+  const copy = (from, to) => { calls++; fs.cpSync(from, to, { recursive: true }); if (calls === 2) throw new Error("EIO"); };
+  fs.writeFileSync(path.join(dst, ".batuta-skills-lock.json"), JSON.stringify({ ref: "v1", skills: ["batuta", "batuta-retired", "..", "../escape"] }));
+  fs.mkdirSync(path.join(tmp, "escape"), { recursive: true });
   assert.throws(() => quiet(() => installSharedSkills(false, { src, dst, lockSrc, copy })), /EIO/);
   assert.equal(fs.readFileSync(path.join(dst, "batuta", "SKILL.md"), "utf8"), "old", "previous installation untouched");
   assert.ok(!fs.existsSync(path.join(dst, "batuta-second")), "the second skill was never installed");
@@ -111,4 +114,6 @@ test("installSharedSkills keeps the previous installation when the copy fails an
   quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
   assert.equal(fs.readFileSync(path.join(dst, "batuta", "SKILL.md"), "utf8"), "new");
   assert.ok(!fs.existsSync(path.join(dst, "batuta-retired")), "skills dropped by the release are removed");
+  assert.ok(fs.existsSync(path.join(tmp, "escape")), "lock entries that are not skill names are never deleted");
+  assert.ok(fs.existsSync(src), "a `..` entry cannot delete the parent");
 });

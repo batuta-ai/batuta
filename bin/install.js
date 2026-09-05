@@ -101,13 +101,17 @@ function installSharedSkills(dryRun, paths = {}) {
   fs.mkdirSync(dst, { recursive: true });
   let previous = [];
   try { previous = JSON.parse(fs.readFileSync(path.join(dst, LOCK_NAME), "utf8")).skills || []; } catch { /* first install */ }
+  const skillName = /^[a-z][a-z0-9-]*$/;
+  for (const name of names) {
+    if (!skillName.test(name)) throw new Error(`vendored skill name "${name}" is not a skill directory name`);
+  }
   const staged = [];
   try {
     for (const name of names) {
       const stage = path.join(dst, `.${name}.staging`);
       fs.rmSync(stage, { recursive: true, force: true });
-      copy(path.join(src, name), stage);
       staged.push([stage, path.join(dst, name)]);
+      copy(path.join(src, name), stage);
     }
   } catch (e) {
     for (const [stage] of staged) fs.rmSync(stage, { recursive: true, force: true });
@@ -118,7 +122,9 @@ function installSharedSkills(dryRun, paths = {}) {
     fs.renameSync(stage, target);
   }
   for (const name of previous) {
-    if (!names.includes(name)) fs.rmSync(path.join(dst, name), { recursive: true, force: true });
+    // Names come from a file on disk: only plain skill directory names are ever removed.
+    if (!skillName.test(name) || names.includes(name)) continue;
+    fs.rmSync(path.join(dst, name), { recursive: true, force: true });
   }
   lock.skills = names;
   lock.installedAt = new Date().toISOString();
