@@ -6,6 +6,7 @@ is text a human edits; nothing breaks on a stray character.
 ## Contents
 
 - Files
+- Managed state
 - WORK.md
 - Run trail
 - Handoff
@@ -24,8 +25,20 @@ is text a human edits; nothing breaks on a stray character.
 | `.batuta/handoff.md` | `/batuta-pause` | transit note, consumed by `/batuta-resume` |
 | `.batuta/learnings.md` | Step 4 | rules distilled from rejected findings, append-only |
 
-`.batuta/runs/`, `.batuta/scout/`, `.batuta/worktrees/` are listed in
-`.git/info/exclude` — never in `.gitignore`, which belongs to the user.
+`.batuta/runs/`, `.batuta/scout/`, `.batuta/worktrees/`, `.batuta/handoff.md`
+are listed in `.git/info/exclude` — never in `.gitignore`, which belongs to
+the user.
+
+## Managed state
+
+`WORK.md`, `.batuta/profile.md`, `.batuta/routing.md`, `.batuta/plan-*.md`
+and `.batuta/learnings.md` are tracked files the conductor owns. Because
+the cycle writes them around the code commit, they are the one kind of
+dirt every check tolerates:
+
+- **Preflight** (`SKILL.md` Step 3): "clean tree" means `git status --porcelain -- . ':!WORK.md' ':!.batuta'` prints nothing. Anything else dirty stops the cycle.
+- **Scope check and traceability** ignore them; the diff review reports them in one line and moves on.
+- **Commits**: `/batuta-init` offers one commit of the files it created. After that, the `WORK.md` line of task N rides along in the commit of task N+1 (`git add WORK.md .batuta/*.md` before committing). `/batuta-pause` and the end of a batch offer a `chore(batuta): update WORK.md` commit for whatever is still pending, so a session never ends with state only on disk.
 
 ## WORK.md
 

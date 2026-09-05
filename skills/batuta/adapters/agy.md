@@ -4,7 +4,7 @@ executable: agy
 run: agy -p "{brief}" {model_flags} --mode=accept-edits --dangerously-skip-permissions --sandbox --disable-slash-commands --print-timeout 30m < /dev/null
 run_file: agy -p "Follow the instructions in {brief_file}" {model_flags} --mode=accept-edits --dangerously-skip-permissions --sandbox --disable-slash-commands --print-timeout 30m < /dev/null
 model_flags: --model {model}
-readonly: agy -p "Read-only task: do not create, edit or delete any file. {prompt}" --model {model} --mode=plan --disable-slash-commands --print-timeout 15m < /dev/null
+readonly: 'agy -p "Read-only task: do not create, edit or delete any file. {prompt}" --model {model} --mode=plan --disable-slash-commands --print-timeout 15m < /dev/null'
 available: command -v agy
 models: agy models
 finished: exit_code

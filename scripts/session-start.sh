@@ -9,7 +9,8 @@ else
   echo "Batuta installed, project not set up: run /batuta:init once, then ask for a code task."
 fi
 if command -v batuta >/dev/null 2>&1 && batuta version >/dev/null 2>&1 && [ -f .batuta/profile.md ]; then
-  batuta doctor --json 2>/dev/null | python3 -c '
+  # The hook has 15 s; doctor probes every executor. Cap it well below.
+  batuta doctor --json --timeout 5s 2>/dev/null | python3 -c '
 import json,sys
 try:
     r=json.load(sys.stdin)

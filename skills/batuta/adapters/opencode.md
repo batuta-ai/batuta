@@ -4,7 +4,7 @@ executable: opencode
 run: opencode run --dir {cwd} --model {model} "{brief}" < /dev/null
 run_file: opencode run --dir {cwd} --model {model} "Follow the instructions in {brief_file}" < /dev/null
 model_flags: --model {model}
-readonly: opencode run --dir {cwd} --model {model} "Read-only task: do not create, edit or delete any file. {prompt}" < /dev/null
+readonly: 'opencode run --dir {cwd} --model {model} "Read-only task: do not create, edit or delete any file. {prompt}" < /dev/null'
 available: command -v opencode && opencode models | grep -qx '{model}'
 models: opencode models
 finished: exit_code

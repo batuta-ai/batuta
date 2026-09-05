@@ -28,8 +28,9 @@ reconfigure. Read `../batuta/references/routing.md` first in both modes.
 7. **Pointer (opt-in).** Offer to write `assets/agents-md-block.md` into the project's `AGENTS.md` between its markers. Declined → write nothing, never re-offer. Accepted → replace what sits between existing markers, or create the file with only the block. The last sentence of the block is the anti-loop guard for executors that read `AGENTS.md`.
 8. **Takeover.** Artifacts from another framework (`.planning/`, `TODO.md`, roadmaps) → offer a one-time import: in-progress and done work become `WORK.md` lines, large remaining work becomes `.batuta/plan-<slug>.md`. Old artifacts stay untouched.
 9. **Project map.** Add a "Project map" section to the profile: 20–40 lines of prose — key directories, where routes/components/tests live, entry points, generated files not to touch. Delegate the sweep to the research lane (`../batuta/references/scout.md`); no lane or two failures → sweep yourself. The map says where to start looking, not everything.
-10. **`WORK.md`** at the project root if absent (format in `state.md`).
-11. **Self-check**, then report:
+10. **`WORK.md`** at the project root if absent (format in `state.md`). Add `.batuta/runs/`, `.batuta/scout/`, `.batuta/worktrees/` and `.batuta/handoff.md` to `.git/info/exclude` if missing.
+11. **Commit (opt-in).** Offer one commit of `.batuta/profile.md`, `.batuta/routing.md` and `WORK.md` — `chore(batuta): set up conducting`. Declined → they stay on disk; the cycle tolerates them as managed state (`../batuta/references/state.md`).
+12. **Self-check**, then report:
     ```bash
     test -f .batuta/profile.md && test -f .batuta/routing.md && test -f WORK.md
     grep -q '^Test:' .batuta/profile.md
