@@ -5,8 +5,9 @@
 //   npx -y github:batuta-ai/batuta -- --list  show the host matrix
 //   npx -y github:batuta-ai/batuta -- --only codex --dry-run
 //
-// Each host gets its native install path; the Batuta skills reach any other
-// agent through `npx skills add batuta-ai/skills`. The `batuta` binary
+// Claude Code and Codex get their plugin; Cursor, opencode and Antigravity
+// read the shared ~/.agents/skills directory, which receives the skills
+// vendored in this package (pinned by skills-lock.json). The `batuta` binary
 // (gates, inventory, unattended loop) is installed with `go install` when
 // Go is available and skipped otherwise, loudly.
 
@@ -57,25 +58,51 @@ const HOSTS = [
     id: "cursor",
     label: "Cursor",
     detect: () => which("cursor-agent") || exists(path.join(home, ".cursor")),
-    steps: [`npx -y skills add ${SKILLS} -a cursor -g -y`],
-    note: "skills in ~/.cursor/skills",
+    steps: [],
+    after: installSharedSkills,
+    note: "vendored skills copied to ~/.agents/skills",
   },
   {
     id: "opencode",
     label: "opencode",
     detect: () => which("opencode") || exists(path.join(home, ".config", "opencode")),
-    steps: [`npx -y skills add ${SKILLS} -a opencode -g -y`],
-    after: installOpencodeCommands,
-    note: "skills in ~/.config/opencode/skills plus /batuta-* commands",
+    steps: [],
+    after: (dryRun) => { installSharedSkills(dryRun); installOpencodeCommands(dryRun); },
+    note: "vendored skills copied to ~/.agents/skills plus /batuta-* commands",
   },
   {
     id: "agy",
     label: "Antigravity CLI",
     detect: () => which("agy"),
-    steps: [`npx -y skills add ${SKILLS} -a antigravity -g -y`],
-    note: "skills in ~/.agents/skills (the shared directory every host reads)",
+    steps: [],
+    after: installSharedSkills,
+    note: "vendored skills copied to ~/.agents/skills (the shared directory every host reads)",
   },
 ];
+
+// Copies the vendored skills/ tree into the shared skills directory, one
+// directory per skill, replacing whatever was there, and records the pinned
+// ref next to them. Runs once per invocation however many hosts share it.
+let sharedSkillsDone = false;
+function installSharedSkills(dryRun, paths = {}) {
+  const src = paths.src || path.join(ROOT, "skills");
+  const dst = paths.dst || path.join(home, ".agents", "skills");
+  const lockSrc = paths.lockSrc || path.join(ROOT, "skills-lock.json");
+  if (!paths.src && sharedSkillsDone) return;
+  sharedSkillsDone = true;
+  const names = fs.readdirSync(src).filter((n) => fs.statSync(path.join(src, n)).isDirectory());
+  if (dryRun) { console.log(`  copy ${src}/{${names.join(",")}} -> ${dst}/`); return; }
+  fs.mkdirSync(dst, { recursive: true });
+  for (const name of names) {
+    const target = path.join(dst, name);
+    fs.rmSync(target, { recursive: true, force: true });
+    fs.cpSync(path.join(src, name), target, { recursive: true });
+  }
+  const lock = JSON.parse(fs.readFileSync(lockSrc, "utf8"));
+  lock.installedAt = new Date().toISOString();
+  fs.writeFileSync(path.join(dst, ".batuta-skills-lock.json"), JSON.stringify(lock, null, 2) + "\n");
+  console.log(`  copied ${names.length} skills to ${dst} (${lock.ref})`);
+}
 
 function installOpencodeCommands(dryRun) {
   const src = path.join(ROOT, "hosts", "opencode", "commands");
@@ -153,4 +180,4 @@ function main(argv, deps = {}) {
 }
 
 if (require.main === module) process.exitCode = main(process.argv.slice(2));
-module.exports = { main, HOSTS };
+module.exports = { main, HOSTS, installSharedSkills };

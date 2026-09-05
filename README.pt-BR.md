@@ -38,9 +38,9 @@ npx -y github:batuta-ai/batuta
 |---|---|---|
 | Claude Code | `claude plugin marketplace add batuta-ai/batuta` · `claude plugin install batuta@batuta` | a skill `batuta` em qualquer tarefa de código; `/batuta:init`, `/batuta:plan`, `/batuta:loop`, `/batuta:review`, `/batuta:status`, `/batuta:route`, `/batuta:pause`, `/batuta:resume` |
 | Codex CLI | `codex plugin marketplace add batuta-ai/batuta` · `codex plugin add batuta@batuta` | `$batuta`, `$batuta-init`, `$batuta-plan`, … |
-| Cursor | `npx skills add batuta-ai/skills -a cursor -g` | as skills, pelo nome |
-| opencode | `npx skills add batuta-ai/skills -a opencode -g` + `hosts/opencode/commands/` | `/batuta`, `/batuta-init`, … |
-| Antigravity (`agy`) e qualquer outro agente | `npx skills add batuta-ai/skills -g` | as skills, pelo nome |
+| Cursor | `npx -y github:batuta-ai/batuta -- --only cursor` (vendored skills → `~/.agents/skills`) | as skills, pelo nome |
+| opencode | `npx -y github:batuta-ai/batuta -- --only opencode` (vendored skills → `~/.agents/skills` + `hosts/opencode/commands/`) | `/batuta`, `/batuta-init`, … |
+| Antigravity (`agy`) | `npx -y github:batuta-ai/batuta -- --only agy` (skills vendoradas → `~/.agents/skills`); qualquer outro agente: `npx skills add batuta-ai/skills -g` | as skills, pelo nome |
 | CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | o agente `batuta` |
 
 O binário `batuta` (inventário de executores, gates de verificação, loop
