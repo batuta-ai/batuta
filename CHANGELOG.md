@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/batuta-ai/batuta/compare/v0.3.0...v0.3.1) (2026-09-05)
+
+
+### Bug Fixes
+
+* **install:** correct the Codex command, propagate failures, cap the hook's doctor probe ([#24](https://github.com/batuta-ai/batuta/issues/24)) ([7bc4037](https://github.com/batuta-ai/batuta/commit/7bc4037edc31ac225c07577362a9d8681a0026f8))
+
 ## [0.3.0](https://github.com/batuta-ai/batuta/compare/v0.2.14...v0.3.0) (2026-09-05)
 
 
