@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/batuta-ai/batuta/compare/v0.3.1...v0.3.2) (2026-09-05)
+
+
+### Bug Fixes
+
+* **install:** copy the vendored skills into ~/.agents/skills for Cursor, opencode and Antigravity ([#27](https://github.com/batuta-ai/batuta/issues/27)) ([04b8b0f](https://github.com/batuta-ai/batuta/commit/04b8b0f924fe828b5ac7c663a63f574d5ad0c8f4)), closes [#26](https://github.com/batuta-ai/batuta/issues/26)
+
 ## [0.3.1](https://github.com/batuta-ai/batuta/compare/v0.3.0...v0.3.1) (2026-09-05)
 
 
