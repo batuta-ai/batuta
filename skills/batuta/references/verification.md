@@ -22,8 +22,11 @@ unverified, whatever the report says.
 
 ## The four gates
 
-Run in order. With the core binary on PATH, `batuta gate <name>` runs each
-one and prints compact JSON; otherwise run the commands yourself.
+Run in order. Probe the core binary once per session:
+`batuta capabilities 2>/dev/null | grep -q '"gate"'`. Only when that
+succeeds does `batuta gate <name>` run each gate and print compact JSON;
+an absent or older binary fails the probe and you run the commands
+yourself. Never call a subcommand the probe did not list.
 
 | Gate | Question | How |
 |---|---|---|
@@ -34,9 +37,11 @@ one and prints compact JSON; otherwise run the commands yourself.
 
 ## Scope check
 
-`git status --porcelain` (in a worktree: `git diff --name-only main...batuta/<slug>`)
+`git status --porcelain` (in a worktree: `git diff --name-only <base>...batuta/<slug>`)
 against the brief's Scope list. A path outside the list fails verification
-even when the code is correct. Name the files in the feedback.
+even when the code is correct. Name the files in the feedback. Managed
+state (`state.md`: `WORK.md`, `.batuta/`) is not scope: report it, never
+fail on it.
 
 ## Diff review
 
@@ -69,19 +74,19 @@ cause, never restates the claim.
 When a second reviewer is dispatched (`high`/`critical` by default,
 `/batuta-review`, or on the user's ask):
 
-- **Reviewer** — any executor from the routing table, invoked through its adapter's `readonly` line. Never the executor that wrote the diff.
+- **Reviewer** — any executor from the routing table, invoked through its adapter's `readonly` line, which forbids writing. Never the executor that wrote the diff.
 - **Lenses scale with the diff** — under ~50 changed lines: 1; up to ~200: 2; above: 3. In order: **Skeptic** (what breaks), **Architect** (fits the design and conventions), **Minimalist** (what the brief did not ask for). One dispatch carries all lenses.
-- **Findings are a file** — the dispatch names an output file outside the repository; the reviewer writes `file:line · severity · concrete failure scenario` there. No file → invalid round. Stdout is operational evidence only.
+- **Findings are a file you write** — the reviewer prints its findings between the lines `<<<FINDINGS` and `FINDINGS>>>`, one per line: `file:line · severity · concrete failure scenario`, or the single line `none`. You save that block verbatim to `.batuta/runs/<date>-<slug>.review.md` before judging. No block, or anything written to the tree → invalid round.
 - **Contract parity** — when the item implements a spec or plan, the reviewer receives that artifact verbatim, never a paraphrase.
 - **You judge** — accept or reject each finding with a one-line rationale. Accepted → normal failure flow. Rejected → recorded as declined. The verdict is always yours.
-- **Scoped write** — the reviewer may write exactly one file, at the named path, and nothing else. `git status --porcelain` before and after; any repo change reverts and fails the round.
+- **Read-only** — the reviewer's brief carries the read-only contract from `scout.md`. `git status --porcelain` before and after; any change reverts and fails the round.
 
 Accepted and declined findings go one line each into the run trail.
 
 ## Retry and escalation
 
 1. Fail → feedback with file:line, the failing command and its output, the flagged pattern. **One retry**, same executor, same worktree.
-2. Fail again → **escalate**: one row up the routing table, cycle restarts at Step 2 with the brief enriched by the diagnosis. In a worktree, reset the branch first (`git reset --hard main` inside it).
+2. Fail again → **escalate**: one row up the routing table, cycle restarts at Step 2 with the brief enriched by the diagnosis. In a worktree, reset the branch first (`git reset --hard <base>` inside it).
 3. Critical bugfix, or failure after escalation → investigate per `method/debug.md` before the re-brief.
 4. A task that fails after escalation is aborted: trail written with verdict `❌ aborted`, worktree removed, dependents blocked and reported.
 

@@ -14,7 +14,7 @@ cycles with the real cause, escalation one row up, one commit per task,
 
 ## Procedure
 
-1. **Preflight.** `command -v batuta` — absent → say the core binary is missing, give the install line from the README, offer the interactive cycle instead. Then `batuta doctor`: hosts, adapters, test command, skills version.
+1. **Preflight.** `command -v batuta` — absent → say the core binary is missing, give the install line from the README, offer the interactive cycle instead. Then `batuta capabilities 2>/dev/null | grep -q '"loop"'` — fails → say "this core binary (`batuta version`) does not ship `loop` yet", offer the interactive cycle, stop. Then `batuta doctor`: hosts, adapters, clean tree, test command, skills version.
 2. **Pick the plan.** The user names it or there is exactly one `.batuta/plan-*.md` with `Status: approved`. A plan not approved → stop; approval happens in `/batuta-plan`.
 3. **Dry run.** `batuta loop --dry-run .batuta/plan-<slug>.md` prints the waves (dependency-safe, at most four tasks each), the executor and model per task, the worktrees it would create, the test command. Show it. Any preflight failure (dirty tree, unknown test command, unavailable executor) stops here — nothing has been spent.
 4. **Launch.** `batuta loop .batuta/plan-<slug>.md` through the runtime's background facility, or tell the user to run it in another terminal. The run ends the turn: report the journal path (`.batuta/journal/<delivery>.jsonl`) and how to watch (`batuta loop --dashboard`).

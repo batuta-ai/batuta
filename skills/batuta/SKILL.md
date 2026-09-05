@@ -59,7 +59,7 @@ A task is the smallest deliverable that verifies and commits on its own.
 2. `self` adapter (critical only) → you implement: test-first from the criteria; bugs via `references/method/debug.md`; then Step 4 like any executor.
 3. Profile `Worktree: off | medium+ | always` → `references/worktree.md` decides where the executor works.
 4. Parallel items run through the runtime's background facility; otherwise foreground.
-5. Preflight before spending tokens: clean tree (or fresh worktree), test command known. With the core binary on PATH, `batuta doctor`.
+5. Preflight before spending tokens: clean tree except managed state (`references/state.md`), or a fresh worktree; test command known. With the core binary on PATH, `batuta doctor`.
 
 *Done when:* the executor finished and its report is captured verbatim.
 
@@ -77,8 +77,8 @@ Always, in order: scope check → diff review (traceability, slop) → tests run
 
 ## Step 5 — Commit and record
 
-1. One verified task = one commit, message per the profile's methodology. In a worktree, squash per `references/worktree.md`.
-2. One `WORK.md` line and one run trail, format in `references/state.md`. The line tells the routing story: executor, model, retries, escalation.
+1. One verified task = one commit, message per the profile's methodology. Pending managed state rides along (`git add WORK.md .batuta/*.md`, `references/state.md`). In a worktree, squash per `references/worktree.md`.
+2. One `WORK.md` line and one run trail, format in `references/state.md`. The line tells the routing story: executor, model, retries, escalation. It is committed with the next task, or by `/batuta-pause`.
 
 *Done when:* the commit sha is on the `WORK.md` line and the trail file exists.
 

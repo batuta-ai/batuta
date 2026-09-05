@@ -10,7 +10,8 @@ disable-model-invocation: true
 2. **Background.** List executors still running. Note in `WORK.md` what finishes on its own; stop what would be orphaned. A running `batuta loop` is not an orphan: record its journal path; it resumes with `--resume`.
 3. **Worktrees.** List Batuta worktrees and the branch each holds. Remove none.
 4. **Write `.batuta/handoff.md`** — four sections, prose, format in `../batuta/references/state.md`: Cycle point · Decisions not yet written · Background · Open questions.
-5. Say in one line where the project stands and that `/batuta-resume` picks it up.
+5. **Commit pending state.** `git status --porcelain WORK.md .batuta` non-empty → offer `chore(batuta): update WORK.md` (managed state, `state.md`). The handoff is excluded from git and never committed.
+6. Say in one line where the project stands and that `/batuta-resume` picks it up.
 
 *Done when:* `WORK.md` is truthful and the handoff has its four sections filled or marked `none`.
 
