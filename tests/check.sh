@@ -36,6 +36,6 @@ hits=$(grep -rnE 'superpowers\.md|codex-plugin\.md|compozy\.md' --include='*.md'
 [ -z "$hits" ] || bad "retired integration references:"$'\n'"$hits"
 
 # 6. The installer's behaviour tests.
-node --test tests/ >/dev/null 2>&1 || bad "node --test tests/ failed (run it for details)"
+out=$(node --test tests/*.test.js 2>&1) || bad "installer tests:"$'\n'"$out"
 
 [ "$fail" -eq 0 ] && echo "batuta check: ok" || { echo "batuta check: FAILED"; exit 1; }
