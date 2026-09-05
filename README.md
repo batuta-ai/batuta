@@ -37,7 +37,7 @@ targets one. Per host, the same thing by hand:
 | Host | Install | Entry points |
 |---|---|---|
 | Claude Code | `claude plugin marketplace add batuta-ai/batuta` · `claude plugin install batuta@batuta` | the `batuta` skill on any code task; `/batuta:init`, `/batuta:plan`, `/batuta:loop`, `/batuta:review`, `/batuta:status`, `/batuta:route`, `/batuta:pause`, `/batuta:resume` |
-| Codex CLI | `codex plugin marketplace add batuta-ai/batuta` · `codex plugin add batuta` | `$batuta`, `$batuta-init`, `$batuta-plan`, … |
+| Codex CLI | `codex plugin marketplace add batuta-ai/batuta` · `codex plugin add batuta@batuta` | `$batuta`, `$batuta-init`, `$batuta-plan`, … |
 | Cursor | `npx skills add batuta-ai/skills -a cursor -g` | the skills, by name |
 | opencode | `npx skills add batuta-ai/skills -a opencode -g` + `hosts/opencode/commands/` | `/batuta`, `/batuta-init`, … |
 | Antigravity (`agy`) and any other agent | `npx skills add batuta-ai/skills -g` | the skills, by name |

@@ -114,7 +114,7 @@ the root. One repository per host would multiply vendoring and releases.
 | Host | Manifest | Extra | Install |
 |---|---|---|---|
 | Claude Code | `.claude-plugin/plugin.json` + `marketplace.json` | `hooks/hooks.json` (SessionStart, one line), `commands/` thin routers | `claude plugin marketplace add batuta-ai/batuta && claude plugin install batuta@batuta` |
-| Codex | `.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json` | `agents/openai.yaml` per skill | `codex plugin marketplace add batuta-ai/batuta` → `codex plugin add batuta` |
+| Codex | `.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json` | `agents/openai.yaml` per skill | `codex plugin marketplace add batuta-ai/batuta` → `codex plugin add batuta@batuta` |
 | Cursor | `.cursor-plugin/plugin.json` + `marketplace.json` | — | `npx skills add batuta-ai/skills -a cursor -g` |
 | opencode | `hosts/opencode/commands/*.md` | copied by the installer | `npx skills add batuta-ai/skills -a opencode -g` |
 | Antigravity, any other | — | — | `npx skills add batuta-ai/skills -g` |

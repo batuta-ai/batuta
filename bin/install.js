@@ -49,7 +49,7 @@ const HOSTS = [
     detect: () => which("codex") || exists(path.join(home, ".codex")),
     steps: [
       `codex plugin marketplace add ${REPO}`,
-      "codex plugin add batuta",
+      "codex plugin add batuta@batuta",
     ],
     note: "plugin: skills with $batuta-* prompts",
   },
@@ -108,7 +108,9 @@ function run(cmd) {
   execSync(cmd, { stdio: "inherit" });
 }
 
-function main(argv) {
+function main(argv, deps = {}) {
+  const exec = deps.run || run;
+  const hosts = deps.hosts || HOSTS;
   const dryRun = argv.includes("--dry-run");
   const list = argv.includes("--list");
   const onlyIdx = argv.indexOf("--only");
@@ -117,25 +119,38 @@ function main(argv) {
   const withCore = !argv.includes("--no-core");
 
   if (list) {
-    for (const h of HOSTS) console.log(`${h.id.padEnd(9)} ${h.label.padEnd(16)} ${h.detect() ? "detected" : "-"}   ${h.note}`);
+    for (const h of hosts) console.log(`${h.id.padEnd(9)} ${h.label.padEnd(16)} ${h.detect() ? "detected" : "-"}   ${h.note}`);
     return;
   }
-  const targets = HOSTS.filter((h) => (only ? h.id === only : all || h.detect()));
+  const targets = hosts.filter((h) => (only ? h.id === only : all || h.detect()));
   if (targets.length === 0) {
+    if (only) { console.error(`Unknown host "${only}". Hosts: ${hosts.map((h) => h.id).join(", ")}`); return 2; }
     console.log("No supported host detected. Any other agent: npx skills add " + SKILLS);
-    return;
+    return 0;
   }
+  const failed = [];
   for (const h of targets) {
     console.log(`${h.label}:`);
+    let ok = true;
     for (const step of h.steps) {
-      if (dryRun) console.log(`  $ ${step}`); else {
-        try { run(step); } catch (e) { console.log(`  failed: ${e.message}`); }
-      }
+      if (dryRun) { console.log(`  $ ${step}`); continue; }
+      try { exec(step); } catch (e) { console.log(`  failed: ${e.message}`); ok = false; break; }
     }
-    if (h.after) h.after(dryRun);
+    if (!ok) { failed.push(h.id); console.log(`  ${h.label} skipped: a step failed above`); continue; }
+    if (h.after) {
+      try { h.after(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push(h.id); }
+    }
   }
-  if (withCore) installCore(dryRun);
+  if (withCore) {
+    try { (deps.installCore || installCore)(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push("core"); }
+  }
+  if (failed.length > 0) {
+    console.log(`\nFailed: ${failed.join(", ")}. Fix the error above and re-run with --only <host>.`);
+    return 1;
+  }
   console.log("\nNext: open a project and run /batuta:init (Claude Code), $batuta-init (Codex) or /batuta-init (other hosts).");
+  return 0;
 }
 
-main(process.argv.slice(2));
+if (require.main === module) process.exitCode = main(process.argv.slice(2));
+module.exports = { main, HOSTS };
