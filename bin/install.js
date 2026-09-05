@@ -81,26 +81,49 @@ const HOSTS = [
 ];
 
 // Copies the vendored skills/ tree into the shared skills directory, one
-// directory per skill, replacing whatever was there, and records the pinned
-// ref next to them. Runs once per invocation however many hosts share it.
+// directory per skill, and records the pinned ref and the managed names in
+// .batuta-skills-lock.json next to them. Each skill is staged beside its
+// target and swapped in only once the copy succeeded, so a failure leaves
+// the previous installation in place; skills the previous lock listed but
+// this release no longer ships are removed. Runs once per invocation
+// however many hosts share the directory — and only counts once it worked.
+const LOCK_NAME = ".batuta-skills-lock.json";
 let sharedSkillsDone = false;
 function installSharedSkills(dryRun, paths = {}) {
   const src = paths.src || path.join(ROOT, "skills");
   const dst = paths.dst || path.join(home, ".agents", "skills");
   const lockSrc = paths.lockSrc || path.join(ROOT, "skills-lock.json");
+  const copy = paths.copy || ((from, to) => fs.cpSync(from, to, { recursive: true }));
   if (!paths.src && sharedSkillsDone) return;
-  sharedSkillsDone = true;
   const names = fs.readdirSync(src).filter((n) => fs.statSync(path.join(src, n)).isDirectory());
   if (dryRun) { console.log(`  copy ${src}/{${names.join(",")}} -> ${dst}/`); return; }
-  fs.mkdirSync(dst, { recursive: true });
-  for (const name of names) {
-    const target = path.join(dst, name);
-    fs.rmSync(target, { recursive: true, force: true });
-    fs.cpSync(path.join(src, name), target, { recursive: true });
-  }
   const lock = JSON.parse(fs.readFileSync(lockSrc, "utf8"));
+  fs.mkdirSync(dst, { recursive: true });
+  let previous = [];
+  try { previous = JSON.parse(fs.readFileSync(path.join(dst, LOCK_NAME), "utf8")).skills || []; } catch { /* first install */ }
+  const staged = [];
+  try {
+    for (const name of names) {
+      const stage = path.join(dst, `.${name}.staging`);
+      fs.rmSync(stage, { recursive: true, force: true });
+      copy(path.join(src, name), stage);
+      staged.push([stage, path.join(dst, name)]);
+    }
+  } catch (e) {
+    for (const [stage] of staged) fs.rmSync(stage, { recursive: true, force: true });
+    throw e;
+  }
+  for (const [stage, target] of staged) {
+    fs.rmSync(target, { recursive: true, force: true });
+    fs.renameSync(stage, target);
+  }
+  for (const name of previous) {
+    if (!names.includes(name)) fs.rmSync(path.join(dst, name), { recursive: true, force: true });
+  }
+  lock.skills = names;
   lock.installedAt = new Date().toISOString();
-  fs.writeFileSync(path.join(dst, ".batuta-skills-lock.json"), JSON.stringify(lock, null, 2) + "\n");
+  fs.writeFileSync(path.join(dst, LOCK_NAME), JSON.stringify(lock, null, 2) + "\n");
+  sharedSkillsDone = !paths.src;
   console.log(`  copied ${names.length} skills to ${dst} (${lock.ref})`);
 }
 

@@ -77,5 +77,38 @@ test("installSharedSkills copies the vendored tree, replaces stale files and wri
   assert.ok(!fs.existsSync(path.join(dst, "README.md")), "only skill directories are copied");
   const lock = JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
   assert.equal(lock.ref, "v9.9.9");
+  assert.deepEqual(lock.skills, ["batuta"]);
   assert.ok(lock.installedAt);
+});
+
+test("installSharedSkills keeps the previous installation when the copy fails and retires dropped skills", () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { installSharedSkills } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-skills-"));
+  const src = path.join(tmp, "src"), dst = path.join(tmp, "dst"), lockSrc = path.join(tmp, "skills-lock.json");
+  fs.mkdirSync(path.join(src, "batuta"), { recursive: true });
+  fs.writeFileSync(path.join(src, "batuta", "SKILL.md"), "new");
+  fs.mkdirSync(path.join(dst, "batuta"), { recursive: true });
+  fs.writeFileSync(path.join(dst, "batuta", "SKILL.md"), "old");
+  fs.mkdirSync(path.join(dst, "batuta-retired"), { recursive: true });
+  fs.writeFileSync(path.join(dst, ".batuta-skills-lock.json"), JSON.stringify({ ref: "v1", skills: ["batuta", "batuta-retired"] }));
+  // A missing source lock makes the run fail after the copy; the previous install must survive an earlier failure too.
+  fs.writeFileSync(lockSrc, "not json");
+  assert.throws(() => quiet(() => installSharedSkills(false, { src, dst, lockSrc })));
+  // A copy that fails on the second skill after the first was staged: nothing is swapped in.
+  fs.mkdirSync(path.join(src, "batuta-second"), { recursive: true });
+  fs.writeFileSync(path.join(src, "batuta-second", "SKILL.md"), "x");
+  fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v2" }));
+  let calls = 0;
+  const copy = (from, to) => { calls++; if (calls === 2) throw new Error("EIO"); fs.cpSync(from, to, { recursive: true }); };
+  assert.throws(() => quiet(() => installSharedSkills(false, { src, dst, lockSrc, copy })), /EIO/);
+  assert.equal(fs.readFileSync(path.join(dst, "batuta", "SKILL.md"), "utf8"), "old", "previous installation untouched");
+  assert.ok(!fs.existsSync(path.join(dst, "batuta-second")), "the second skill was never installed");
+  assert.ok(!fs.readdirSync(dst).some((n) => n.endsWith(".staging")), "no staging directories left behind");
+  assert.ok(fs.existsSync(path.join(dst, "batuta-retired")), "nothing retired on a failed run");
+  quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
+  assert.equal(fs.readFileSync(path.join(dst, "batuta", "SKILL.md"), "utf8"), "new");
+  assert.ok(!fs.existsSync(path.join(dst, "batuta-retired")), "skills dropped by the release are removed");
 });
