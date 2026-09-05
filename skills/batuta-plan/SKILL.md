@@ -37,10 +37,13 @@ straight into the cycle.
 <free prose: what a fresh session needs to know to resume>
 ```
 
-   Machine contract (read by `/batuta-loop`): a task is a `- [ ] N.` line; `Accept:` is mandatory; `Depends on:` lists task numbers; `Scope:` is a comma-separated list of paths or globs. Everything else is prose.
+   Machine contract (read by `/batuta-loop`): a task is a `- [ ] N. <title> — <domain>/<complexity>` line, the `→ <executor/model>` tail optional; the lane is mandatory because the loop routes by it. `Accept:` is mandatory; `Depends on:` lists task numbers, in any order; `Scope:` is a comma-separated list of paths or globs. `**Status:**` is exactly one of the four words, on the `**Created:**` line, once. Everything else is prose.
 5. **Self-check:**
    ```bash
-   test "$(grep -c '^- \[ \] [0-9]*\.' .batuta/plan-<slug>.md)" = "$(grep -c '^      Accept:' .batuta/plan-<slug>.md)"
+   f=.batuta/plan-<slug>.md
+   test "$(grep -c '^- \[ \] [0-9]*\.' $f)" = "$(grep -c '^- \[ \] [0-9]*\. .* — [a-z]*/\(low\|medium\|high\|critical\)' $f)"
+   test "$(grep -c '^- \[ \] [0-9]*\.' $f)" = "$(grep -c '^      Accept:' $f)"
+   test "$(grep -c '^\*\*Created:\*\*.*\*\*Status:\*\* \(proposed\|approved\|in progress\|done\)$' $f)" = 1
    ```
 6. **Present and wait for approval.** Set `Status: approved` only on the user's word.
 7. Approved → execute task by task through the `batuta` cycle, ticking checkboxes and recording in `WORK.md`; or hand off to `/batuta-loop` for an unattended run.
