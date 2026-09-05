@@ -16,15 +16,22 @@ function quiet(fn) {
   try { return { code: fn(), lines }; } finally { console.log = log; console.error = err; }
 }
 
-test("every step succeeds → exit 0 and the first-run hint", () => {
+async function quietAsync(fn) {
+  const log = console.log, err = console.error, lines = [];
+  console.log = (...a) => lines.push(a.join(" "));
+  console.error = (...a) => lines.push(a.join(" "));
+  try { return { code: await fn(), lines }; } finally { console.log = log; console.error = err; }
+}
+
+test("every step succeeds → exit 0 and the first-run hint", async () => {
   const ran = [];
-  const { code, lines } = quiet(() => main(["--no-core"], { hosts: [host("a", ["s1", "s2"])], run: (s) => ran.push(s) }));
+  const { code, lines } = await quietAsync(() => main(["--no-core"], { hosts: [host("a", ["s1", "s2"])], run: (s) => ran.push(s) }));
   assert.equal(code, 0);
   assert.deepEqual(ran, ["s1", "s2"]);
   assert.ok(lines.some((l) => l.trim().startsWith("Next:")));
 });
 
-test("a failing step stops that host, skips its after hook and exits 1", () => {
+test("a failing step stops that host, skips its after hook and exits 1", async () => {
   let afterCalled = false;
   const ran = [];
   const hosts = [
@@ -32,7 +39,7 @@ test("a failing step stops that host, skips its after hook and exits 1", () => {
     host("b", ["s3"]),
   ];
   const run = (s) => { ran.push(s); if (s === "s1") throw new Error("boom"); };
-  const { code, lines } = quiet(() => main(["--no-core"], { hosts, run }));
+  const { code, lines } = await quietAsync(() => main(["--no-core"], { hosts, run }));
   assert.equal(code, 1);
   assert.deepEqual(ran, ["s1", "s3"], "s2 must not run after s1 failed; host b still runs");
   assert.equal(afterCalled, false);
@@ -40,13 +47,13 @@ test("a failing step stops that host, skips its after hook and exits 1", () => {
   assert.ok(!lines.some((l) => l.trim().startsWith("Next:")));
 });
 
-test("a failing core install exits 1", () => {
-  const { code } = quiet(() => main([], { hosts: [host("a", [])], run: () => {}, installCore: () => { throw new Error("go missing"); } }));
+test("a failing core install exits 1", async () => {
+  const { code } = await quietAsync(() => main([], { hosts: [host("a", [])], run: () => {}, installCore: async () => { throw new Error("go missing"); } }));
   assert.equal(code, 1);
 });
 
-test("--only with an unknown host exits 2", () => {
-  const { code } = quiet(() => main(["--only", "nope"], { hosts: [host("a", [])], run: () => {} }));
+test("--only with an unknown host exits 2", async () => {
+  const { code } = await quietAsync(() => main(["--only", "nope"], { hosts: [host("a", [])], run: () => {} }));
   assert.equal(code, 2);
 });
 
@@ -116,4 +123,54 @@ test("installSharedSkills keeps the previous installation when the copy fails an
   assert.ok(!fs.existsSync(path.join(dst, "batuta-retired")), "skills dropped by the release are removed");
   assert.ok(fs.existsSync(path.join(tmp, "escape")), "lock entries that are not skill names are never deleted");
   assert.ok(fs.existsSync(src), "a `..` entry cannot delete the parent");
+});
+
+test("downloadCore verifies the checksum and installs the binary from the release archive", async () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const crypto = require("node:crypto");
+  const { execFileSync } = require("node:child_process");
+  const { downloadCore, coreAsset, expectedChecksum, CORE_VERSION } = require("../bin/install.js");
+  assert.match(CORE_VERSION, /^v\d+\.\d+\.\d+(-beta\.\d+)?$/);
+  assert.equal(coreAsset("darwin", "arm64"), "batuta_darwin_arm64.tar.gz");
+  assert.equal(coreAsset("linux", "x64"), "batuta_linux_amd64.tar.gz");
+  assert.equal(coreAsset("win32", "x64"), null);
+
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-dl-"));
+  const src = path.join(tmp, "src");
+  fs.mkdirSync(src);
+  fs.writeFileSync(path.join(src, "batuta"), "#!/bin/sh\necho v-test\n");
+  fs.chmodSync(path.join(src, "batuta"), 0o755);
+  const archive = path.join(tmp, "batuta_linux_amd64.tar.gz");
+  execFileSync("tar", ["-czf", archive, "-C", src, "batuta"]);
+  const bytes = fs.readFileSync(archive);
+  const sha = crypto.createHash("sha256").update(bytes).digest("hex");
+  const checksums = `${sha}  batuta_linux_amd64.tar.gz\n0000000000000000000000000000000000000000000000000000000000000000  batuta_darwin_arm64.tar.gz\n`;
+  assert.equal(expectedChecksum(checksums, "batuta_linux_amd64.tar.gz"), sha);
+  assert.equal(expectedChecksum(checksums, "missing.tar.gz"), null);
+
+  const served = { "checksums.txt": Buffer.from(checksums), "batuta_linux_amd64.tar.gz": bytes };
+  const fetched = [];
+  const fakeFetch = async (url) => {
+    fetched.push(url);
+    const name = url.split("/").pop();
+    if (!served[name]) return { ok: false, status: 404 };
+    return { ok: true, status: 200, arrayBuffer: async () => served[name] };
+  };
+  const binDir = path.join(tmp, "bin");
+  const target = await downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" });
+  assert.equal(target, path.join(binDir, "batuta"));
+  assert.equal(fs.readFileSync(target, "utf8"), "#!/bin/sh\necho v-test\n");
+  assert.ok(fs.statSync(target).mode & 0o100, "binary is executable");
+  assert.deepEqual(fetched, ["https://example.test/rel/checksums.txt", "https://example.test/rel/batuta_linux_amd64.tar.gz"]);
+
+  // A tampered archive never reaches binDir.
+  served["batuta_linux_amd64.tar.gz"] = Buffer.concat([bytes, Buffer.from("x")]);
+  fs.writeFileSync(target, "previous");
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" }), /checksum mismatch/);
+  assert.equal(fs.readFileSync(target, "utf8"), "previous");
+  // Darwin/arm64 is listed with a bogus hash; a 404 on the archive is reported as such.
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "darwin", arch: "arm64", baseUrl: "https://example.test/rel" }), /HTTP 404/);
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "win32", arch: "x64" }), /no prebuilt batuta/);
 });
