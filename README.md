@@ -44,8 +44,9 @@ targets one. Per host, the same thing by hand:
 | CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | the `batuta` agent |
 
 The `batuta` binary (executor inventory, verification gates, unattended loop) is
-installed with `go install github.com/batuta-ai/core/cmd/batuta@latest` when Go
-is present; the skills work without it.
+downloaded from the pinned [batuta-ai/core release](https://github.com/batuta-ai/core/releases)
+into `~/.local/bin` (set `BATUTA_BIN_DIR` to change it), checked against the
+release's `checksums.txt`; no Go needed. The skills work without it.
 
 Then, in a project: `/batuta:init` once, and just ask for code tasks.
 
