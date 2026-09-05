@@ -19,7 +19,7 @@ the conductor and the executor: the executor sees nothing else.
 |---|---|
 | **Goal** | What to deliver, 1–3 sentences. |
 | **Context** | Relevant paths, the snippets that matter, decisions already made in the conversation. Code appears as evidence of what exists, never as the fix. |
-| **Conventions** | The profile's rules, then the stack template, then every template in its `Extends` chain, child first up to `generic.md`. Verbatim, every brief. |
+| **Conventions** | The profile's rules, then the **Conventions for briefs** section (bullets and `Never:` block) of the stack template and of every template in its `Extends` chain, child first up to `generic.md`. Verbatim, every brief. The templates' *Verification hints* and catalog note never enter a brief — they are yours, at Step 4. |
 | **Acceptance criteria** | Verifiable list. This is what Step 4 checks. |
 | **Boundaries** | What not to touch. |
 | **Scope** | Closed list of paths the task may change. |
@@ -94,7 +94,7 @@ Every code brief carries one method line:
 - [ ] Eight sections present; empty ones say `Unknown — <reason>`.
 - [ ] Every criterion names its proof.
 - [ ] Scope is a closed list with the closing sentence.
-- [ ] Conventions pasted from the profile and the template chain.
+- [ ] Conventions pasted from the profile and the template chain's Conventions sections only — no verification hints.
 - [ ] Test laws present when tests are involved.
 - [ ] Sweep done (medium+).
 - [ ] Method line present.

@@ -49,7 +49,7 @@ Read `git diff` as the conductor:
 
 - **Correctness** — does it do what the criteria say?
 - **Traceability** — every changed line traces to the brief. Drive-by edits fail even when correct.
-- **Conventions** — the profile's rules and the template's `Never:` block. A `Never:` hit is a convention failure.
+- **Conventions** — the profile's rules and the template's `Never:` block. A `Never:` hit is a convention failure. Then walk the *Verification hints for the orchestrator* of each template in the chain — they were kept out of the brief for you.
 - **Slop** — comments a reader of the surrounding code does not need; defensive checks or try/catch abnormal for trusted paths; type-silencing casts; nesting an early return would flatten; patterns inconsistent with the file. Findings go into the retry feedback.
 - **Workarounds** — an unmarked workaround fails. A `// WORKAROUND: <reason>` marker demands the reason in the report; judge it.
 

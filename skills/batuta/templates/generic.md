@@ -31,10 +31,9 @@ Never:
   except from an allowed dependency.
 - Drive-by refactors or "improvements" outside the brief's scope.
 - Touch CI config, license, or anything listed under the brief's Boundaries.
-- Silence a signal instead of fixing its source: type-silencing casts, empty
-  catch blocks, sleeps/timeouts to fix ordering, copy-pasting similar code to
-  dodge the real fix. Root cause genuinely out of reach → mark
-  `// WORKAROUND: <reason>` and flag it in your report.
+- Silence a signal instead of fixing its source (casts, empty catch blocks,
+  sleeps, copy-paste to dodge the real fix) — the method line says how to
+  mark an unavoidable workaround.
 
 ## Verification hints for the orchestrator
 
