@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/batuta-ai/batuta/compare/v0.3.2...v0.3.3) (2026-09-05)
+
+
+### Bug Fixes
+
+* **install:** stage the shared skills, keep the previous copy on failure, retire dropped skills ([#30](https://github.com/batuta-ai/batuta/issues/30)) ([ab5efe4](https://github.com/batuta-ai/batuta/commit/ab5efe428cf47642429f4a48cad645db0fe4085a))
+
 ## [0.3.2](https://github.com/batuta-ai/batuta/compare/v0.3.1...v0.3.2) (2026-09-05)
 
 
