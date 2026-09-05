@@ -23,3 +23,4 @@ cat > skills-lock.json <<JSON
 }
 JSON
 echo "skills vendored from $TAG ($commit)"
+echo "commit as: fix(skills): vendor batuta-ai/skills $TAG  — a chore commit does not trigger a release"
