@@ -4,6 +4,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { main } = require("../bin/install.js");
+const noShadow = { shadowSharedSkillsInCodex: () => [] };
 
 function host(id, steps, after) {
   return { id, label: id, detect: () => true, steps, after, note: "" };
@@ -25,7 +26,7 @@ async function quietAsync(fn) {
 
 test("every step succeeds → exit 0 and the first-run hint", async () => {
   const ran = [];
-  const { code, lines } = await quietAsync(() => main(["--no-core"], { hosts: [host("a", ["s1", "s2"])], run: (s) => ran.push(s) }));
+  const { code, lines } = await quietAsync(() => main(["--no-core"], { ...noShadow,  hosts: [host("a", ["s1", "s2"])], run: (s) => ran.push(s) }));
   assert.equal(code, 0);
   assert.deepEqual(ran, ["s1", "s2"]);
   assert.ok(lines.some((l) => l.trim().startsWith("Next:")));
@@ -39,7 +40,7 @@ test("a failing step stops that host, skips its after hook and exits 1", async (
     host("b", ["s3"]),
   ];
   const run = (s) => { ran.push(s); if (s === "s1") throw new Error("boom"); };
-  const { code, lines } = await quietAsync(() => main(["--no-core"], { hosts, run }));
+  const { code, lines } = await quietAsync(() => main(["--no-core"], { ...noShadow,  hosts, run }));
   assert.equal(code, 1);
   assert.deepEqual(ran, ["s1", "s3"], "s2 must not run after s1 failed; host b still runs");
   assert.equal(afterCalled, false);
@@ -48,12 +49,12 @@ test("a failing step stops that host, skips its after hook and exits 1", async (
 });
 
 test("a failing core install exits 1", async () => {
-  const { code } = await quietAsync(() => main([], { hosts: [host("a", [])], run: () => {}, installCore: async () => { throw new Error("go missing"); } }));
+  const { code } = await quietAsync(() => main([], { ...noShadow,  hosts: [host("a", [])], run: () => {}, installCore: async () => { throw new Error("go missing"); } }));
   assert.equal(code, 1);
 });
 
 test("--only with an unknown host exits 2", async () => {
-  const { code } = await quietAsync(() => main(["--only", "nope"], { hosts: [host("a", [])], run: () => {} }));
+  const { code } = await quietAsync(() => main(["--only", "nope"], { ...noShadow,  hosts: [host("a", [])], run: () => {} }));
   assert.equal(code, 2);
 });
 
@@ -256,4 +257,38 @@ test("pruneSkillLinks removes only symlinks that resolve to the shared skill of 
   assert.ok(fs.existsSync(path.join(shared, "batuta")), "the shared skill itself is untouched");
   assert.match(lines.join("\n"), /removed 1 duplicate skill link/);
   assert.deepEqual(quiet(() => pruneSkillLinks(false, { dir: path.join(root, "absent"), shared, src })).code, []);
+});
+
+test("shadowSharedSkillsInCodex disables the shared copies once, only when the plugin is installed", () => {
+  const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
+  const { shadowSharedSkillsInCodex } = require("../bin/install.js");
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-shadow-"));
+  const src = path.join(root, "vendored"), shared = path.join(root, "agents-skills");
+  const config = path.join(root, "codex", "config.toml"), pluginCache = path.join(root, "plugin-cache");
+  for (const name of ["batuta", "batuta-init", "batuta-plan"]) fs.mkdirSync(path.join(src, name), { recursive: true });
+  for (const name of ["batuta", "batuta-init"]) {
+    fs.mkdirSync(path.join(shared, name), { recursive: true });
+    fs.writeFileSync(path.join(shared, name, "SKILL.md"), "---\nname: x\n---\n");
+  }
+  fs.mkdirSync(path.join(shared, "other"), { recursive: true });
+  fs.writeFileSync(path.join(shared, "other", "SKILL.md"), "");
+  const opts = { src, shared, config, pluginCache };
+  assert.deepEqual(quiet(() => shadowSharedSkillsInCodex(false, opts)).code, [], "no plugin: nothing written");
+  assert.ok(!fs.existsSync(config));
+  fs.mkdirSync(pluginCache, { recursive: true });
+  fs.mkdirSync(path.dirname(config), { recursive: true });
+  fs.writeFileSync(config, 'model = "gpt-6-astra"');
+  assert.deepEqual(quiet(() => shadowSharedSkillsInCodex(true, opts)).code, ["batuta", "batuta-init"]);
+  assert.equal(fs.readFileSync(config, "utf8"), 'model = "gpt-6-astra"', "dry run writes nothing");
+  const { code, lines } = quiet(() => shadowSharedSkillsInCodex(false, opts));
+  assert.deepEqual(code, ["batuta", "batuta-init"]);
+  const toml = fs.readFileSync(config, "utf8");
+  assert.equal((toml.match(/\[\[skills\.config\]\]/g) || []).length, 2);
+  assert.match(toml, new RegExp(`path = "${path.join(shared, "batuta-init", "SKILL.md").replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"\nenabled = false`));
+  assert.ok(!toml.includes("other"), "unvendored skills are left alone");
+  assert.ok(!toml.includes("batuta-plan"), "a vendored skill absent from the shared directory gets no entry");
+  assert.match(toml, /^model = "gpt-6-astra"\n/, "existing config kept, newline inserted");
+  assert.match(lines.join("\n"), /disabled 2 shared skills/);
+  assert.deepEqual(quiet(() => shadowSharedSkillsInCodex(false, opts)).code, [], "second run adds nothing");
+  assert.equal(fs.readFileSync(config, "utf8"), toml);
 });

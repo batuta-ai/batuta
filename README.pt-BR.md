@@ -43,6 +43,8 @@ npx -y github:batuta-ai/batuta
 | Antigravity (`agy`) | `npx -y github:batuta-ai/batuta -- --only agy` (skills vendoradas → `~/.agents/skills`); qualquer outro agente: `npx skills add batuta-ai/skills -g -a <agente>` (sem `-a` a skills CLI também linka as skills no Claude Code e no Codex, que já as recebem pelo plugin) | as skills, pelo nome |
 | CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | o agente `batuta` |
 
+O Codex também lê `~/.agents/skills`. Quando o plugin do Codex e um host de diretório compartilhado (Cursor, opencode, agy) coexistem na mesma máquina, o instalador acrescenta entradas `[[skills.config]]` em `~/.codex/config.toml` que desligam as cópias compartilhadas, e o Codex lista cada skill uma vez, pelo plugin.
+
 O binário `batuta` (inventário de executores, gates de verificação, loop
 autônomo) é baixado do [release fixado do batuta-ai/core](https://github.com/batuta-ai/core/releases)
 para `~/.local/bin` (`BATUTA_BIN_DIR` muda o destino) e conferido contra o

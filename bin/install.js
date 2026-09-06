@@ -173,6 +173,41 @@ function pruneSkillLinks(dryRun, paths = {}) {
   return pruned;
 }
 
+// Codex reads ~/.agents/skills natively, so on a machine where the Codex
+// plugin and a shared-directory host (Cursor, opencode, agy) coexist it lists
+// every Batuta skill twice: `batuta-init` from the shared directory and
+// `batuta:batuta-init` from the plugin. The plugin stays the source on Codex;
+// the shared copies are switched off through `[[skills.config]]` entries
+// (path selector, enabled = false) appended to ~/.codex/config.toml. Only the
+// names this package vendors, only paths that exist, one entry per path.
+function shadowSharedSkillsInCodex(dryRun, paths = {}) {
+  const shared = paths.shared || path.join(home, ".agents", "skills");
+  const config = paths.config || path.join(home, ".codex", "config.toml");
+  const pluginCache = paths.pluginCache || path.join(home, ".codex", "plugins", "cache", "batuta", "batuta");
+  const src = paths.src || path.join(ROOT, "skills");
+  if (!exists(pluginCache)) return [];
+  let names;
+  try { names = fs.readdirSync(src).filter((n) => fs.statSync(path.join(src, n)).isDirectory()); } catch { return []; }
+  let current = "";
+  try { current = fs.readFileSync(config, "utf8"); } catch { /* no config yet */ }
+  const added = [];
+  let block = "";
+  for (const name of names) {
+    const skillMd = path.join(shared, name, "SKILL.md");
+    if (!exists(skillMd)) continue;
+    if (current.includes(`path = ${JSON.stringify(skillMd)}`)) continue;
+    block += `\n[[skills.config]]\npath = ${JSON.stringify(skillMd)}\nenabled = false\n`;
+    added.push(name);
+  }
+  if (added.length === 0) return [];
+  if (dryRun) { console.log(`  would disable ${added.length} shared skills in ${config} (the plugin already ships them)`); return added; }
+  fs.mkdirSync(path.dirname(config), { recursive: true });
+  const sep = current.length > 0 && !current.endsWith("\n") ? "\n" : "";
+  fs.appendFileSync(config, sep + block);
+  console.log(`  disabled ${added.length} shared skills in ${config} (the plugin already ships them)`);
+  return added;
+}
+
 function installOpencodeCommands(dryRun) {
   const src = path.join(ROOT, "hosts", "opencode", "commands");
   const dst = path.join(home, ".config", "opencode", "commands");
@@ -337,6 +372,7 @@ async function main(argv, deps = {}) {
       try { h.after(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push(h.id); }
     }
   }
+  try { (deps.shadowSharedSkillsInCodex || shadowSharedSkillsInCodex)(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push("codex"); }
   if (withCore) {
     try { await (deps.installCore || installCore)(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push("core"); }
   }
@@ -349,4 +385,4 @@ async function main(argv, deps = {}) {
 }
 
 if (require.main === module) main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
-module.exports = { main, HOSTS, installSharedSkills, pruneSkillLinks, downloadCore, installBinary, coreAsset, expectedChecksum, CORE_VERSION };
+module.exports = { main, HOSTS, installSharedSkills, pruneSkillLinks, shadowSharedSkillsInCodex, downloadCore, installBinary, coreAsset, expectedChecksum, CORE_VERSION };

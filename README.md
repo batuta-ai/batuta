@@ -43,6 +43,8 @@ targets one. Per host, the same thing by hand:
 | Antigravity (`agy`) | `npx -y github:batuta-ai/batuta -- --only agy` (vendored skills → `~/.agents/skills`); any other agent: `npx skills add batuta-ai/skills -g -a <agent>` (without `-a` the skills CLI also links the skills into Claude Code and Codex, which already get them from the plugin) | the skills, by name |
 | CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | the `batuta` agent |
 
+Codex also reads `~/.agents/skills`. When the Codex plugin and a shared-directory host (Cursor, opencode, agy) share a machine, the installer appends `[[skills.config]]` entries to `~/.codex/config.toml` that disable the shared copies, so Codex lists each skill once, from the plugin.
+
 The `batuta` binary (executor inventory, verification gates, unattended loop) is
 downloaded from the pinned [batuta-ai/core release](https://github.com/batuta-ai/core/releases)
 into `~/.local/bin` (set `BATUTA_BIN_DIR` to change it), checked against the
