@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.6](https://github.com/batuta-ai/batuta/compare/v0.4.5...v0.4.6) (2026-09-06)
+
+
+### Bug Fixes
+
+* **install:** refresh the Claude and Codex marketplaces before installing the plugin ([#51](https://github.com/batuta-ai/batuta/issues/51)) ([f6ec0a9](https://github.com/batuta-ai/batuta/commit/f6ec0a9ffe0a48f57a7e950bd374545650566345))
+
 ## [0.4.5](https://github.com/batuta-ai/batuta/compare/v0.4.4...v0.4.5) (2026-09-06)
 
 
