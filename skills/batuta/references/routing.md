@@ -21,7 +21,7 @@ always wins. It is a markdown table — edit freely.
 | `low` | contained change, well-trodden path: rename, config, copy, simple test | cheapest coding-capable model |
 | `medium` | isolated feature, bugfix with clear repro, new interface with moderate coordination | mid-tier coding model; raise reasoning before raising cost |
 | `high` | new subsystem, multi-file feature or refactor that a precise brief can fully specify | strong coding model, high reasoning |
-| `critical` | architecture, security-sensitive work, anything needing the conversation's context or open decisions | the conducting host itself (`self`) |
+| `critical` | architecture, security-sensitive work, anything needing the conversation's context or open decisions | the conducting host (`self`), or a strong CLI model when loop-first |
 
 **Domain** — one of: `backend, frontend, mobile, data, infra, security,
 testing, docs, general, fullstack`. Domain is a routing discriminator: a row
@@ -43,6 +43,8 @@ Assumes the full set is installed. Onboarding adapts it to what exists.
 | medium | * | codex | default model | ChatGPT subscription |
 | high | * | codex | `<strongest model>`, reasoning high, set at onboarding | ChatGPT subscription |
 | critical | * | self | the session's model | host subscription |
+
+Loop-first projects seat `critical` on a CLI (`codex <strongest model>` or `claude opus`); an open decision then parks the task with `BATUTA-QUESTION`.
 
 ## Rules
 
