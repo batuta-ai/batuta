@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/batuta-ai/batuta/compare/v0.4.0...v0.4.1) (2026-09-06)
+
+
+### Bug Fixes
+
+* **install:** exclusive staging, regular-file member, GOBIN fallback; pin core v1.1.0-beta.7 ([#41](https://github.com/batuta-ai/batuta/issues/41)) ([f0f8fa6](https://github.com/batuta-ai/batuta/commit/f0f8fa63d5a8b3a4dc4603c6d09817e2f2df435a))
+
 ## [0.4.0](https://github.com/batuta-ai/batuta/compare/v0.3.4...v0.4.0) (2026-09-05)
 
 

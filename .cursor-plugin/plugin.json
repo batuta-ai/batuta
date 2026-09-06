@@ -1,6 +1,6 @@
 {
   "name": "batuta",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Batuta for Cursor: the conductor classifies each task, delegates to the cheapest capable executor, verifies and commits.",
   "author": {
     "name": "batuta-ai"
