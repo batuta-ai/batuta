@@ -62,6 +62,7 @@ test("plugin hosts refresh their marketplace before installing", () => {
   const { HOSTS } = require("../bin/install.js");
   const claude = HOSTS.find((h) => h.id === "claude"), codex = HOSTS.find((h) => h.id === "codex");
   assert.ok(claude.steps.indexOf("claude plugin marketplace update batuta") < claude.steps.findIndex((s) => s.startsWith("claude plugin install")));
+  assert.ok(claude.steps.findIndex((s) => s.startsWith("claude plugin install")) < claude.steps.indexOf("claude plugin update batuta@batuta"));
   assert.ok(codex.steps.indexOf("codex plugin marketplace upgrade batuta") < codex.steps.findIndex((s) => s.startsWith("codex plugin add")));
 });
 

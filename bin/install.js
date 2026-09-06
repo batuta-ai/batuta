@@ -48,7 +48,10 @@ const HOSTS = [
     steps: [
       `claude plugin marketplace add ${REPO}`,
       "claude plugin marketplace update batuta",
+      // `install` is a no-op on an installed plugin; `update` moves it to
+      // the marketplace's current version and says "already latest" otherwise.
       "claude plugin install batuta@batuta",
+      "claude plugin update batuta@batuta",
     ],
     after: (dryRun) => pruneSkillLinks(dryRun, { dir: path.join(home, ".claude", "skills") }),
     note: "plugin: skills, /batuta:* commands and the SessionStart hook",
