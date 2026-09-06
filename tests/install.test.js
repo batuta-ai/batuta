@@ -53,9 +53,57 @@ test("a failing core install exits 1", async () => {
   assert.equal(code, 1);
 });
 
+test("--help prints the usage and runs nothing", async () => {
+  for (const flag of ["--help", "-h"]) {
+    let ran = false;
+    let core = false;
+    const { code, lines } = await quietAsync(() => main([flag], {
+      ...noShadow,
+      hosts: [host("a", [])],
+      run: () => { ran = true; },
+      installCore: async () => { core = true; },
+    }));
+    assert.equal(code, 0);
+    assert.equal(ran, false);
+    assert.equal(core, false);
+    for (const needle of [
+      "npx -y github:batuta-ai/batuta -- <flags>",
+      "--list",
+      "--only <host>",
+      "--all",
+      "--dry-run",
+      "--no-core",
+      "--help, -h",
+    ]) {
+      assert.ok(lines.some((l) => l.includes(needle)), needle);
+    }
+  }
+});
+
 test("--only with an unknown host exits 2", async () => {
   const { code } = await quietAsync(() => main(["--only", "nope"], { ...noShadow,  hosts: [host("a", [])], run: () => {} }));
   assert.equal(code, 2);
+});
+
+test("an unknown flag prints the usage and exits 2 without installing", async () => {
+  let ran = false;
+  let core = false;
+  const { code, lines } = await quietAsync(() => main(["--only", "codex", "--bogus"], {
+    ...noShadow,
+    hosts: [host("a", [])],
+    run: () => { ran = true; },
+    installCore: async () => { core = true; },
+  }));
+  assert.equal(code, 2);
+  assert.equal(ran, false);
+  assert.equal(core, false);
+  assert.ok(lines.some((l) => l.includes('Unknown flag "--bogus".')));
+  for (const needle of [
+    "npx -y github:batuta-ai/batuta -- <flags>",
+    "--help, -h",
+  ]) {
+    assert.ok(lines.some((l) => l.includes(needle)), needle);
+  }
 });
 
 test("plugin hosts refresh their marketplace before installing", () => {
