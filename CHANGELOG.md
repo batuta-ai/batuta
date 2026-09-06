@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/batuta-ai/batuta/compare/v0.4.3...v0.4.4) (2026-09-06)
+
+
+### Bug Fixes
+
+* **install:** disable the shared skill copies in Codex when the plugin is installed ([#47](https://github.com/batuta-ai/batuta/issues/47)) ([4d77926](https://github.com/batuta-ai/batuta/commit/4d77926cfaae98e9d4e9ba6beaa7555380405dd5))
+
 ## [0.4.3](https://github.com/batuta-ai/batuta/compare/v0.4.2...v0.4.3) (2026-09-06)
 
 
