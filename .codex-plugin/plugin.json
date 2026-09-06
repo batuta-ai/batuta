@@ -1,6 +1,6 @@
 {
   "name": "batuta",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Batuta for Codex: the conductor classifies each task, delegates to the cheapest capable executor, verifies and commits.",
   "author": {
     "name": "batuta-ai",
