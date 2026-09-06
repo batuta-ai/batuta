@@ -15,7 +15,7 @@ straight into the cycle.
 1. **Understand the goal.** Ask the missing questions, few, one at a time, per `clarify.md`. Preserve executable requirements literally.
 2. **Decompose** into tasks by the cycle's unit: the smallest deliverable that verifies and commits alone. For each task: one or two sentences; domain × complexity and the executor the routing table predicts; a closed Scope; acceptance criteria with their proof; dependencies.
 3. **Right-size.** A task that needs more than one executor session is two tasks. A task with no verifiable criterion is not a task.
-4. **Write** `.batuta/plans/<slug>.md` (finished plans end up in `.batuta/plans/done/`; core ≥ v1.1.0-beta.13 still reads the legacy `.batuta/plan-<slug>.md`):
+4. **Write** `.batuta/plans/<slug>.md` (finished plans end up in `.batuta/plans/done/`; core ≥ v1.1.0-beta.13 still reads the legacy `.batuta/plan-<slug>.md`). When `.batuta/roadmap.md` exists, "plan phase N" takes the phase's title and notes from it and fills that phase's tail `→ plans/<slug>.md`; the roadmap is `# Roadmap — <title>` plus `- [ ] N. <title>` lines, ticked by the loop when the phase's plan is archived:
 
 ```markdown
 # Plan — <title>
