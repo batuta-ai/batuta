@@ -228,3 +228,32 @@ test("downloadCore rejects an archive whose batuta member is not a regular file"
   const noTar = () => ({ status: null, error: new Error("spawnSync tar ENOENT") });
   await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", exec: noTar }), /tar is required/);
 });
+
+test("pruneSkillLinks removes only symlinks that resolve to the shared skill of the same name", () => {
+  const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
+  const { pruneSkillLinks } = require("../bin/install.js");
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-prune-"));
+  const src = path.join(root, "vendored"), shared = path.join(root, "agents-skills"), dir = path.join(root, "host-skills");
+  for (const name of ["batuta", "batuta-init"]) {
+    fs.mkdirSync(path.join(src, name), { recursive: true });
+    fs.mkdirSync(path.join(shared, name), { recursive: true });
+  }
+  fs.mkdirSync(path.join(shared, "other"), { recursive: true });
+  fs.mkdirSync(dir, { recursive: true });
+  fs.symlinkSync(path.join(shared, "batuta"), path.join(dir, "batuta"));            // duplicate: removed
+  fs.mkdirSync(path.join(dir, "batuta-init"));                                        // real directory: kept
+  fs.symlinkSync(path.join(shared, "other"), path.join(dir, "batuta-loop"));         // wrong target: kept
+  fs.symlinkSync(path.join(shared, "batuta"), path.join(dir, "mine"));               // name not vendored: kept
+  const dry = quiet(() => pruneSkillLinks(true, { dir, shared, src }));
+  assert.deepEqual(dry.code, ["batuta"]);
+  assert.ok(fs.lstatSync(path.join(dir, "batuta")).isSymbolicLink(), "dry run removes nothing");
+  const { code, lines } = quiet(() => pruneSkillLinks(false, { dir, shared, src }));
+  assert.deepEqual(code, ["batuta"]);
+  assert.ok(!fs.existsSync(path.join(dir, "batuta")));
+  assert.ok(fs.statSync(path.join(dir, "batuta-init")).isDirectory());
+  assert.ok(fs.lstatSync(path.join(dir, "batuta-loop")).isSymbolicLink());
+  assert.ok(fs.lstatSync(path.join(dir, "mine")).isSymbolicLink());
+  assert.ok(fs.existsSync(path.join(shared, "batuta")), "the shared skill itself is untouched");
+  assert.match(lines.join("\n"), /removed 1 duplicate skill link/);
+  assert.deepEqual(quiet(() => pruneSkillLinks(false, { dir: path.join(root, "absent"), shared, src })).code, []);
+});

@@ -40,7 +40,7 @@ targets one. Per host, the same thing by hand:
 | Codex CLI | `codex plugin marketplace add batuta-ai/batuta` · `codex plugin add batuta@batuta` | `$batuta`, `$batuta-init`, `$batuta-plan`, … |
 | Cursor | `npx -y github:batuta-ai/batuta -- --only cursor` (vendored skills → `~/.agents/skills`) | the skills, by name |
 | opencode | `npx -y github:batuta-ai/batuta -- --only opencode` (vendored skills → `~/.agents/skills` + `hosts/opencode/commands/`) | `/batuta`, `/batuta-init`, … |
-| Antigravity (`agy`) | `npx -y github:batuta-ai/batuta -- --only agy` (vendored skills → `~/.agents/skills`); any other agent: `npx skills add batuta-ai/skills -g` | the skills, by name |
+| Antigravity (`agy`) | `npx -y github:batuta-ai/batuta -- --only agy` (vendored skills → `~/.agents/skills`); any other agent: `npx skills add batuta-ai/skills -g -a <agent>` (without `-a` the skills CLI also links the skills into Claude Code and Codex, which already get them from the plugin) | the skills, by name |
 | CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | the `batuta` agent |
 
 The `batuta` binary (executor inventory, verification gates, unattended loop) is
