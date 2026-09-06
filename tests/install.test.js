@@ -174,3 +174,57 @@ test("downloadCore verifies the checksum and installs the binary from the releas
   await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "darwin", arch: "arm64", baseUrl: "https://example.test/rel" }), /HTTP 404/);
   await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "win32", arch: "x64" }), /no prebuilt batuta/);
 });
+
+test("installBinary never follows a pre-existing path and leaves no stub on failure", () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { installBinary } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-bin-"));
+  const victim = path.join(tmp, "victim");
+  fs.writeFileSync(victim, "keep me");
+  fs.symlinkSync(victim, path.join(tmp, "batuta.new"));
+  fs.symlinkSync(victim, path.join(tmp, "batuta"));
+  const target = installBinary(Buffer.from("#!/bin/sh\necho ok\n"), tmp);
+  assert.equal(fs.readFileSync(victim, "utf8"), "keep me", "a symlink at the destination is replaced, never written through");
+  assert.ok(!fs.lstatSync(target).isSymbolicLink(), "the installed batuta is a regular file");
+  assert.equal(fs.readFileSync(target, "utf8"), "#!/bin/sh\necho ok\n");
+  assert.ok(fs.statSync(target).mode & 0o100);
+  assert.deepEqual(fs.readdirSync(tmp).filter((n) => n.startsWith(".batuta.")), [], "no staging file left behind");
+  // Read-only directory: the failure leaves nothing behind either.
+  const ro = path.join(tmp, "ro");
+  fs.mkdirSync(ro);
+  fs.chmodSync(ro, 0o555);
+  try {
+    if (process.getuid && process.getuid() !== 0) {
+      assert.throws(() => installBinary(Buffer.from("x"), ro), /EACCES|EPERM/);
+      assert.deepEqual(fs.readdirSync(ro), []);
+    }
+  } finally { fs.chmodSync(ro, 0o755); }
+});
+
+test("downloadCore rejects an archive whose batuta member is not a regular file", async () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const crypto = require("node:crypto");
+  const { execFileSync } = require("node:child_process");
+  const { downloadCore } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-dl2-"));
+  const src = path.join(tmp, "src");
+  fs.mkdirSync(src);
+  fs.writeFileSync(path.join(src, "real"), "not the binary");
+  fs.symlinkSync("real", path.join(src, "batuta"));
+  const archive = path.join(tmp, "batuta_linux_amd64.tar.gz");
+  execFileSync("tar", ["-czf", archive, "-C", src, "batuta", "real"]);
+  const bytes = fs.readFileSync(archive);
+  const sha = crypto.createHash("sha256").update(bytes).digest("hex");
+  const served = { "checksums.txt": Buffer.from(`${sha}  batuta_linux_amd64.tar.gz\n`), "batuta_linux_amd64.tar.gz": bytes };
+  const fakeFetch = async (url) => ({ ok: true, status: 200, arrayBuffer: async () => served[url.split("/").pop()] });
+  const binDir = path.join(tmp, "bin");
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" }), /regular file named batuta/);
+  assert.ok(!fs.existsSync(path.join(binDir, "batuta")));
+  // Missing tar is reported as such, not as an empty "tar failed".
+  const noTar = () => ({ status: null, error: new Error("spawnSync tar ENOENT") });
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", exec: noTar }), /tar is required/);
+});

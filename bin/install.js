@@ -194,16 +194,42 @@ async function downloadCore(deps = {}) {
     const archivePath = path.join(work, asset);
     fs.writeFileSync(archivePath, archive);
     const untar = exec("tar", ["-xzf", archivePath, "-C", work, "batuta"]);
+    if (untar.error) throw new Error(`tar is required to extract ${asset}: ${untar.error.message}`);
     if (untar.status !== 0) throw new Error(`tar failed: ${(untar.stderr || "").trim()}`);
+    const extracted = path.join(work, "batuta");
+    const member = fs.lstatSync(extracted, { throwIfNoEntry: false });
+    if (!member || !member.isFile()) throw new Error(`${asset} does not contain a regular file named batuta`);
     fs.mkdirSync(binDir, { recursive: true });
-    const target = path.join(binDir, "batuta");
-    fs.copyFileSync(path.join(work, "batuta"), target + ".new");
-    fs.chmodSync(target + ".new", 0o755);
-    fs.renameSync(target + ".new", target);
-    return target;
+    return installBinary(fs.readFileSync(extracted), binDir);
   } finally {
     fs.rmSync(work, { recursive: true, force: true });
   }
+}
+
+// Writes the binary through a fresh exclusive staging file in binDir and
+// renames it over `batuta`, so a pre-existing path (a symlink left by
+// someone else, say) is never followed and a failure leaves no stub.
+function installBinary(bytes, binDir) {
+  const target = path.join(binDir, "batuta");
+  const stage = path.join(binDir, `.batuta.${process.pid}.${crypto.randomBytes(6).toString("hex")}`);
+  const fd = fs.openSync(stage, "wx", 0o755);
+  try {
+    fs.writeSync(fd, bytes);
+    fs.closeSync(fd);
+    fs.renameSync(stage, target);
+  } catch (e) {
+    try { fs.closeSync(fd); } catch { /* already closed */ }
+    fs.rmSync(stage, { force: true });
+    throw e;
+  }
+  return target;
+}
+
+// After either install path: is the binary we installed the one PATH finds?
+function reportCorePath(target) {
+  const onPath = which("batuta");
+  if (onPath && path.resolve(onPath) !== path.resolve(target)) console.log(`core: note — ${onPath} comes first on PATH; put ${path.dirname(target)} before it.`);
+  else if (!onPath) console.log(`core: add ${path.dirname(target)} to PATH.`);
 }
 
 async function installCore(dryRun) {
@@ -218,19 +244,26 @@ async function installCore(dryRun) {
   if (foundVersion) console.log(`core: batuta ${foundVersion} on PATH (${found}); this release expects ${CORE_VERSION}`);
   const asset = coreAsset();
   if (dryRun) { console.log(`core: download ${CORE_RELEASES}/${asset || "(no prebuilt binary for this platform)"}`); return; }
+  const binDir = process.env.BATUTA_BIN_DIR || path.join(home, ".local", "bin");
   try {
-    const target = await downloadCore();
+    const target = await downloadCore({ binDir });
     console.log(`core: installed batuta ${CORE_VERSION} at ${target}`);
-    const onPath = which("batuta");
-    if (onPath && path.resolve(onPath) !== path.resolve(target)) console.log(`core: note — ${onPath} comes first on PATH; put ${path.dirname(target)} before it.`);
-    else if (!onPath) console.log(`core: add ${path.dirname(target)} to PATH.`);
+    reportCorePath(target);
     return;
   } catch (e) {
     console.log(`core: ${e.message}`);
   }
   if (!which("go")) throw new Error(`core binary not installed; download failed and Go is not available. Manual: https://github.com/batuta-ai/core/releases/tag/${CORE_VERSION}`);
-  console.log(`core: falling back to go install ${CORE_MODULE}@${CORE_VERSION}`);
-  run(`go install ${CORE_MODULE}@${CORE_VERSION}`);
+  // Same destination contract as the download: GOBIN puts the binary in binDir.
+  console.log(`core: falling back to go install ${CORE_MODULE}@${CORE_VERSION} (GOBIN=${binDir})`);
+  fs.mkdirSync(binDir, { recursive: true });
+  console.log(`  $ GOBIN=${binDir} go install ${CORE_MODULE}@${CORE_VERSION}`);
+  execSync(`go install ${CORE_MODULE}@${CORE_VERSION}`, { stdio: "inherit", env: { ...process.env, GOBIN: binDir } });
+  const target = path.join(binDir, "batuta");
+  const probe = spawnSync(target, ["version"], { encoding: "utf8" });
+  if (probe.status !== 0 || probe.stdout.trim() !== CORE_VERSION) throw new Error(`go install did not produce batuta ${CORE_VERSION} at ${target}`);
+  console.log(`core: installed batuta ${CORE_VERSION} at ${target}`);
+  reportCorePath(target);
 }
 
 function run(cmd) {
@@ -283,4 +316,4 @@ async function main(argv, deps = {}) {
 }
 
 if (require.main === module) main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
-module.exports = { main, HOSTS, installSharedSkills, downloadCore, coreAsset, expectedChecksum, CORE_VERSION };
+module.exports = { main, HOSTS, installSharedSkills, downloadCore, installBinary, coreAsset, expectedChecksum, CORE_VERSION };
