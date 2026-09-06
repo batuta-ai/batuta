@@ -24,9 +24,16 @@ unverified, whatever the report says.
 
 Run in order. Probe the core binary once per session:
 `batuta capabilities 2>/dev/null | grep -q '"gate"'`. Only when that
-succeeds does `batuta gate <name>` run each gate and print compact JSON;
-an absent or older binary fails the probe and you run the commands
-yourself. Never call a subcommand the probe did not list.
+succeeds does `batuta gate <name>` run a gate and print one compact JSON
+verdict (`name`, `pass`, `signal`, `detail`; exit 0 pass, 2 fail, 1
+error); an absent or older binary fails the probe and you run the
+commands yourself. Never call a subcommand the probe did not list. Forms,
+all with `[--dir <d>]`: `gate tree --snapshot` → signature, then
+`gate tree --before '<json>'` → `changed`; `gate tests --command "<cmd>"
+[--timeout 15m]`; `gate scope --base <ref> --scope <a,b>` → adds
+`outside`, `managed`; `gate proofs --accept "<criterion → proof>;…"` →
+one verdict per criterion; `gate verifier --criteria <n> [--proofs
+'<json>'] < output`.
 
 | Gate | Question | How |
 |---|---|---|
