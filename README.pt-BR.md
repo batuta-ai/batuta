@@ -1,6 +1,8 @@
-<p align="center">
-  <img src="docs/assets/logo.jpg" alt="Batuta — orquestre múltiplas CLI tools. Automático. Inteligente. Seu." width="720">
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/batuta-ai/.github/main/brand/readme-header-batuta-dark.png">
+  <img src="https://raw.githubusercontent.com/batuta-ai/.github/main/brand/readme-header-batuta-light.png" width="100%" alt="batuta-ai / batuta — Integração com hosts e ponto de entrada da plataforma. Host integration and platform entry point.">
+</picture>
+
 
 > 🇺🇸 [English version](README.md)
 
