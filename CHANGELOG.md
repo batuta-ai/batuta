@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/batuta-ai/batuta/compare/v0.4.2...v0.4.3) (2026-09-06)
+
+
+### Bug Fixes
+
+* **install:** remove duplicate skill links on plugin hosts; target one agent in the skills CLI hint ([#45](https://github.com/batuta-ai/batuta/issues/45)) ([7722a5a](https://github.com/batuta-ai/batuta/commit/7722a5aac6316c5735cded27d60ec81e0336f342))
+
 ## [0.4.2](https://github.com/batuta-ai/batuta/compare/v0.4.1...v0.4.2) (2026-09-06)
 
 
