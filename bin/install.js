@@ -47,6 +47,7 @@ const HOSTS = [
     detect: () => which("claude") || exists(path.join(home, ".claude")),
     steps: [
       `claude plugin marketplace add ${REPO}`,
+      "claude plugin marketplace update batuta",
       "claude plugin install batuta@batuta",
     ],
     after: (dryRun) => pruneSkillLinks(dryRun, { dir: path.join(home, ".claude", "skills") }),
@@ -56,8 +57,12 @@ const HOSTS = [
     id: "codex",
     label: "Codex CLI",
     detect: () => which("codex") || exists(path.join(home, ".codex")),
+    // `marketplace add` on a marketplace that already exists keeps the
+    // revision it has; without the upgrade a re-run installs the version
+    // the machine already had.
     steps: [
       `codex plugin marketplace add ${REPO}`,
+      "codex plugin marketplace upgrade batuta",
       "codex plugin add batuta@batuta",
     ],
     after: (dryRun) => pruneSkillLinks(dryRun, { dir: path.join(home, ".codex", "skills") }),
