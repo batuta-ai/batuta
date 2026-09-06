@@ -1,7 +1,7 @@
 {
   "name": "batuta",
   "description": "Batuta for Claude Code: the conductor classifies each task, delegates to the cheapest capable executor, verifies and commits. Quem rege não toca.",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "author": {
     "name": "Francisross Soares de Oliveira",
     "email": "franciscpd@gmail.com"
