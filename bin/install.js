@@ -28,6 +28,21 @@ const CORE_MODULE = "github.com/batuta-ai/core/cmd/batuta";
 const CORE_RELEASES = `https://github.com/batuta-ai/core/releases/download/${CORE_VERSION}`;
 const crypto = require("node:crypto");
 const ROOT = path.resolve(__dirname, "..");
+const USAGE_LINES = [
+  "Usage:",
+  "  npx -y github:batuta-ai/batuta -- <flags>",
+  "Flags:",
+  "  --list         show the host matrix",
+  "  --only <host>  install only the named host",
+  "  --all          install every host, even if not detected",
+  "  --dry-run      print the commands without running them",
+  "  --no-core      skip installing the core batuta binary",
+  "  --help, -h     print this usage and exit",
+];
+
+function printUsage(stream = console.log) {
+  for (const line of USAGE_LINES) stream(line);
+}
 
 function which(bin) {
   const probe = process.platform === "win32" ? "where" : "which";
@@ -350,12 +365,33 @@ function run(cmd) {
 async function main(argv, deps = {}) {
   const exec = deps.run || run;
   const hosts = deps.hosts || HOSTS;
-  const dryRun = argv.includes("--dry-run");
-  const list = argv.includes("--list");
-  const onlyIdx = argv.indexOf("--only");
-  const only = onlyIdx >= 0 ? argv[onlyIdx + 1] : "";
-  const all = argv.includes("--all");
-  const withCore = !argv.includes("--no-core");
+  let dryRun = false;
+  let list = false;
+  let only = "";
+  let all = false;
+  let withCore = true;
+  let help = false;
+  let unknown = "";
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === "--dry-run") dryRun = true;
+    else if (arg === "--list") list = true;
+    else if (arg === "--only") only = argv[++i] || "";
+    else if (arg === "--all") all = true;
+    else if (arg === "--no-core") withCore = false;
+    else if (arg === "--help" || arg === "-h") help = true;
+    else if (arg.startsWith("--")) { unknown = arg; break; }
+  }
+
+  if (help) {
+    printUsage();
+    return 0;
+  }
+  if (unknown) {
+    printUsage(console.error);
+    console.error(`Unknown flag "${unknown}".`);
+    return 2;
+  }
 
   if (list) {
     for (const h of hosts) console.log(`${h.id.padEnd(9)} ${h.label.padEnd(16)} ${h.detect() ? "detected" : "-"}   ${h.note}`);
