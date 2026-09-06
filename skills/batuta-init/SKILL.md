@@ -18,11 +18,12 @@ reconfigure. Read `../batuta/references/routing.md` first in both modes.
    - Test command? Build command? Install command? (install is optional; prepares a worktree)
    - Batch execution: `sequential` (default) or `parallel`?
    - Worktree mode: `off`, `medium+` (default) or `always`?
-3. **Inventory.** With the core binary on PATH: `batuta inventory` (redacted JSON of installed executors and their models). Otherwise, run `available` and `models` from each adapter the default table names — `../batuta/adapters/`. Never scan the machine for CLIs the table does not name; a new CLI enters only when the user asks for it.
+3. **Inventory.** With the core binary on PATH: `batuta inventory` (redacted JSON of installed executors and their models). Otherwise, run `available` and `models` for **every** adapter shipped in `../batuta/adapters/` (`agy`, `claude`, `codex`, `cursor-agent`, `opencode`), not only the ones the default table names. Never scan the machine for CLIs outside that directory; a new CLI enters only when the user asks for it. Name what is installed and what is not before proposing anything.
 4. **Propose the lanes** from what is installed, executor and exact model per row, research lane included. Filter cheap candidates with `kimi|deepseek|glm|qwen|flash|mini|nano|free`; suggest two or three per lane. Shapes:
    - full set → default table; confirm the `low` model and the `high` executor (codex strong model, or a strong Claude/Cursor model in background).
    - no codex → opencode keeps `low`, a mid-tier opencode model on `medium`, a strong background model on `high`.
    - one vendor only → lanes differ by model of that vendor's CLI adapter; `critical` stays `self`.
+   - agy or cursor-agent installed → offer them: agy Flash `-low`/`-medium` slugs on `low` and research, cursor-agent on a `frontend` row or on `high`. Installed and left out is a choice the user makes, never a silent default.
 5. **Confirm once.** One question covering the whole mapping and the pointer (step 7). The user has the final word on every row.
 6. **Write** `.batuta/profile.md` (answers as literal lines: `Stack:`, `Methodology:`, `Test:`, `Build:`, `Install:`, `Execution:`, `Worktree:`, `Template: templates/<stack>.md`) and `.batuta/routing.md` (the confirmed table, stamp on line 3 per `../batuta/references/state.md`). Template: the most specific that applies (`nextjs` > `react` > `generic`); in doubt, the child.
 7. **Pointer (opt-in).** Offer to write `assets/agents-md-block.md` into the project's `AGENTS.md` between its markers. Declined → write nothing, never re-offer. Accepted → replace what sits between existing markers, or create the file with only the block. The last sentence of the block is the anti-loop guard for executors that read `AGENTS.md`.
@@ -42,7 +43,7 @@ reconfigure. Read `../batuta/references/routing.md` first in both modes.
 
 ## Reconfigure
 
-1. Re-run `available` for every executor the project's table names. Never scan.
+1. Re-run the inventory of step 3 above: every shipped adapter, not only the executors the project's table names. Show what is routed, what is installed but unrouted (offer a row for each), and what is routed but no longer available.
 2. Recompute the routing stamp; show the current setup in a few lines: rows, profile answers, stamp state, map age.
 3. **Migrate** a table still using `trivial/medium/complex/critical`: `trivial → low`, `complex → high`; add the Domain column with `*`. Say so.
 4. Ask what to change — one question: a row or model, a profile answer, execution or worktree mode, the pointer (add, rewrite, remove between markers), a fresh map sweep.

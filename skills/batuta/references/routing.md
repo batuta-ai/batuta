@@ -53,7 +53,7 @@ Assumes the full set is installed. Onboarding adapts it to what exists.
 - **Explicit model:** every row names the exact model ID the CLI accepts. Never the CLI's global default — it is whatever the user last touched and may be a premium model, silently defeating cost routing. Exception: codex under a subscription has flat per-task cost, so its default is acceptable on `medium` only. On `high` the model is a capability knob and must be explicit.
 - **Discover, never recall:** model IDs come from the adapter's `models` command on this machine, confirmed once at onboarding. Never write an ID from memory.
 - **`self` is the host that conducts.** In Claude Code, `self` is the Claude session and `claude.md` means a background `claude -p`. In Codex, `self` is the Codex session and `codex.md` means a background `codex exec`. Rows never point `self` below `critical`.
-- **Dormant adapters:** the table references, the adapter sleeps. An adapter is read only when its row is routed to or added. Never scan the machine for CLIs the table does not name.
+- **Dormant adapters:** the table references, the adapter sleeps. During a cycle an adapter is read only when its row is routed to or added. Onboarding and reconfigure (`batuta-init`) probe every adapter shipped in `adapters/`; nothing ever probes a CLI outside that directory.
 
 ## Support lane: research
 
