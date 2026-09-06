@@ -60,8 +60,16 @@ Evidence: paths touched, each command with its real output, what was not
 verified. Stop conditions, always these three plus any task-specific ones:
 
 1. The code's shape contradicts the brief.
-2. The same command fails twice.
+2. The same command fails twice for the same unexpected reason (a red test the executor just wrote is not that).
 3. The fix needs edits beyond Scope or Boundaries.
+
+Progress protocol, same section, verbatim: for each acceptance criterion
+n, print an isolated line `BATUTA-PROGRESS <n> START` before the first
+edit toward it and `BATUTA-PROGRESS <n> DONE` when its proof passes
+locally. Plain text, nothing else on that line, no tool required. The
+loop journals the lines as `task_progress` records and `--dashboard
+--watch` shows them; in the interactive cycle they let you read the
+executor's log at a glance.
 
 ## Test laws
 
