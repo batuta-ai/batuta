@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.7](https://github.com/batuta-ai/batuta/compare/v0.4.6...v0.4.7) (2026-09-06)
+
+
+### Bug Fixes
+
+* **install:** update an already-installed Claude plugin on re-run ([#53](https://github.com/batuta-ai/batuta/issues/53)) ([6ce0c79](https://github.com/batuta-ai/batuta/commit/6ce0c79a0152e47f5cd5479d5195ee30522cf079))
+
 ## [0.4.6](https://github.com/batuta-ai/batuta/compare/v0.4.5...v0.4.6) (2026-09-06)
 
 
