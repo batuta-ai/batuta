@@ -23,6 +23,7 @@ reconfigure. Read `../batuta/references/routing.md` first in both modes.
    - full set → default table; confirm the `low` model and the `high` executor (codex strong model, or a strong Claude/Cursor model in background).
    - no codex → opencode keeps `low`, a mid-tier opencode model on `medium`, a strong background model on `high`.
    - one vendor only → lanes differ by model of that vendor's CLI adapter; `critical` stays `self`.
+   - loop-first (the user wants every task in `batuta loop`) → `critical` names a CLI: `codex <strongest model>` or `claude opus`. Say the trade: no conversation, an open decision parks the task with `BATUTA-QUESTION`; the plan's Decisions must carry what the session would have said.
    - agy or cursor-agent installed → offer them: agy Flash `-low`/`-medium` slugs on `low` and research, cursor-agent on a `frontend` row or on `high`. Installed and left out is a choice the user makes, never a silent default.
 5. **Confirm once.** One question covering the whole mapping and the pointer (step 7). The user has the final word on every row.
 6. **Write** `.batuta/profile.md` (answers as literal lines: `Stack:`, `Methodology:`, `Test:`, `Build:`, `Install:`, `Execution:`, `Worktree:`, `Template: templates/<stack>.md`) and `.batuta/routing.md` (the confirmed table, stamp on line 3 per `../batuta/references/state.md`). Template: the most specific that applies (`nextjs` > `react` > `generic`); in doubt, the child.
