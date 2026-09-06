@@ -37,7 +37,7 @@ straight into the cycle.
 <free prose: what a fresh session needs to know to resume>
 ```
 
-   Machine contract (read by `/batuta-loop`): a task is a `- [ ] N. <title> — <domain>/<complexity>` line, the `→ <executor/model>` tail optional; the lane is mandatory because the loop routes by it. `Accept:` is mandatory; `Depends on:` lists task numbers, in any order; `Scope:` is a comma-separated list of paths or globs. `**Status:**` is exactly one of the four words, on the `**Created:**` line, once. Everything else is prose.
+   Machine contract (read by `/batuta-loop`): a task is a `- [ ] N. <title> — <domain>/<complexity>` line, the `→ <executor/model>` tail optional and advisory — the routing table decides; the lane is mandatory because the loop routes by it. `Accept:` is mandatory: entries split on `;`, each `<criterion> → <proof>` where the proof is a command the loop runs in the task's worktree (exit 0 = holds, so no `;` inside it); a criterion without an arrow is judged by the read-only verifier. `Depends on:` lists task numbers, in any order; `Scope:` is a comma-separated list of paths or globs contained in the repository (no absolute paths, no `..`). `**Status:**` is exactly one of the four words, on the `**Created:**` line, once. Everything else is prose; `## Decisions and context` reaches the executors' briefs verbatim.
 5. **Self-check:**
    ```bash
    f=.batuta/plan-<slug>.md
