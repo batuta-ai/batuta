@@ -49,6 +49,7 @@ const HOSTS = [
       `claude plugin marketplace add ${REPO}`,
       "claude plugin install batuta@batuta",
     ],
+    after: (dryRun) => pruneSkillLinks(dryRun, { dir: path.join(home, ".claude", "skills") }),
     note: "plugin: skills, /batuta:* commands and the SessionStart hook",
   },
   {
@@ -59,6 +60,7 @@ const HOSTS = [
       `codex plugin marketplace add ${REPO}`,
       "codex plugin add batuta@batuta",
     ],
+    after: (dryRun) => pruneSkillLinks(dryRun, { dir: path.join(home, ".codex", "skills") }),
     note: "plugin: skills with $batuta-* prompts",
   },
   {
@@ -138,6 +140,37 @@ function installSharedSkills(dryRun, paths = {}) {
   fs.writeFileSync(path.join(dst, LOCK_NAME), JSON.stringify(lock, null, 2) + "\n");
   sharedSkillsDone = !paths.src;
   console.log(`  copied ${names.length} skills to ${dst} (${lock.ref})`);
+}
+
+// A plugin host lists every skill the plugin ships. `npx skills add
+// batuta-ai/skills -g` without `-a` also symlinks each skill from
+// ~/.agents/skills into that host's user skills directory, so the host shows
+// every Batuta skill twice (`/batuta:init` and `/batuta-init`). Once the
+// plugin is installed those links are removed. Only symlinks, only the names
+// this package vendors, only when the link resolves inside the shared
+// directory: a real directory or a link to anywhere else is the user's.
+function pruneSkillLinks(dryRun, paths = {}) {
+  const dir = paths.dir;
+  const shared = path.resolve(paths.shared || path.join(home, ".agents", "skills"));
+  const src = paths.src || path.join(ROOT, "skills");
+  let names;
+  try { names = fs.readdirSync(src).filter((n) => fs.statSync(path.join(src, n)).isDirectory()); } catch { return []; }
+  const pruned = [];
+  for (const name of names) {
+    const link = path.join(dir, name);
+    let stat;
+    try { stat = fs.lstatSync(link); } catch { continue; }
+    if (!stat.isSymbolicLink()) continue;
+    let target;
+    try { target = fs.realpathSync(link); } catch { continue; }
+    if (target !== path.join(fs.realpathSync(shared), name)) continue;
+    if (!dryRun) fs.unlinkSync(link);
+    pruned.push(name);
+  }
+  if (pruned.length > 0) {
+    console.log(`  ${dryRun ? "would remove" : "removed"} ${pruned.length} duplicate skill links from ${dir} (the plugin already ships them)`);
+  }
+  return pruned;
 }
 
 function installOpencodeCommands(dryRun) {
@@ -288,7 +321,7 @@ async function main(argv, deps = {}) {
   const targets = hosts.filter((h) => (only ? h.id === only : all || h.detect()));
   if (targets.length === 0) {
     if (only) { console.error(`Unknown host "${only}". Hosts: ${hosts.map((h) => h.id).join(", ")}`); return 2; }
-    console.log("No supported host detected. Any other agent: npx skills add " + SKILLS);
+    console.log("No supported host detected. Any other agent: npx skills add " + SKILLS + " -g -a <agent>");
     return 0;
   }
   const failed = [];
@@ -316,4 +349,4 @@ async function main(argv, deps = {}) {
 }
 
 if (require.main === module) main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
-module.exports = { main, HOSTS, installSharedSkills, downloadCore, installBinary, coreAsset, expectedChecksum, CORE_VERSION };
+module.exports = { main, HOSTS, installSharedSkills, pruneSkillLinks, downloadCore, installBinary, coreAsset, expectedChecksum, CORE_VERSION };
