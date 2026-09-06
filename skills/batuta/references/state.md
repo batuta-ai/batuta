@@ -19,7 +19,7 @@ is text a human edits; nothing breaks on a stray character.
 | `WORK.md` (project root) | human and conductor | the conducting log: in progress, done |
 | `.batuta/profile.md` | `/batuta-init` | stack, methodology, commands, execution and worktree modes, project map |
 | `.batuta/routing.md` | `/batuta-init`, `/batuta-route` | the project's routing table |
-| `.batuta/plan-<slug>.md` | `/batuta-plan` | approvable plan; input of `/batuta-loop` |
+| `.batuta/plans/<slug>.md` | `/batuta-plan` | approvable plan; input of `/batuta-loop`; moved to `.batuta/plans/done/` by the loop when done |
 | `.batuta/runs/<date>-<slug>.md` | Step 5 | run trail, one per task |
 | `.batuta/scout/<date>-<slug>.md` | scout | research report |
 | `.batuta/handoff.md` | `/batuta-pause` | transit note, consumed by `/batuta-resume` |
@@ -31,7 +31,7 @@ the user.
 
 ## Managed state
 
-`WORK.md`, `.batuta/profile.md`, `.batuta/routing.md`, `.batuta/plan-*.md`
+`WORK.md`, `.batuta/profile.md`, `.batuta/routing.md`, `.batuta/plans/`
 and `.batuta/learnings.md` are tracked files the conductor owns. Because
 the cycle writes them around the code commit, they are the one kind of
 dirt every check tolerates:

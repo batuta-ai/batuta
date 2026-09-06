@@ -15,7 +15,7 @@ straight into the cycle.
 1. **Understand the goal.** Ask the missing questions, few, one at a time, per `clarify.md`. Preserve executable requirements literally.
 2. **Decompose** into tasks by the cycle's unit: the smallest deliverable that verifies and commits alone. For each task: one or two sentences; domain × complexity and the executor the routing table predicts; a closed Scope; acceptance criteria with their proof; dependencies.
 3. **Right-size.** A task that needs more than one executor session is two tasks. A task with no verifiable criterion is not a task.
-4. **Write** `.batuta/plan-<slug>.md`:
+4. **Write** `.batuta/plans/<slug>.md` (finished plans end up in `.batuta/plans/done/`; core ≥ v1.1.0-beta.13 still reads the legacy `.batuta/plan-<slug>.md`):
 
 ```markdown
 # Plan — <title>
@@ -40,7 +40,7 @@ straight into the cycle.
    Machine contract (read by `/batuta-loop`): a task is a `- [ ] N. <title> — <domain>/<complexity>` line, the `→ <executor/model>` tail optional and advisory — the routing table decides; the lane is mandatory because the loop routes by it. `Accept:` is mandatory: entries split on `;`, each `<criterion> → <proof>` where the proof is a command the loop runs in the task's worktree (exit 0 = holds, so no `;` inside it); a criterion without an arrow is judged by the read-only verifier. `Depends on:` lists task numbers, in any order; `Scope:` is a comma-separated list of paths or globs contained in the repository (no absolute paths, no `..`). `**Status:**` is exactly one of the four words, on the `**Created:**` line, once. Everything else is prose; `## Decisions and context` reaches the executors' briefs verbatim.
 5. **Self-check:**
    ```bash
-   f=.batuta/plan-<slug>.md
+   f=.batuta/plans/<slug>.md
    test "$(grep -c '^- \[ \] [0-9]*\.' $f)" = "$(grep -c '^- \[ \] [0-9]*\. .* — [a-z]*/\(low\|medium\|high\|critical\)' $f)"
    test "$(grep -c '^- \[ \] [0-9]*\.' $f)" = "$(grep -c '^      Accept:' $f)"
    test "$(grep -c '^\*\*Created:\*\*.*\*\*Status:\*\* \(proposed\|approved\|in progress\|done\)$' $f)" = 1

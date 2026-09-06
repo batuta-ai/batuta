@@ -23,7 +23,7 @@ const SKILLS = "batuta-ai/skills";
 // The core release this package was tested with. Bump deliberately: a
 // batuta release names the binary it expects (see scripts/sync-skills.sh
 // for the same idea with the skills).
-const CORE_VERSION = "v1.1.0-beta.12";
+const CORE_VERSION = "v1.1.0-beta.13";
 const CORE_MODULE = "github.com/batuta-ai/core/cmd/batuta";
 const CORE_RELEASES = `https://github.com/batuta-ai/core/releases/download/${CORE_VERSION}`;
 const crypto = require("node:crypto");
