@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.12](https://github.com/batuta-ai/batuta/compare/v0.4.11...v0.4.12) (2026-09-06)
+
+
+### Bug Fixes
+
+* **skills:** vendor batuta-ai/skills v0.5.9 ([90028fc](https://github.com/batuta-ai/batuta/commit/90028fc4227f32ff2dc284cf6bc7b6815c172af0))
+* **skills:** vendor batuta-ai/skills v0.5.9 ([e708538](https://github.com/batuta-ai/batuta/commit/e708538bdb18e80adfb3637b8fde6f33104be19d))
+
 ## [0.4.11](https://github.com/batuta-ai/batuta/compare/v0.4.10...v0.4.11) (2026-09-06)
 
 
