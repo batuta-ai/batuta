@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.9](https://github.com/batuta-ai/batuta/compare/v0.4.8...v0.4.9) (2026-09-06)
+
+
+### Bug Fixes
+
+* **install:** --help prints the usage; an unknown flag never installs ([#59](https://github.com/batuta-ai/batuta/issues/59)) ([0730cfe](https://github.com/batuta-ai/batuta/commit/0730cfe86f86c40c3ebb8cdc5cff19c21a68c22d))
+
 ## [0.4.8](https://github.com/batuta-ai/batuta/compare/v0.4.7...v0.4.8) (2026-09-06)
 
 
