@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.14](https://github.com/batuta-ai/batuta/compare/v0.4.13...v0.4.14) (2026-09-07)
+
+
+### Bug Fixes
+
+* **install:** pin core v1.1.0-beta.18; vendor batuta-ai/skills v0.6.1 ([23cf2f5](https://github.com/batuta-ai/batuta/commit/23cf2f5c5052592d9a4c21e98be5fc9116500f67))
+* **install:** pin core v1.1.0-beta.18; vendor batuta-ai/skills v0.6.1 ([d7fb08a](https://github.com/batuta-ai/batuta/commit/d7fb08a4a812e3761767e33b341b7189549f3f79))
+
 ## [0.4.13](https://github.com/batuta-ai/batuta/compare/v0.4.12...v0.4.13) (2026-09-06)
 
 
