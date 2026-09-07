@@ -67,8 +67,8 @@ Progress protocol, same section, verbatim: for each acceptance criterion
 n, print an isolated line `BATUTA-PROGRESS <n> START` before the first
 edit toward it and `BATUTA-PROGRESS <n> DONE` when its proof passes
 locally. Plain text, nothing else on that line, no tool required. The
-loop journals the lines as `task_progress` records and `--dashboard
---watch` shows them; in the interactive cycle they let you read the
+loop journals the lines as `task_progress` records and `batuta watch`
+shows them; in the interactive cycle they let you read the
 executor's log at a glance.
 
 ## Test laws
