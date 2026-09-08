@@ -220,6 +220,36 @@ test("installSharedSkills keeps a customized skill with a warning and replaces a
   }
 });
 
+for (const kind of ["directory", "dangling", "file"]) {
+  test(`installSharedSkills preserves a locally added ${kind} symlink with a warning`, () => {
+    const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
+    const { installSharedSkills } = require("../bin/install.js");
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-skills-symlink-"));
+    const src = path.join(tmp, "src"), dst = path.join(tmp, "dst"), lockSrc = path.join(tmp, "skills-lock.json");
+    try {
+      fs.mkdirSync(path.join(src, "batuta"), { recursive: true });
+      fs.writeFileSync(path.join(src, "batuta", "SKILL.md"), "old");
+      fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v1" }));
+      quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
+      const target = path.join(tmp, "link-target");
+      if (kind === "directory") fs.mkdirSync(target);
+      if (kind === "file") fs.writeFileSync(target, "user file");
+      const link = path.join(dst, "batuta", "local-link");
+      fs.symlinkSync(target, link);
+      fs.writeFileSync(path.join(src, "batuta", "SKILL.md"), "new");
+
+      const { lines } = quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
+
+      assert.ok(fs.lstatSync(link).isSymbolicLink());
+      assert.equal(fs.readlinkSync(link), target);
+      assert.equal(fs.readFileSync(path.join(dst, "batuta", "SKILL.md"), "utf8"), "old");
+      assert.ok(lines.includes("  kept batuta: customized locally; rerun with --force-skills to replace it"));
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+}
+
 test("--force-skills replaces a customized skill and a customized dropped skill is otherwise kept", async () => {
   const fs = require("node:fs");
   const os = require("node:os");
@@ -470,7 +500,7 @@ test("downloadCore size cap rejects content-length before reading and a streamin
       ? new Response(checksum, { status: 200 })
       : declaredArchive;
     await assert.rejects(downloadCore({ ...opts, fetch: declaredFetch }), /batuta_linux_amd64\.tar\.gz is 129 bytes, above the 128 limit/);
-    assert.equal(declaredArchive.bodyUsed, false, "an oversized declared body is not read");
+    assert.equal(declaredArchive.bodyUsed, true, "an oversized declared body is canceled");
 
     const streamedArchive = new Response(new Uint8Array(129), { status: 200 });
     const streamedFetch = async (url) => url.endsWith("checksums.txt")
@@ -481,6 +511,29 @@ test("downloadCore size cap rejects content-length before reading and a streamin
     assert.ok(!fs.existsSync(path.join(binDir, "batuta")), "an oversized archive is never installed");
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("downloadCore cancels bodies rejected for declared size or HTTP status", async () => {
+  const { downloadCore } = require("../bin/install.js");
+  for (const rejectCancel of [false, true]) {
+    for (const status of [200, 404]) {
+      let canceled = false;
+      const body = new ReadableStream({
+        cancel() {
+          canceled = true;
+          if (rejectCancel) throw new Error("cancel failed");
+        },
+      });
+      const response = new Response(body, { status, headers: { "content-length": "129" } });
+      await assert.rejects(downloadCore({
+        fetch: async () => response,
+        platform: "linux",
+        arch: "x64",
+        maxBytes: 128,
+      }), status === 200 ? /above the 128 limit/ : /HTTP 404/);
+      assert.equal(canceled, true, `status ${status} cancels its body`);
+    }
   }
 });
 
@@ -495,36 +548,43 @@ test("downloadCore leaves nothing behind after deadline, size cap, checksum mism
   fs.mkdirSync(binDir);
   const asset = "batuta_linux_amd64.tar.gz";
   const base = { binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", checksums: { [asset]: "0".repeat(64) } };
-  const assertClean = () => {
-    assert.deepEqual(fs.readdirSync(os.tmpdir()).filter((name) => name.startsWith("batuta-core-")), [], "no download work directory remains");
+  const assertClean = (tmpDir) => {
+    assert.deepEqual(fs.readdirSync(tmpDir), [], "no download work directory remains");
     assert.deepEqual(fs.readdirSync(binDir).filter((name) => name.startsWith(".batuta.")), [], "no binary staging file remains");
   };
   try {
     const deadlineFetch = (_url, options) => new Promise((_resolve, reject) => {
       options.signal.addEventListener("abort", () => reject(options.signal.reason), { once: true });
     });
-    await assert.rejects(downloadCore({ ...base, fetch: deadlineFetch, timeoutMs: 20 }), /timed out after 20 ms/);
-    assertClean();
+    const deadlineRoot = fs.mkdtempSync(path.join(tmp, "deadline-"));
+    await assert.rejects(downloadCore({ ...base, tmpDir: deadlineRoot, fetch: deadlineFetch, timeoutMs: 20 }), /timed out after 20 ms/);
+    assertClean(deadlineRoot);
 
     const sizeFetch = async () => new Response(new Uint8Array(1), { status: 200, headers: { "content-length": "129" } });
-    await assert.rejects(downloadCore({ ...base, fetch: sizeFetch, maxBytes: 128 }), /above the 128 limit/);
-    assertClean();
+    const sizeRoot = fs.mkdtempSync(path.join(tmp, "size-"));
+    await assert.rejects(downloadCore({ ...base, tmpDir: sizeRoot, fetch: sizeFetch, maxBytes: 128 }), /above the 128 limit/);
+    assertClean(sizeRoot);
 
     const checksum = `${"0".repeat(64)}  ${asset}\n`;
     const mismatchFetch = async (url) => url.endsWith("checksums.txt")
       ? new Response(checksum, { status: 200 })
       : new Response(new Uint8Array([1]), { status: 200 });
-    await assert.rejects(downloadCore({ ...base, fetch: mismatchFetch }), /checksum mismatch/);
-    assertClean();
+    const mismatchRoot = fs.mkdtempSync(path.join(tmp, "mismatch-"));
+    await assert.rejects(downloadCore({ ...base, tmpDir: mismatchRoot, fetch: mismatchFetch }), /checksum mismatch/);
+    assertClean(mismatchRoot);
 
     const archive = new Uint8Array([1, 2, 3]);
     const sha = crypto.createHash("sha256").update(archive).digest("hex");
     const tarFetch = async (url) => url.endsWith("checksums.txt")
       ? new Response(`${sha}  ${asset}\n`, { status: 200 })
       : new Response(archive, { status: 200 });
-    const failTar = () => ({ status: 2, stderr: "broken archive" });
-    await assert.rejects(downloadCore({ ...base, fetch: tarFetch, exec: failTar, checksums: { [asset]: sha } }), /tar failed: broken archive/);
-    assertClean();
+    const tarRoot = fs.mkdtempSync(path.join(tmp, "tar-"));
+    const failTar = (_command, args) => {
+      assert.equal(path.dirname(args[3]), tarRoot, "download work uses the injected root");
+      return { status: 2, stderr: "broken archive" };
+    };
+    await assert.rejects(downloadCore({ ...base, tmpDir: tarRoot, fetch: tarFetch, exec: failTar, checksums: { [asset]: sha } }), /tar failed: broken archive/);
+    assertClean(tarRoot);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

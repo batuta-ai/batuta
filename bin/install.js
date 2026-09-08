@@ -135,16 +135,22 @@ function treeHash(dir) {
     for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
       const childRelative = relative ? `${relative}/${entry.name}` : entry.name;
       const child = path.join(current, entry.name);
-      if (entry.isDirectory()) visit(child, childRelative);
-      else files.push([childRelative, child]);
+      if (entry.isSymbolicLink()) files.push([childRelative, `link:${fs.readlinkSync(child)}`]);
+      else if (entry.isDirectory()) visit(child, childRelative);
+      else if (entry.isFile()) files.push([childRelative, fs.readFileSync(child)]);
+      else {
+        const type = entry.isSocket() ? "socket" : entry.isFIFO() ? "fifo"
+          : entry.isBlockDevice() ? "block" : entry.isCharacterDevice() ? "character" : "unknown";
+        files.push([childRelative, type]);
+      }
     }
   }
   visit(dir, "");
   const hash = crypto.createHash("sha256");
-  for (const [relative, file] of files.sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
+  for (const [relative, contents] of files.sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
     hash.update(relative);
     hash.update("\0");
-    hash.update(fs.readFileSync(file));
+    hash.update(contents);
   }
   return hash.digest("hex");
 }
@@ -317,6 +323,7 @@ function expectedChecksum(checksums, name) {
 async function readDownloadBody(response, name, maxBytes) {
   const declared = Number(response.headers && response.headers.get("content-length"));
   if (Number.isFinite(declared) && declared > maxBytes) {
+    try { await response.body?.cancel(); } catch { /* preserve the size error */ }
     throw new Error(`${name} is ${declared} bytes, above the ${maxBytes} limit`);
   }
   if (!response.body) {
@@ -337,7 +344,7 @@ async function readDownloadBody(response, name, maxBytes) {
 
 // Downloads the pinned core release for this machine, verifies it against
 // checksums.txt and extracts the platform binary into binDir. Returns the installed
-// path. `deps` exist for the tests: fetch, exec and the bin directory.
+// path. `deps` exist for the tests: fetch, exec and the bin/temp directories.
 async function downloadCore(deps = {}) {
   const fetcher = deps.fetch || fetch;
   const exec = deps.exec || ((cmd, args) => spawnSync(cmd, args, { encoding: "utf8" }));
@@ -353,7 +360,10 @@ async function downloadCore(deps = {}) {
     const signal = AbortSignal.timeout(timeoutMs);
     try {
       const response = await fetcher(`${(deps.baseUrl || CORE_RELEASES)}/${name}`, { signal });
-      if (!response.ok) throw new Error(`download of ${name} failed: HTTP ${response.status}`);
+      if (!response.ok) {
+        try { await response.body?.cancel(); } catch { /* preserve the HTTP error */ }
+        throw new Error(`download of ${name} failed: HTTP ${response.status}`);
+      }
       return await readDownloadBody(response, name, maxBytes);
     } catch (e) {
       if (signal.aborted) throw new Error(`download of ${name} timed out after ${timeoutMs} ms`);
@@ -366,7 +376,7 @@ async function downloadCore(deps = {}) {
   const archive = await get(asset);
   const got = crypto.createHash("sha256").update(archive).digest("hex");
   if (got !== pinned) throw new Error(`${asset} checksum mismatch: expected ${pinned}, got ${got}`);
-  const work = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-core-"));
+  const work = fs.mkdtempSync(path.join(deps.tmpDir || os.tmpdir(), "batuta-core-"));
   try {
     const archivePath = path.join(work, asset);
     fs.writeFileSync(archivePath, archive);

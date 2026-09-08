@@ -30,12 +30,34 @@ const fs = require("node:fs");
 const tag = process.env.PIN_TAG;
 const checksumsFile = process.env.CHECKSUMS_FILE;
 const installJs = process.env.INSTALL_JS;
-const entries = fs.readFileSync(checksumsFile, "utf8")
-  .split(/\r?\n/)
-  .map((line) => line.trim().match(/^([0-9a-f]{64})\s+\*?(\S+)$/))
-  .filter(Boolean)
-  .map((match) => [match[2], match[1]]);
-if (entries.length === 0) throw new Error(`${checksumsFile} contains no release asset digests`);
+const assets = [
+  "batuta_darwin_amd64.tar.gz",
+  "batuta_darwin_arm64.tar.gz",
+  "batuta_linux_amd64.tar.gz",
+  "batuta_linux_arm64.tar.gz",
+  "batuta_windows_amd64.zip",
+];
+const digests = new Map();
+const errors = [];
+for (const [index, line] of fs.readFileSync(checksumsFile, "utf8").split(/\r?\n/).entries()) {
+  if (line === "") continue;
+  const match = line.match(/^([0-9a-f]{64})  (batuta_(?:(?:darwin|linux)_(?:amd64|arm64)\.tar\.gz|windows_amd64\.zip))$/);
+  if (!match) {
+    errors.push(`invalid checksum line ${index + 1}: ${line}`);
+  } else if (digests.has(match[2])) {
+    errors.push(`duplicated digest for ${match[2]}`);
+  } else {
+    digests.set(match[2], match[1]);
+  }
+}
+for (const asset of assets) {
+  if (!digests.has(asset)) errors.push(`missing digest for ${asset}`);
+}
+if (errors.length > 0) {
+  console.error(`${checksumsFile}: ${errors.join("; ")}`);
+  process.exit(1);
+}
+const entries = assets.map((asset) => [asset, digests.get(asset)]);
 let source = fs.readFileSync(installJs, "utf8");
 const versionPattern = /const CORE_VERSION = "[^"]+";/;
 const checksumsPattern = /const CORE_CHECKSUMS = \{[\s\S]*?\n\};/;
