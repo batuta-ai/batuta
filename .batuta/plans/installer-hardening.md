@@ -5,12 +5,12 @@
 **Created:** 2026-09-08 · **Status:** approved
 
 ## Tasks
-- [ ] 1. Download deadline, archive size cap and cleanup on every failure path — backend/medium
+- [x] 1. Download deadline, archive size cap and cleanup on every failure path — backend/medium
       Scope: bin/install.js, tests/install.test.js
       Accept: every fetch in downloadCore carries an AbortSignal.timeout and a fetch that never resolves fails with a message naming the deadline → node --test --test-name-pattern='deadline' tests/install.test.js; a content-length above the cap fails before the body is read and a body above the cap fails while it is read, both before any hashing → node --test --test-name-pattern='size cap' tests/install.test.js; after every failure neither the temp work directory nor a staging file in binDir remains → node --test --test-name-pattern='leaves nothing behind' tests/install.test.js; the whole suite passes → node --test tests
 - [ ] 2. Per-platform digests pinned in the installer, cross-checked with the release's checksums.txt, refreshed by scripts/pin-core.sh — backend/medium
       Depends on: 1
-      Scope: bin/install.js, tests/install.test.js, scripts/pin-core.sh, tests/fixtures/checksums.txt, README.md, README.pt-BR.md
+      Scope: bin/install.js, tests/install.test.js, scripts/pin-core.sh, tests/pin-core.test.sh, tests/fixtures/checksums.txt, README.md, README.pt-BR.md
       Accept: downloadCore refuses an asset without a pinned digest, refuses a checksums.txt that disagrees with the pin, and refuses an archive whose sha256 differs from the pin → node --test --test-name-pattern='pinned digest' tests/install.test.js; scripts/pin-core.sh rewrites CORE_VERSION and CORE_CHECKSUMS from a checksums file and prints the commit reminder → bash tests/pin-core.test.sh; the README sentence on verification names the pinned digests in both languages → grep -q 'pinned' README.md && grep -q 'fixad' README.pt-BR.md; the whole suite passes → node --test tests
 - [ ] 3. Windows: the installer downloads batuta_windows_amd64.zip and installs batuta.exe — backend/medium
       Depends on: 2
