@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.1](https://github.com/batuta-ai/batuta/compare/v0.5.0...v0.5.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **install:** pin core v1.1.0-beta.21 ([af31fc3](https://github.com/batuta-ai/batuta/commit/af31fc3c4d057a148e9b710a55bb6bcf4d4e2775))
+* **install:** pin core v1.1.0-beta.21 ([5a74468](https://github.com/batuta-ai/batuta/commit/5a744683ad369253a69a422b6f583e79c368867e))
+
 ## [0.5.0](https://github.com/batuta-ai/batuta/compare/v0.4.16...v0.5.0) (2026-09-08)
 
 
