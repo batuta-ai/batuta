@@ -24,6 +24,13 @@ const SKILLS = "batuta-ai/skills";
 // batuta release names the binary it expects (see scripts/sync-skills.sh
 // for the same idea with the skills).
 const CORE_VERSION = "v1.1.0-beta.20";
+const CORE_CHECKSUMS = {
+  "batuta_darwin_amd64.tar.gz": "be8ef923041586ce380dab17f56d840d95f4c940468d894115d6d459302db207",
+  "batuta_darwin_arm64.tar.gz": "03ff5783225a000ee89f9f9a55ee738e4295a4618158d043a0c8f993b8c8188e",
+  "batuta_linux_amd64.tar.gz": "f582180fc6b030bd94ad77dd833aa8da178f75b97a53cd952bb1008d19a85a5c",
+  "batuta_linux_arm64.tar.gz": "a7af84139570e3b0ca2ee76e5425f831e40a8c8060f466ff227ebb90a396552b",
+  "batuta_windows_amd64.zip": "34de4761a87cdf3816aa9d031d0f96ecd71811af89acd63618476e01748d4e6c",
+};
 const CORE_MODULE = "github.com/batuta-ai/core/cmd/batuta";
 const CORE_RELEASES = `https://github.com/batuta-ai/core/releases/download/${CORE_VERSION}`;
 const crypto = require("node:crypto");
@@ -292,6 +299,8 @@ async function downloadCore(deps = {}) {
   const maxBytes = deps.maxBytes === undefined ? 64 * 1024 * 1024 : deps.maxBytes;
   const asset = coreAsset(deps.platform, deps.arch);
   if (!asset) throw new Error(`no prebuilt batuta for ${deps.platform || process.platform}/${deps.arch || process.arch}; see https://github.com/batuta-ai/core/releases/tag/${CORE_VERSION}`);
+  const pinned = (deps.checksums || CORE_CHECKSUMS)[asset];
+  if (!pinned) throw new Error(`no pinned digest for ${asset} in this package`);
   const get = async (name) => {
     const signal = AbortSignal.timeout(timeoutMs);
     try {
@@ -304,11 +313,11 @@ async function downloadCore(deps = {}) {
     }
   };
   const checksums = (await get("checksums.txt")).toString("utf8");
-  const want = expectedChecksum(checksums, asset);
-  if (!want) throw new Error(`${asset} is not listed in checksums.txt of ${CORE_VERSION}`);
+  const listed = expectedChecksum(checksums, asset);
+  if (listed !== pinned) throw new Error(`checksums.txt of ${CORE_VERSION} lists ${listed} for ${asset}, this package pins ${pinned}`);
   const archive = await get(asset);
   const got = crypto.createHash("sha256").update(archive).digest("hex");
-  if (got !== want) throw new Error(`${asset} checksum mismatch: expected ${want}, got ${got}`);
+  if (got !== pinned) throw new Error(`${asset} checksum mismatch: expected ${pinned}, got ${got}`);
   const work = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-core-"));
   try {
     const archivePath = path.join(work, asset);
@@ -458,4 +467,4 @@ async function main(argv, deps = {}) {
 }
 
 if (require.main === module) main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
-module.exports = { main, HOSTS, installSharedSkills, pruneSkillLinks, shadowSharedSkillsInCodex, downloadCore, installBinary, coreAsset, expectedChecksum, CORE_VERSION };
+module.exports = { main, HOSTS, installSharedSkills, pruneSkillLinks, shadowSharedSkillsInCodex, downloadCore, installBinary, coreAsset, expectedChecksum, CORE_VERSION, CORE_CHECKSUMS };

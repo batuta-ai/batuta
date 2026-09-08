@@ -216,7 +216,8 @@ test("downloadCore verifies the checksum and installs the binary from the releas
     return { ok: true, status: 200, arrayBuffer: async () => served[name] };
   };
   const binDir = path.join(tmp, "bin");
-  const target = await downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" });
+  const pins = { "batuta_linux_amd64.tar.gz": sha, "batuta_darwin_arm64.tar.gz": "0".repeat(64) };
+  const target = await downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", checksums: pins });
   assert.equal(target, path.join(binDir, "batuta"));
   assert.equal(fs.readFileSync(target, "utf8"), "#!/bin/sh\necho v-test\n");
   assert.ok(fs.statSync(target).mode & 0o100, "binary is executable");
@@ -225,11 +226,47 @@ test("downloadCore verifies the checksum and installs the binary from the releas
   // A tampered archive never reaches binDir.
   served["batuta_linux_amd64.tar.gz"] = Buffer.concat([bytes, Buffer.from("x")]);
   fs.writeFileSync(target, "previous");
-  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" }), /checksum mismatch/);
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", checksums: pins }), /checksum mismatch/);
   assert.equal(fs.readFileSync(target, "utf8"), "previous");
   // Darwin/arm64 is listed with a bogus hash; a 404 on the archive is reported as such.
-  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "darwin", arch: "arm64", baseUrl: "https://example.test/rel" }), /HTTP 404/);
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "darwin", arch: "arm64", baseUrl: "https://example.test/rel", checksums: pins }), /HTTP 404/);
   await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "win32", arch: "x64" }), /no prebuilt batuta/);
+});
+
+test("downloadCore enforces the package pinned digest against checksums.txt and the archive", async () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { downloadCore, CORE_VERSION } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-pinned-digest-"));
+  const asset = "batuta_linux_amd64.tar.gz";
+  const base = { binDir: path.join(tmp, "bin"), platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" };
+  const pinned = "a".repeat(64);
+  const listed = "b".repeat(64);
+  let fetched = 0;
+  try {
+    await assert.rejects(
+      downloadCore({ ...base, checksums: {}, fetch: async () => { fetched++; } }),
+      new RegExp(`no pinned digest for ${asset} in this package`),
+    );
+    assert.equal(fetched, 0, "a missing package pin fails before any download");
+
+    const disagreeingFetch = async () => new Response(`${listed}  ${asset}\n`, { status: 200 });
+    await assert.rejects(
+      downloadCore({ ...base, checksums: { [asset]: pinned }, fetch: disagreeingFetch }),
+      new RegExp(`checksums\\.txt of ${CORE_VERSION} lists ${listed} for ${asset.replaceAll(".", "\\.")}, this package pins ${pinned}`),
+    );
+
+    const tamperedFetch = async (url) => url.endsWith("checksums.txt")
+      ? new Response(`${pinned}  ${asset}\n`, { status: 200 })
+      : new Response("tampered", { status: 200 });
+    await assert.rejects(
+      downloadCore({ ...base, checksums: { [asset]: pinned }, fetch: tamperedFetch }),
+      /checksum mismatch/,
+    );
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("downloadCore deadline aborts every fetch and names the timeout", async () => {
@@ -246,7 +283,7 @@ test("downloadCore deadline aborts every fetch and names the timeout", async () 
   });
   try {
     await assert.rejects(
-      downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", timeoutMs: 20 }),
+      downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", timeoutMs: 20, checksums: { "batuta_linux_amd64.tar.gz": "0".repeat(64) } }),
       /download of checksums\.txt timed out after 20 ms/,
     );
     assert.equal(signals.length, 1);
@@ -264,7 +301,7 @@ test("downloadCore size cap rejects content-length before reading and a streamin
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-size-cap-"));
   const binDir = path.join(tmp, "bin");
   const checksum = `${"0".repeat(64)}  batuta_linux_amd64.tar.gz\n`;
-  const opts = { binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", maxBytes: 128 };
+  const opts = { binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", maxBytes: 128, checksums: { "batuta_linux_amd64.tar.gz": "0".repeat(64) } };
   try {
     const declaredArchive = new Response(new Uint8Array([1]), { status: 200, headers: { "content-length": "129" } });
     const declaredFetch = async (url) => url.endsWith("checksums.txt")
@@ -295,7 +332,7 @@ test("downloadCore leaves nothing behind after deadline, size cap, checksum mism
   const binDir = path.join(tmp, "bin");
   fs.mkdirSync(binDir);
   const asset = "batuta_linux_amd64.tar.gz";
-  const base = { binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" };
+  const base = { binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", checksums: { [asset]: "0".repeat(64) } };
   const assertClean = () => {
     assert.deepEqual(fs.readdirSync(os.tmpdir()).filter((name) => name.startsWith("batuta-core-")), [], "no download work directory remains");
     assert.deepEqual(fs.readdirSync(binDir).filter((name) => name.startsWith(".batuta.")), [], "no binary staging file remains");
@@ -324,7 +361,7 @@ test("downloadCore leaves nothing behind after deadline, size cap, checksum mism
       ? new Response(`${sha}  ${asset}\n`, { status: 200 })
       : new Response(archive, { status: 200 });
     const failTar = () => ({ status: 2, stderr: "broken archive" });
-    await assert.rejects(downloadCore({ ...base, fetch: tarFetch, exec: failTar }), /tar failed: broken archive/);
+    await assert.rejects(downloadCore({ ...base, fetch: tarFetch, exec: failTar, checksums: { [asset]: sha } }), /tar failed: broken archive/);
     assertClean();
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
@@ -378,11 +415,12 @@ test("downloadCore rejects an archive whose batuta member is not a regular file"
   const served = { "checksums.txt": Buffer.from(`${sha}  batuta_linux_amd64.tar.gz\n`), "batuta_linux_amd64.tar.gz": bytes };
   const fakeFetch = async (url) => ({ ok: true, status: 200, arrayBuffer: async () => served[url.split("/").pop()] });
   const binDir = path.join(tmp, "bin");
-  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" }), /regular file named batuta/);
+  const pins = { "batuta_linux_amd64.tar.gz": sha };
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", checksums: pins }), /regular file named batuta/);
   assert.ok(!fs.existsSync(path.join(binDir, "batuta")));
   // Missing tar is reported as such, not as an empty "tar failed".
   const noTar = () => ({ status: null, error: new Error("spawnSync tar ENOENT") });
-  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", exec: noTar }), /tar is required/);
+  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", exec: noTar, checksums: pins }), /tar is required/);
 });
 
 test("pruneSkillLinks removes only symlinks that resolve to the shared skill of the same name", () => {

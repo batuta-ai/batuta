@@ -50,7 +50,8 @@ Codex also reads `~/.agents/skills`. When the Codex plugin and a shared-director
 The `batuta` binary (executor inventory, verification gates, unattended loop) is
 downloaded from the pinned [batuta-ai/core release](https://github.com/batuta-ai/core/releases)
 into `~/.local/bin` (set `BATUTA_BIN_DIR` to change it), checked against the
-release's `checksums.txt`; no Go needed. The skills work without it.
+digest pinned in this package and the release's `checksums.txt`; no Go needed.
+The skills work without it.
 
 Then, in a project: `/batuta:init` once, and just ask for code tasks.
 
