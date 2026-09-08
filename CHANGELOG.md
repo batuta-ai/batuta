@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.5.0](https://github.com/batuta-ai/batuta/compare/v0.4.16...v0.5.0) (2026-09-08)
+
+
+### Features
+
+* download deadline, archive size cap and cleanup on every failure pat ([f493802](https://github.com/batuta-ai/batuta/commit/f493802939b89db4c071863c7284a29bc28b6727))
+* **install:** pinned digests, Windows binary, download limits, ownership of shared skills ([e5e4c20](https://github.com/batuta-ai/batuta/commit/e5e4c201ca7d8719492a43349b730351ebcfe29b))
+* ownership contract for the shared skills: customized copies are kept ([4fd8560](https://github.com/batuta-ai/batuta/commit/4fd8560e7cc3c6bee51922625f82401b97e3a010))
+* per-platform digests pinned in the installer, cross-checked with the ([feba68d](https://github.com/batuta-ai/batuta/commit/feba68ddba7a28257ea92e8234ac3141b112506d))
+* windows: the installer downloads batuta_windows_amd64.zip and instal ([86d8f92](https://github.com/batuta-ai/batuta/commit/86d8f92c3a6ca8421d920377fb1050a343a25e5c))
+
+
+### Bug Fixes
+
+* **install:** symlink-safe skill hashes, cancelled rejected bodies, strict pin-core parser ([217cf66](https://github.com/batuta-ai/batuta/commit/217cf66a37c6cd67f646445b3909d71d70ce8cf7))
+* **install:** unambiguous skill tree hash; a replaced root entry counts as a customization ([c661f69](https://github.com/batuta-ai/batuta/commit/c661f69c444e12726b5804e5d74a2fa4099d8db6))
+* **skills:** vendor batuta-ai/skills v0.6.2 ([dfcc8eb](https://github.com/batuta-ai/batuta/commit/dfcc8eb5e10575b51159e9497a9fc6045782c217))
+
 ## [0.4.16](https://github.com/batuta-ai/batuta/compare/v0.4.15...v0.4.16) (2026-09-08)
 
 
