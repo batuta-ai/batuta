@@ -2,26 +2,26 @@
 <!-- inputs: profile.md@sha256:1b7e8125908b routing.md@sha256:9f7fe441b051 -->
 
 **Goal:** Close batuta #40 (release authentication beyond the co-located `checksums.txt`, Windows zip + `.exe`, download deadline and size limit with cleanup on every failure path) and #31 (ownership contract for locally customized shared skills) in `bin/install.js`, with tests and the README contract, before host v0.4.17. The GitHub Actions pins of #40 are done by the conductor outside this plan (`.github/` is not executor territory).
-**Created:** 2026-09-08 · **Status:** approved
+**Created:** 2026-09-08 · **Status:** done
 
 ## Tasks
 - [x] 1. Download deadline, archive size cap and cleanup on every failure path — backend/medium
       Scope: bin/install.js, tests/install.test.js
       Accept: every fetch in downloadCore carries an AbortSignal.timeout and a fetch that never resolves fails with a message naming the deadline → node --test --test-name-pattern='deadline' tests/install.test.js; a content-length above the cap fails before the body is read and a body above the cap fails while it is read, both before any hashing → node --test --test-name-pattern='size cap' tests/install.test.js; after every failure neither the temp work directory nor a staging file in binDir remains → node --test --test-name-pattern='leaves nothing behind' tests/install.test.js; the whole suite passes → node --test tests
-- [ ] 2. Per-platform digests pinned in the installer, cross-checked with the release's checksums.txt, refreshed by scripts/pin-core.sh — backend/medium
+- [x] 2. Per-platform digests pinned in the installer, cross-checked with the release's checksums.txt, refreshed by scripts/pin-core.sh — backend/medium
       Depends on: 1
       Scope: bin/install.js, tests/install.test.js, scripts/pin-core.sh, tests/pin-core.test.sh, tests/fixtures/checksums.txt, README.md, README.pt-BR.md
       Accept: downloadCore refuses an asset without a pinned digest, refuses a checksums.txt that disagrees with the pin, and refuses an archive whose sha256 differs from the pin → node --test --test-name-pattern='pinned digest' tests/install.test.js; scripts/pin-core.sh rewrites CORE_VERSION and CORE_CHECKSUMS from a checksums file and prints the commit reminder → bash tests/pin-core.test.sh; the README sentence on verification names the pinned digests in both languages → grep -q 'pinned' README.md && grep -q 'fixad' README.pt-BR.md; the whole suite passes → node --test tests
-- [ ] 3. Windows: the installer downloads batuta_windows_amd64.zip and installs batuta.exe — backend/medium
+- [x] 3. Windows: the installer downloads batuta_windows_amd64.zip and installs batuta.exe — backend/medium
       Depends on: 2
       Scope: bin/install.js, tests/install.test.js, README.md, README.pt-BR.md
       Accept: on win32/x64 coreAsset names the zip, the archive is extracted with tar -xf and the member batuta.exe is installed as batuta.exe in binDir, and an unsupported platform still fails with the release URL → node --test --test-name-pattern='windows' tests/install.test.js; the go install fallback and the version probe use batuta.exe on win32 → node --test --test-name-pattern='fallback on win32' tests/install.test.js; both READMEs qualify the no-Go claim as Linux, macOS and Windows 10 or later on x64 → grep -q 'Windows 10' README.md && grep -q 'Windows 10' README.pt-BR.md; the whole suite passes → node --test tests
-- [ ] 4. Ownership contract for the shared skills: customized copies are kept with a warning, --force-skills replaces them, the README says who owns what — backend/medium
+- [x] 4. Ownership contract for the shared skills: customized copies are kept with a warning, --force-skills replaces them, the README says who owns what — backend/medium
       Depends on: 3
       Scope: bin/install.js, tests/install.test.js, README.md, README.pt-BR.md
       Accept: the lock records a content hash per skill and a skill whose current hash differs from the previous lock is kept with the warning naming --force-skills, while an unchanged one is replaced → node --test --test-name-pattern='customized skill' tests/install.test.js; --force-skills replaces a customized skill and a dropped skill that was customized is kept, not retired → node --test --test-name-pattern='force-skills' tests/install.test.js; --help lists --force-skills → node --test --test-name-pattern='help' tests/install.test.js; both READMEs carry the ownership section → grep -q 'force-skills' README.md && grep -q 'force-skills' README.pt-BR.md; the whole suite passes and the manifests still lint → bash tests/check.sh
 
-- [ ] 5. PRD-v1.md in English: the historical PRD is translated in place, structure intact — docs/low
+- [x] 5. PRD-v1.md in English: the historical PRD is translated in place, structure intact — docs/low
       Scope: docs/specs-history/PRD-v1.md
       Accept: the file keeps its 25 headings and its length → test "$(grep -c '^#' docs/specs-history/PRD-v1.md)" = 25 && test "$(wc -l < docs/specs-history/PRD-v1.md)" -ge 380; no Portuguese prose remains outside the epigraph on line 3 → test "$(sed 3d docs/specs-history/PRD-v1.md | grep -ciE '\b(não|também|através|usuário|porque|então|para|com|uma)\b')" = 0
 
