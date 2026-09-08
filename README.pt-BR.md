@@ -50,7 +50,7 @@ O Codex também lê `~/.agents/skills`. Quando o plugin do Codex e um host de di
 ### Skills compartilhadas: quem é dono do quê
 
 - O Batuta é dono das cópias vendoradas que instala em `~/.agents/skills` e registra os hashes do conteúdo delas em `.batuta-skills-lock.json`.
-- Uma cópia alterada localmente, inclusive por `npx skills update`, pertence ao usuário: uma instalação normal a mantém e imprime um aviso.
+- Uma cópia alterada localmente, inclusive por `npx skills update`, pertence ao usuário: uma instalação normal a mantém e imprime um aviso. A garantia depende do hash registrado por uma instalação anterior desta versão ou posterior; ao atualizar de um lock antigo, toda cópia é substituída uma vez, então faça backup das skills customizadas antes dessa primeira execução.
 - `--force-skills` dá explicitamente ao instalador permissão para substituir cópias customizadas e aposentar skills customizadas que o release não distribui mais.
 - O instalador nunca altera o diretório `.agents/skills` de um projeto.
 
