@@ -50,8 +50,8 @@ O Codex também lê `~/.agents/skills`. Quando o plugin do Codex e um host de di
 O binário `batuta` (inventário de executores, gates de verificação, loop
 autônomo) é baixado do [release fixado do batuta-ai/core](https://github.com/batuta-ai/core/releases)
 para `~/.local/bin` (`BATUTA_BIN_DIR` muda o destino) e conferido contra o digest
-fixado neste pacote e o `checksums.txt` do release; não precisa de Go. As skills
-funcionam sem ele.
+fixado neste pacote e o `checksums.txt` do release; não precisa de Go no Linux,
+macOS e Windows 10 ou posterior (x64). As skills funcionam sem ele.
 
 Depois, num projeto: `/batuta:init` uma vez, e é só pedir tarefas de código.
 

@@ -192,7 +192,7 @@ test("downloadCore verifies the checksum and installs the binary from the releas
   assert.match(CORE_VERSION, /^v\d+\.\d+\.\d+(-beta\.\d+)?$/);
   assert.equal(coreAsset("darwin", "arm64"), "batuta_darwin_arm64.tar.gz");
   assert.equal(coreAsset("linux", "x64"), "batuta_linux_amd64.tar.gz");
-  assert.equal(coreAsset("win32", "x64"), null);
+  assert.equal(coreAsset("freebsd", "x64"), null);
 
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-dl-"));
   const src = path.join(tmp, "src");
@@ -230,7 +230,87 @@ test("downloadCore verifies the checksum and installs the binary from the releas
   assert.equal(fs.readFileSync(target, "utf8"), "previous");
   // Darwin/arm64 is listed with a bogus hash; a 404 on the archive is reported as such.
   await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "darwin", arch: "arm64", baseUrl: "https://example.test/rel", checksums: pins }), /HTTP 404/);
-  await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "win32", arch: "x64" }), /no prebuilt batuta/);
+});
+
+test("windows x64 downloads the zip, extracts batuta.exe with tar, and installs batuta.exe", async () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const crypto = require("node:crypto");
+  const { downloadCore, coreAsset, coreBinaryName } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-windows-"));
+  const binDir = path.join(tmp, "bin");
+  const asset = "batuta_windows_amd64.zip";
+  const bytes = Buffer.from("zip bytes");
+  const sha = crypto.createHash("sha256").update(bytes).digest("hex");
+  const fetched = [];
+  const fetch = async (url) => {
+    fetched.push(url);
+    return new Response(url.endsWith("checksums.txt") ? `${sha}  ${asset}\n` : bytes, { status: 200 });
+  };
+  const exec = (command, args) => {
+    assert.equal(command, "tar");
+    assert.deepEqual(args.slice(0, 2), ["-xf", path.join(args[3], asset)]);
+    assert.deepEqual(args.slice(2), ["-C", args[3], "batuta.exe"]);
+    fs.writeFileSync(path.join(args[3], "batuta.exe"), "windows binary");
+    return { status: 0 };
+  };
+  try {
+    assert.equal(coreAsset("win32", "x64"), asset);
+    assert.equal(coreAsset("win32", "arm64"), null);
+    assert.equal(coreBinaryName("win32"), "batuta.exe");
+    const target = await downloadCore({ fetch, exec, binDir, platform: "win32", arch: "x64", baseUrl: "https://example.test/rel", checksums: { [asset]: sha } });
+    assert.equal(target, path.join(binDir, "batuta.exe"));
+    assert.equal(fs.readFileSync(target, "utf8"), "windows binary");
+    assert.deepEqual(fetched, ["https://example.test/rel/checksums.txt", `https://example.test/rel/${asset}`]);
+    const noTar = () => ({ status: null, error: new Error("spawnSync tar.exe ENOENT") });
+    await assert.rejects(
+      downloadCore({ fetch, exec: noTar, binDir, platform: "win32", arch: "x64", baseUrl: "https://example.test/rel", checksums: { [asset]: sha } }),
+      /tar\.exe is required/,
+    );
+    await assert.rejects(
+      downloadCore({ fetch, exec, binDir, platform: "freebsd", arch: "x64", baseUrl: "https://example.test/rel" }),
+      /no prebuilt batuta.*https:\/\/github\.com\/batuta-ai\/core\/releases\/tag\//,
+    );
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("fallback on win32 runs go install and probes batuta.exe", async () => {
+  const os = require("node:os");
+  const path = require("node:path");
+  const fs = require("node:fs");
+  const { installCore, CORE_VERSION } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-win-fallback-"));
+  const binDir = path.join(tmp, "bin");
+  const calls = [];
+  const exec = (command, args, options) => {
+    calls.push({ command, args, options });
+    if (command === "go") return { status: 0, stdout: "" };
+    if (command === path.join(binDir, "batuta.exe")) return { status: 0, stdout: `${CORE_VERSION}\n` };
+    throw new Error(`unexpected command: ${command}`);
+  };
+  const which = (name) => name === "go" ? "C:\\Go\\bin\\go.exe" : "";
+  const fetch = async () => new Response("missing", { status: 404 });
+  try {
+    const { lines } = await quietAsync(() => installCore(false, {
+      fetch,
+      exec,
+      which,
+      binDir,
+      platform: "win32",
+      arch: "x64",
+      baseUrl: "https://example.test/rel",
+    }));
+    assert.deepEqual(calls.map(({ command, args }) => [command, args]), [
+      ["go", ["install", `github.com/batuta-ai/core/cmd/batuta@${CORE_VERSION}`]],
+      [path.join(binDir, "batuta.exe"), ["version"]],
+    ]);
+    assert.ok(lines.some((line) => line.includes(`installed batuta ${CORE_VERSION} at ${path.join(binDir, "batuta.exe")}`)));
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("downloadCore enforces the package pinned digest against checksums.txt and the archive", async () => {

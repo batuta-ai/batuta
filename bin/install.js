@@ -252,10 +252,15 @@ function installOpencodeCommands(dryRun) {
 // The release archive for this machine, or null when no archive is built
 // for it (the installer then says what to do by hand).
 function coreAsset(platform = process.platform, arch = process.arch) {
+  if (platform === "win32") return arch === "x64" ? "batuta_windows_amd64.zip" : null;
   const os = { darwin: "darwin", linux: "linux" }[platform];
   const cpu = { x64: "amd64", arm64: "arm64" }[arch];
   if (!os || !cpu) return null;
   return `batuta_${os}_${cpu}.tar.gz`;
+}
+
+function coreBinaryName(platform = process.platform) {
+  return platform === "win32" ? "batuta.exe" : "batuta";
 }
 
 // The sha256 listed for `name` in a goreleaser checksums.txt.
@@ -289,7 +294,7 @@ async function readDownloadBody(response, name, maxBytes) {
 }
 
 // Downloads the pinned core release for this machine, verifies it against
-// checksums.txt and extracts `batuta` into binDir. Returns the installed
+// checksums.txt and extracts the platform binary into binDir. Returns the installed
 // path. `deps` exist for the tests: fetch, exec and the bin directory.
 async function downloadCore(deps = {}) {
   const fetcher = deps.fetch || fetch;
@@ -297,6 +302,7 @@ async function downloadCore(deps = {}) {
   const binDir = deps.binDir || process.env.BATUTA_BIN_DIR || path.join(home, ".local", "bin");
   const timeoutMs = deps.timeoutMs === undefined ? 60000 : deps.timeoutMs;
   const maxBytes = deps.maxBytes === undefined ? 64 * 1024 * 1024 : deps.maxBytes;
+  const platform = deps.platform || process.platform;
   const asset = coreAsset(deps.platform, deps.arch);
   if (!asset) throw new Error(`no prebuilt batuta for ${deps.platform || process.platform}/${deps.arch || process.arch}; see https://github.com/batuta-ai/core/releases/tag/${CORE_VERSION}`);
   const pinned = (deps.checksums || CORE_CHECKSUMS)[asset];
@@ -322,25 +328,26 @@ async function downloadCore(deps = {}) {
   try {
     const archivePath = path.join(work, asset);
     fs.writeFileSync(archivePath, archive);
-    const untar = exec("tar", ["-xzf", archivePath, "-C", work, "batuta"]);
-    if (untar.error) throw new Error(`tar is required to extract ${asset}: ${untar.error.message}`);
+    const binaryName = coreBinaryName(platform);
+    const untar = exec("tar", ["-xf", archivePath, "-C", work, binaryName]);
+    if (untar.error) throw new Error(`${platform === "win32" ? "tar.exe" : "tar"} is required to extract ${asset}: ${untar.error.message}`);
     if (untar.status !== 0) throw new Error(`tar failed: ${(untar.stderr || "").trim()}`);
-    const extracted = path.join(work, "batuta");
+    const extracted = path.join(work, binaryName);
     const member = fs.lstatSync(extracted, { throwIfNoEntry: false });
-    if (!member || !member.isFile()) throw new Error(`${asset} does not contain a regular file named batuta`);
+    if (!member || !member.isFile()) throw new Error(`${asset} does not contain a regular file named ${binaryName}`);
     fs.mkdirSync(binDir, { recursive: true });
-    return installBinary(fs.readFileSync(extracted), binDir);
+    return installBinary(fs.readFileSync(extracted), binDir, binaryName);
   } finally {
     fs.rmSync(work, { recursive: true, force: true });
   }
 }
 
 // Writes the binary through a fresh exclusive staging file in binDir and
-// renames it over `batuta`, so a pre-existing path (a symlink left by
+// renames it over the requested name, so a pre-existing path (a symlink left by
 // someone else, say) is never followed and a failure leaves no stub.
-function installBinary(bytes, binDir) {
-  const target = path.join(binDir, "batuta");
-  const stage = path.join(binDir, `.batuta.${process.pid}.${crypto.randomBytes(6).toString("hex")}`);
+function installBinary(bytes, binDir, name = coreBinaryName()) {
+  const target = path.join(binDir, name);
+  const stage = path.join(binDir, `.${name}.${process.pid}.${crypto.randomBytes(6).toString("hex")}`);
   const fd = fs.openSync(stage, "wx", 0o755);
   try {
     fs.writeSync(fd, bytes);
@@ -355,44 +362,51 @@ function installBinary(bytes, binDir) {
 }
 
 // After either install path: is the binary we installed the one PATH finds?
-function reportCorePath(target) {
-  const onPath = which("batuta");
+function reportCorePath(target, find = which) {
+  const onPath = find(path.basename(target));
   if (onPath && path.resolve(onPath) !== path.resolve(target)) console.log(`core: note — ${onPath} comes first on PATH; put ${path.dirname(target)} before it.`);
   else if (!onPath) console.log(`core: add ${path.dirname(target)} to PATH.`);
 }
 
-async function installCore(dryRun) {
-  const found = which("batuta");
+async function installCore(dryRun, deps = {}) {
+  const platform = deps.platform || process.platform;
+  const arch = deps.arch || process.arch;
+  const binaryName = coreBinaryName(platform);
+  const find = deps.which || which;
+  const exec = deps.exec || ((cmd, args, options) => spawnSync(cmd, args, options));
+  const found = find(binaryName);
   let foundVersion = "";
   if (found) {
-    const probe = spawnSync(found, ["version"], { encoding: "utf8" });
+    const probe = exec(found, ["version"], { encoding: "utf8" });
     if (probe.status === 0) foundVersion = probe.stdout.trim();
     else console.log(`core: a different "batuta" is on PATH (${found}) — probably the archived batuta-cli. Remove it (cargo uninstall batuta) so the core binary wins.`);
   }
   if (foundVersion === CORE_VERSION) { console.log(`core: batuta ${foundVersion} already on PATH (${found})`); return; }
   if (foundVersion) console.log(`core: batuta ${foundVersion} on PATH (${found}); this release expects ${CORE_VERSION}`);
-  const asset = coreAsset();
+  const asset = coreAsset(platform, arch);
   if (dryRun) { console.log(`core: download ${CORE_RELEASES}/${asset || "(no prebuilt binary for this platform)"}`); return; }
-  const binDir = process.env.BATUTA_BIN_DIR || path.join(home, ".local", "bin");
+  const binDir = deps.binDir || process.env.BATUTA_BIN_DIR || path.join(home, ".local", "bin");
   try {
-    const target = await downloadCore({ binDir });
+    const target = await downloadCore({ ...deps, binDir, platform, arch });
     console.log(`core: installed batuta ${CORE_VERSION} at ${target}`);
-    reportCorePath(target);
+    reportCorePath(target, find);
     return;
   } catch (e) {
     console.log(`core: ${e.message}`);
   }
-  if (!which("go")) throw new Error(`core binary not installed; download failed and Go is not available. Manual: https://github.com/batuta-ai/core/releases/tag/${CORE_VERSION}`);
+  if (!find("go")) throw new Error(`core binary not installed; download failed and Go is not available. Manual: https://github.com/batuta-ai/core/releases/tag/${CORE_VERSION}`);
   // Same destination contract as the download: GOBIN puts the binary in binDir.
   console.log(`core: falling back to go install ${CORE_MODULE}@${CORE_VERSION} (GOBIN=${binDir})`);
   fs.mkdirSync(binDir, { recursive: true });
   console.log(`  $ GOBIN=${binDir} go install ${CORE_MODULE}@${CORE_VERSION}`);
-  execSync(`go install ${CORE_MODULE}@${CORE_VERSION}`, { stdio: "inherit", env: { ...process.env, GOBIN: binDir } });
-  const target = path.join(binDir, "batuta");
-  const probe = spawnSync(target, ["version"], { encoding: "utf8" });
+  const installed = exec("go", ["install", `${CORE_MODULE}@${CORE_VERSION}`], { stdio: "inherit", env: { ...process.env, GOBIN: binDir } });
+  if (installed.error) throw installed.error;
+  if (installed.status !== 0) throw new Error(`go install failed with status ${installed.status}`);
+  const target = path.join(binDir, binaryName);
+  const probe = exec(target, ["version"], { encoding: "utf8" });
   if (probe.status !== 0 || probe.stdout.trim() !== CORE_VERSION) throw new Error(`go install did not produce batuta ${CORE_VERSION} at ${target}`);
   console.log(`core: installed batuta ${CORE_VERSION} at ${target}`);
-  reportCorePath(target);
+  reportCorePath(target, find);
 }
 
 function run(cmd) {
@@ -467,4 +481,4 @@ async function main(argv, deps = {}) {
 }
 
 if (require.main === module) main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
-module.exports = { main, HOSTS, installSharedSkills, pruneSkillLinks, shadowSharedSkillsInCodex, downloadCore, installBinary, coreAsset, expectedChecksum, CORE_VERSION, CORE_CHECKSUMS };
+module.exports = { main, HOSTS, installSharedSkills, pruneSkillLinks, shadowSharedSkillsInCodex, downloadCore, installBinary, installCore, coreAsset, coreBinaryName, expectedChecksum, CORE_VERSION, CORE_CHECKSUMS };
