@@ -183,27 +183,92 @@ test("installSharedSkills keeps the previous installation when the copy fails an
   assert.ok(fs.existsSync(src), "a `..` entry cannot delete the parent");
 });
 
+test("treeHash distinguishes entry types, file boundaries, and empty directories", (t) => {
+  const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
+  const { treeHash } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-tree-hash-"));
+  t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+  const left = path.join(tmp, "left"), right = path.join(tmp, "right");
+  fs.mkdirSync(left);
+  fs.mkdirSync(right);
+  fs.writeFileSync(path.join(left, "SKILL.md"), "link:/tmp/local-notes");
+  fs.symlinkSync("/tmp/local-notes", path.join(right, "SKILL.md"));
+  assert.notEqual(treeHash(left), treeHash(right), "file bytes cannot impersonate a symlink");
+  fs.unlinkSync(path.join(left, "SKILL.md"));
+  fs.unlinkSync(path.join(right, "SKILL.md"));
+  fs.writeFileSync(path.join(left, "a"), "X");
+  fs.writeFileSync(path.join(left, "b"), "Y");
+  fs.writeFileSync(path.join(right, "a"), "Xb\0Y");
+  assert.notEqual(treeHash(left), treeHash(right), "file bytes cannot impersonate another record");
+  fs.writeFileSync(path.join(right, "a"), "X");
+  fs.writeFileSync(path.join(right, "b"), "Y");
+  assert.equal(treeHash(left), treeHash(right), "identical trees have the same hash");
+  fs.mkdirSync(path.join(right, "empty"));
+  assert.notEqual(treeHash(left), treeHash(right), "empty directories are entries too");
+});
+
+for (const kind of ["identical", "dangling"]) {
+  test(`installSharedSkills keeps a ${kind} root symlink for replacement and retirement unless forced`, (t) => {
+    const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
+    const { installSharedSkills } = require("../bin/install.js");
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-root-symlink-"));
+    t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+    const src = path.join(tmp, "src"), dst = path.join(tmp, "dst"), lockSrc = path.join(tmp, "skills-lock.json");
+    const source = path.join(src, "batuta"), target = path.join(dst, "batuta"), external = path.join(tmp, "external");
+    fs.mkdirSync(source, { recursive: true });
+    fs.writeFileSync(path.join(source, "SKILL.md"), "old");
+    fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v1" }));
+    quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
+    const readLock = () => JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
+    const managedHash = readLock().hashes.batuta;
+    if (kind === "identical") fs.cpSync(target, external, { recursive: true });
+    fs.rmSync(target, { recursive: true });
+    fs.symlinkSync(external, target);
+    fs.writeFileSync(path.join(source, "SKILL.md"), "new");
+    for (const retire of [false, true]) {
+      if (retire) fs.rmSync(source, { recursive: true });
+      const { lines } = quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
+      assert.ok(fs.lstatSync(target).isSymbolicLink());
+      assert.equal(fs.readlinkSync(target), external);
+      assert.ok(lines.includes("  kept batuta: customized locally; rerun with --force-skills to replace it"));
+      assert.deepEqual(readLock().skills, ["batuta"]);
+      assert.equal(readLock().hashes.batuta, managedHash);
+    }
+    quiet(() => installSharedSkills(false, { src, dst, lockSrc, force: true }));
+    assert.equal(fs.lstatSync(target, { throwIfNoEntry: false }), undefined, "force retires even a dangling root symlink");
+    assert.deepEqual(readLock().skills, []);
+
+    fs.mkdirSync(source);
+    fs.writeFileSync(path.join(source, "SKILL.md"), "new");
+    fs.symlinkSync(external, target);
+    quiet(() => installSharedSkills(false, { src, dst, lockSrc, force: true }));
+    assert.ok(fs.lstatSync(target).isDirectory(), "force replaces a root symlink with the vendored directory");
+    assert.equal(fs.readFileSync(path.join(target, "SKILL.md"), "utf8"), "new");
+    if (kind === "identical") assert.equal(fs.readFileSync(path.join(external, "SKILL.md"), "utf8"), "old");
+    else assert.equal(fs.lstatSync(external, { throwIfNoEntry: false }), undefined);
+  });
+}
+
 test("installSharedSkills keeps a customized skill with a warning and replaces an unchanged skill", () => {
   const fs = require("node:fs");
   const os = require("node:os");
   const path = require("node:path");
-  const crypto = require("node:crypto");
-  const { installSharedSkills } = require("../bin/install.js");
+  const { installSharedSkills, treeHash } = require("../bin/install.js");
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-skills-customized-"));
   const src = path.join(tmp, "src"), dst = path.join(tmp, "dst"), lockSrc = path.join(tmp, "skills-lock.json");
-  const hash = (contents) => crypto.createHash("sha256").update("SKILL.md\0").update(contents).digest("hex");
   try {
     for (const name of ["customized", "unchanged"]) {
       fs.mkdirSync(path.join(src, name), { recursive: true });
       fs.mkdirSync(path.join(dst, name), { recursive: true });
       fs.writeFileSync(path.join(src, name, "SKILL.md"), `${name} new`);
     }
-    fs.writeFileSync(path.join(dst, "customized", "SKILL.md"), "locally edited");
+    fs.writeFileSync(path.join(dst, "customized", "SKILL.md"), "customized old");
     fs.writeFileSync(path.join(dst, "unchanged", "SKILL.md"), "unchanged old");
     const previousHashes = {
-      customized: hash("customized old"),
-      unchanged: hash("unchanged old"),
+      customized: treeHash(path.join(dst, "customized")),
+      unchanged: treeHash(path.join(dst, "unchanged")),
     };
+    fs.writeFileSync(path.join(dst, "customized", "SKILL.md"), "locally edited");
     fs.writeFileSync(path.join(dst, ".batuta-skills-lock.json"), JSON.stringify({ ref: "v1", skills: ["customized", "unchanged"], hashes: previousHashes }));
     fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v2" }));
 
@@ -214,7 +279,7 @@ test("installSharedSkills keeps a customized skill with a warning and replaces a
     assert.ok(lines.includes("  kept customized: customized locally; rerun with --force-skills to replace it"));
     const lock = JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
     assert.equal(lock.hashes.customized, previousHashes.customized, "the old managed hash is carried forward");
-    assert.equal(lock.hashes.unchanged, hash("unchanged new"));
+    assert.equal(lock.hashes.unchanged, treeHash(path.join(src, "unchanged")));
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
@@ -254,20 +319,20 @@ test("--force-skills replaces a customized skill and a customized dropped skill 
   const fs = require("node:fs");
   const os = require("node:os");
   const path = require("node:path");
-  const crypto = require("node:crypto");
-  const { installSharedSkills } = require("../bin/install.js");
+  const { installSharedSkills, treeHash } = require("../bin/install.js");
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-skills-force-"));
   const src = path.join(tmp, "src"), dst = path.join(tmp, "dst"), lockSrc = path.join(tmp, "skills-lock.json");
-  const hash = (contents) => crypto.createHash("sha256").update("SKILL.md\0").update(contents).digest("hex");
   try {
     fs.mkdirSync(path.join(src, "current"), { recursive: true });
     fs.mkdirSync(path.join(dst, "current"), { recursive: true });
     fs.mkdirSync(path.join(dst, "dropped"), { recursive: true });
     fs.writeFileSync(path.join(src, "current", "SKILL.md"), "release new");
+    fs.writeFileSync(path.join(dst, "current", "SKILL.md"), "release old");
+    fs.writeFileSync(path.join(dst, "dropped", "SKILL.md"), "release dropped");
+    fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v2" }));
+    const previousHashes = { current: treeHash(path.join(dst, "current")), dropped: treeHash(path.join(dst, "dropped")) };
     fs.writeFileSync(path.join(dst, "current", "SKILL.md"), "local current");
     fs.writeFileSync(path.join(dst, "dropped", "SKILL.md"), "local dropped");
-    fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v2" }));
-    const previousHashes = { current: hash("release old"), dropped: hash("release dropped") };
     fs.writeFileSync(path.join(dst, ".batuta-skills-lock.json"), JSON.stringify({ ref: "v1", skills: ["current", "dropped"], hashes: previousHashes }));
 
     quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
@@ -461,13 +526,15 @@ test("downloadCore enforces the package pinned digest against checksums.txt and 
   }
 });
 
-test("downloadCore deadline aborts every fetch and names the timeout", async () => {
+test("downloadCore deadline aborts the checksums fetch and names the timeout", async () => {
   const fs = require("node:fs");
   const os = require("node:os");
   const path = require("node:path");
   const { downloadCore } = require("../bin/install.js");
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-deadline-"));
   const binDir = path.join(tmp, "bin");
+  // AbortSignal.timeout is unref'ed; keep the mocked request alive until it settles.
+  const keepAlive = setInterval(() => {}, 1000);
   const signals = [];
   const fakeFetch = (_url, options) => new Promise((_resolve, reject) => {
     signals.push(options.signal);
@@ -480,9 +547,39 @@ test("downloadCore deadline aborts every fetch and names the timeout", async () 
     );
     assert.equal(signals.length, 1);
     assert.ok(signals[0] instanceof AbortSignal);
+    assert.equal(signals[0].aborted, true);
   } finally {
+    clearInterval(keepAlive);
     fs.rmSync(tmp, { recursive: true, force: true });
   }
+});
+
+test("downloadCore archive deadline aborts the archive fetch and names the asset", async (t) => {
+  const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
+  const { downloadCore } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-archive-deadline-"));
+  t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+  const keepAlive = setInterval(() => {}, 1000);
+  t.after(() => clearInterval(keepAlive));
+  const asset = "batuta_linux_amd64.tar.gz", pinned = "0".repeat(64);
+  const requests = [];
+  const fakeFetch = (url, { signal }) => {
+    requests.push({ url, signal });
+    if (url.endsWith("checksums.txt")) return Promise.resolve(new Response(`${pinned}  ${asset}\n`));
+    return new Promise((_resolve, reject) => {
+      signal.addEventListener("abort", () => reject(signal.reason), { once: true });
+    });
+  };
+  await assert.rejects(downloadCore({
+    fetch: fakeFetch, binDir: path.join(tmp, "bin"), platform: "linux", arch: "x64",
+    baseUrl: "https://example.test/rel", timeoutMs: 20, checksums: { [asset]: pinned },
+  }), /download of batuta_linux_amd64\.tar\.gz timed out after 20 ms/);
+  assert.deepEqual(requests.map(({ url }) => url), [
+    "https://example.test/rel/checksums.txt", `https://example.test/rel/${asset}`,
+  ]);
+  assert.ok(requests[1].signal instanceof AbortSignal);
+  assert.notEqual(requests[0].signal, requests[1].signal, "each fetch gets its own deadline");
+  assert.equal(requests[1].signal.aborted, true);
 });
 
 test("downloadCore size cap rejects content-length before reading and a streaming body while reading", async () => {
@@ -502,12 +599,23 @@ test("downloadCore size cap rejects content-length before reading and a streamin
     await assert.rejects(downloadCore({ ...opts, fetch: declaredFetch }), /batuta_linux_amd64\.tar\.gz is 129 bytes, above the 128 limit/);
     assert.equal(declaredArchive.bodyUsed, true, "an oversized declared body is canceled");
 
-    const streamedArchive = new Response(new Uint8Array(129), { status: 200 });
+    let pulls = 0, canceled = false;
+    const streamedArchive = new Response(new ReadableStream({
+      // One initial chunk plus two pulls crosses the cap; a third pull is remaining body.
+      start(controller) { controller.enqueue(new Uint8Array(60)); },
+      pull(controller) {
+        pulls++;
+        controller.enqueue(new Uint8Array(60));
+        if (pulls === 3) controller.close();
+      },
+      cancel() { canceled = true; },
+    }, { highWaterMark: 0 }), { status: 200 });
     const streamedFetch = async (url) => url.endsWith("checksums.txt")
       ? new Response(checksum, { status: 200 })
       : streamedArchive;
-    await assert.rejects(downloadCore({ ...opts, fetch: streamedFetch }), /batuta_linux_amd64\.tar\.gz is 129 bytes, above the 128 limit/);
-    assert.equal(streamedArchive.bodyUsed, true, "the streaming body is read until it crosses the cap");
+    await assert.rejects(downloadCore({ ...opts, fetch: streamedFetch }), /batuta_linux_amd64\.tar\.gz is 180 bytes, above the 128 limit/);
+    assert.equal(pulls, 2, "the third pull is never requested after cumulative bytes cross the cap");
+    assert.equal(canceled, true, "the remaining body is canceled immediately at the cap");
     assert.ok(!fs.existsSync(path.join(binDir, "batuta")), "an oversized archive is never installed");
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
@@ -544,6 +652,7 @@ test("downloadCore leaves nothing behind after deadline, size cap, checksum mism
   const crypto = require("node:crypto");
   const { downloadCore } = require("../bin/install.js");
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-cleanup-"));
+  const keepAlive = setInterval(() => {}, 1000);
   const binDir = path.join(tmp, "bin");
   fs.mkdirSync(binDir);
   const asset = "batuta_linux_amd64.tar.gz";
@@ -586,6 +695,7 @@ test("downloadCore leaves nothing behind after deadline, size cap, checksum mism
     await assert.rejects(downloadCore({ ...base, tmpDir: tarRoot, fetch: tarFetch, exec: failTar, checksums: { [asset]: sha } }), /tar failed: broken archive/);
     assertClean(tarRoot);
   } finally {
+    clearInterval(keepAlive);
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });

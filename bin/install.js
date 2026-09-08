@@ -130,27 +130,32 @@ const HOSTS = [
 const LOCK_NAME = ".batuta-skills-lock.json";
 let sharedSkillsDone = false;
 function treeHash(dir) {
-  const files = [];
+  const root = fs.lstatSync(dir);
+  const entries = [];
+  function record(current, relative, entry) {
+    const type = entry.isSymbolicLink() ? "l" : entry.isDirectory() ? "d" : entry.isFile() ? "f" : "o";
+    const payload = type === "l" ? fs.readlinkSync(current, { encoding: "buffer" })
+      : type === "f" ? fs.readFileSync(current) : Buffer.alloc(0);
+    entries.push([type, relative, payload]);
+    if (type === "d") visit(current, relative);
+  }
   function visit(current, relative) {
-    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-      const childRelative = relative ? `${relative}/${entry.name}` : entry.name;
-      const child = path.join(current, entry.name);
-      if (entry.isSymbolicLink()) files.push([childRelative, `link:${fs.readlinkSync(child)}`]);
-      else if (entry.isDirectory()) visit(child, childRelative);
-      else if (entry.isFile()) files.push([childRelative, fs.readFileSync(child)]);
-      else {
-        const type = entry.isSocket() ? "socket" : entry.isFIFO() ? "fifo"
-          : entry.isBlockDevice() ? "block" : entry.isCharacterDevice() ? "character" : "unknown";
-        files.push([childRelative, type]);
-      }
+    for (const entry of fs.readdirSync(current, { withFileTypes: true, encoding: "buffer" })) {
+      const childRelative = relative.length ? Buffer.concat([relative, Buffer.from("/"), entry.name]) : entry.name;
+      const child = Buffer.concat([Buffer.from(current), Buffer.from(path.sep), entry.name]);
+      record(child, childRelative, entry);
     }
   }
-  visit(dir, "");
+  if (root.isDirectory()) visit(dir, Buffer.alloc(0));
+  else record(dir, Buffer.alloc(0), root);
   const hash = crypto.createHash("sha256");
-  for (const [relative, contents] of files.sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
-    hash.update(relative);
-    hash.update("\0");
-    hash.update(contents);
+  // Type tags and byte lengths distinguish both entry types and record boundaries.
+  for (const [type, relative, payload] of entries.sort((a, b) => Buffer.compare(a[1], b[1]))) {
+    hash.update(type);
+    for (const bytes of [relative, payload]) {
+      hash.update(`${bytes.length}:`);
+      hash.update(bytes);
+    }
   }
   return hash.digest("hex");
 }
@@ -179,7 +184,8 @@ function installSharedSkills(dryRun, paths = {}) {
     for (const name of names) {
       const target = path.join(dst, name);
       const previousHash = previousHashes[name];
-      if (!paths.force && previousHash && exists(target) && treeHash(target) !== previousHash) {
+      const entry = fs.lstatSync(target, { throwIfNoEntry: false });
+      if (!paths.force && previousHash && entry && treeHash(target) !== previousHash) {
         hashes[name] = previousHash;
         console.log(`  kept ${name}: customized locally; rerun with --force-skills to replace it`);
         continue;
@@ -204,7 +210,8 @@ function installSharedSkills(dryRun, paths = {}) {
     if (!skillName.test(name) || names.includes(name)) continue;
     const target = path.join(dst, name);
     const previousHash = previousHashes[name];
-    if (!paths.force && previousHash && exists(target) && treeHash(target) !== previousHash) {
+    const entry = fs.lstatSync(target, { throwIfNoEntry: false });
+    if (!paths.force && previousHash && entry && treeHash(target) !== previousHash) {
       retained.push(name);
       hashes[name] = previousHash;
       console.log(`  kept ${name}: customized locally; rerun with --force-skills to replace it`);
@@ -535,4 +542,4 @@ async function main(argv, deps = {}) {
 }
 
 if (require.main === module) main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
-module.exports = { main, HOSTS, installSharedSkills, pruneSkillLinks, shadowSharedSkillsInCodex, downloadCore, installBinary, installCore, coreAsset, coreBinaryName, expectedChecksum, CORE_VERSION, CORE_CHECKSUMS };
+module.exports = { main, HOSTS, treeHash, installSharedSkills, pruneSkillLinks, shadowSharedSkillsInCodex, downloadCore, installBinary, installCore, coreAsset, coreBinaryName, expectedChecksum, CORE_VERSION, CORE_CHECKSUMS };
