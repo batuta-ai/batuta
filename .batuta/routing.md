@@ -6,7 +6,7 @@ Confirmed with the user by /batuta-init on 2026-09-06, same lanes as batuta-ai/c
 
 | Lane | Domain | Executor | Model | Cost |
 |---|---|---|---|---|
-| low | * | codex | gpt-5.4-mini | ChatGPT subscription |
+| low | * | agy | gemini-3.8-flash-low | free quota |
 | medium | * | codex | gpt-5.6-sol | ChatGPT subscription |
 | high | * | codex | gpt-6-astra | ChatGPT subscription, reasoning high |
 | critical | * | self | — | host |
