@@ -232,6 +232,105 @@ test("downloadCore verifies the checksum and installs the binary from the releas
   await assert.rejects(downloadCore({ fetch: fakeFetch, binDir, platform: "win32", arch: "x64" }), /no prebuilt batuta/);
 });
 
+test("downloadCore deadline aborts every fetch and names the timeout", async () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { downloadCore } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-deadline-"));
+  const binDir = path.join(tmp, "bin");
+  const signals = [];
+  const fakeFetch = (_url, options) => new Promise((_resolve, reject) => {
+    signals.push(options.signal);
+    options.signal.addEventListener("abort", () => reject(options.signal.reason), { once: true });
+  });
+  try {
+    await assert.rejects(
+      downloadCore({ fetch: fakeFetch, binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", timeoutMs: 20 }),
+      /download of checksums\.txt timed out after 20 ms/,
+    );
+    assert.equal(signals.length, 1);
+    assert.ok(signals[0] instanceof AbortSignal);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("downloadCore size cap rejects content-length before reading and a streaming body while reading", async () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { downloadCore } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-size-cap-"));
+  const binDir = path.join(tmp, "bin");
+  const checksum = `${"0".repeat(64)}  batuta_linux_amd64.tar.gz\n`;
+  const opts = { binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel", maxBytes: 128 };
+  try {
+    const declaredArchive = new Response(new Uint8Array([1]), { status: 200, headers: { "content-length": "129" } });
+    const declaredFetch = async (url) => url.endsWith("checksums.txt")
+      ? new Response(checksum, { status: 200 })
+      : declaredArchive;
+    await assert.rejects(downloadCore({ ...opts, fetch: declaredFetch }), /batuta_linux_amd64\.tar\.gz is 129 bytes, above the 128 limit/);
+    assert.equal(declaredArchive.bodyUsed, false, "an oversized declared body is not read");
+
+    const streamedArchive = new Response(new Uint8Array(129), { status: 200 });
+    const streamedFetch = async (url) => url.endsWith("checksums.txt")
+      ? new Response(checksum, { status: 200 })
+      : streamedArchive;
+    await assert.rejects(downloadCore({ ...opts, fetch: streamedFetch }), /batuta_linux_amd64\.tar\.gz is 129 bytes, above the 128 limit/);
+    assert.equal(streamedArchive.bodyUsed, true, "the streaming body is read until it crosses the cap");
+    assert.ok(!fs.existsSync(path.join(binDir, "batuta")), "an oversized archive is never installed");
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("downloadCore leaves nothing behind after deadline, size cap, checksum mismatch, or tar failure", async () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const crypto = require("node:crypto");
+  const { downloadCore } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-cleanup-"));
+  const binDir = path.join(tmp, "bin");
+  fs.mkdirSync(binDir);
+  const asset = "batuta_linux_amd64.tar.gz";
+  const base = { binDir, platform: "linux", arch: "x64", baseUrl: "https://example.test/rel" };
+  const assertClean = () => {
+    assert.deepEqual(fs.readdirSync(os.tmpdir()).filter((name) => name.startsWith("batuta-core-")), [], "no download work directory remains");
+    assert.deepEqual(fs.readdirSync(binDir).filter((name) => name.startsWith(".batuta.")), [], "no binary staging file remains");
+  };
+  try {
+    const deadlineFetch = (_url, options) => new Promise((_resolve, reject) => {
+      options.signal.addEventListener("abort", () => reject(options.signal.reason), { once: true });
+    });
+    await assert.rejects(downloadCore({ ...base, fetch: deadlineFetch, timeoutMs: 20 }), /timed out after 20 ms/);
+    assertClean();
+
+    const sizeFetch = async () => new Response(new Uint8Array(1), { status: 200, headers: { "content-length": "129" } });
+    await assert.rejects(downloadCore({ ...base, fetch: sizeFetch, maxBytes: 128 }), /above the 128 limit/);
+    assertClean();
+
+    const checksum = `${"0".repeat(64)}  ${asset}\n`;
+    const mismatchFetch = async (url) => url.endsWith("checksums.txt")
+      ? new Response(checksum, { status: 200 })
+      : new Response(new Uint8Array([1]), { status: 200 });
+    await assert.rejects(downloadCore({ ...base, fetch: mismatchFetch }), /checksum mismatch/);
+    assertClean();
+
+    const archive = new Uint8Array([1, 2, 3]);
+    const sha = crypto.createHash("sha256").update(archive).digest("hex");
+    const tarFetch = async (url) => url.endsWith("checksums.txt")
+      ? new Response(`${sha}  ${asset}\n`, { status: 200 })
+      : new Response(archive, { status: 200 });
+    const failTar = () => ({ status: 2, stderr: "broken archive" });
+    await assert.rejects(downloadCore({ ...base, fetch: tarFetch, exec: failTar }), /tar failed: broken archive/);
+    assertClean();
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test("installBinary never follows a pre-existing path and leaves no stub on failure", () => {
   const fs = require("node:fs");
   const os = require("node:os");

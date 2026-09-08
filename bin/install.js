@@ -260,6 +260,27 @@ function expectedChecksum(checksums, name) {
   return null;
 }
 
+async function readDownloadBody(response, name, maxBytes) {
+  const declared = Number(response.headers && response.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > maxBytes) {
+    throw new Error(`${name} is ${declared} bytes, above the ${maxBytes} limit`);
+  }
+  if (!response.body) {
+    const bytes = Buffer.from(await response.arrayBuffer());
+    if (bytes.length > maxBytes) throw new Error(`${name} is ${bytes.length} bytes, above the ${maxBytes} limit`);
+    return bytes;
+  }
+  const chunks = [];
+  let total = 0;
+  for await (const chunk of response.body) {
+    const bytes = Buffer.from(chunk);
+    total += bytes.length;
+    if (total > maxBytes) throw new Error(`${name} is ${total} bytes, above the ${maxBytes} limit`);
+    chunks.push(bytes);
+  }
+  return Buffer.concat(chunks, total);
+}
+
 // Downloads the pinned core release for this machine, verifies it against
 // checksums.txt and extracts `batuta` into binDir. Returns the installed
 // path. `deps` exist for the tests: fetch, exec and the bin directory.
@@ -267,12 +288,20 @@ async function downloadCore(deps = {}) {
   const fetcher = deps.fetch || fetch;
   const exec = deps.exec || ((cmd, args) => spawnSync(cmd, args, { encoding: "utf8" }));
   const binDir = deps.binDir || process.env.BATUTA_BIN_DIR || path.join(home, ".local", "bin");
+  const timeoutMs = deps.timeoutMs === undefined ? 60000 : deps.timeoutMs;
+  const maxBytes = deps.maxBytes === undefined ? 64 * 1024 * 1024 : deps.maxBytes;
   const asset = coreAsset(deps.platform, deps.arch);
   if (!asset) throw new Error(`no prebuilt batuta for ${deps.platform || process.platform}/${deps.arch || process.arch}; see https://github.com/batuta-ai/core/releases/tag/${CORE_VERSION}`);
   const get = async (name) => {
-    const response = await fetcher(`${(deps.baseUrl || CORE_RELEASES)}/${name}`);
-    if (!response.ok) throw new Error(`download of ${name} failed: HTTP ${response.status}`);
-    return Buffer.from(await response.arrayBuffer());
+    const signal = AbortSignal.timeout(timeoutMs);
+    try {
+      const response = await fetcher(`${(deps.baseUrl || CORE_RELEASES)}/${name}`, { signal });
+      if (!response.ok) throw new Error(`download of ${name} failed: HTTP ${response.status}`);
+      return await readDownloadBody(response, name, maxBytes);
+    } catch (e) {
+      if (signal.aborted) throw new Error(`download of ${name} timed out after ${timeoutMs} ms`);
+      throw e;
+    }
   };
   const checksums = (await get("checksums.txt")).toString("utf8");
   const want = expectedChecksum(checksums, asset);
