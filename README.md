@@ -47,10 +47,19 @@ targets one. Per host, the same thing by hand:
 
 Codex also reads `~/.agents/skills`. When the Codex plugin and a shared-directory host (Cursor, opencode, agy) share a machine, the installer appends `[[skills.config]]` entries to `~/.codex/config.toml` that disable the shared copies, so Codex lists each skill once, from the plugin.
 
+### Shared skills: who owns what
+
+- Batuta owns the vendored copies it installs under `~/.agents/skills` and records their content hashes in `.batuta-skills-lock.json`.
+- A copy changed locally, including by `npx skills update`, belongs to the user: a normal install keeps it and prints a warning. The guarantee needs the hash recorded by a previous install of this version or later; upgrading from an older lock replaces every copy once, so back up customized skills before that first run.
+- `--force-skills` explicitly gives the installer permission to replace customized copies and retire customized skills that the release no longer ships.
+- The installer never touches a project's `.agents/skills` directory.
+
 The `batuta` binary (executor inventory, verification gates, unattended loop) is
 downloaded from the pinned [batuta-ai/core release](https://github.com/batuta-ai/core/releases)
 into `~/.local/bin` (set `BATUTA_BIN_DIR` to change it), checked against the
-release's `checksums.txt`; no Go needed. The skills work without it.
+digest pinned in this package and the release's `checksums.txt`; no Go needed
+on Linux, macOS and Windows 10 or later (x64).
+The skills work without it.
 
 Then, in a project: `/batuta:init` once, and just ask for code tasks.
 
