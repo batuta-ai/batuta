@@ -43,6 +43,7 @@ const USAGE_LINES = [
   "  --only <host>  install only the named host",
   "  --all          install every host, even if not detected",
   "  --dry-run      print the commands without running them",
+  "  --force-skills replace locally customized shared skills",
   "  --no-core      skip installing the core batuta binary",
   "  --help, -h     print this usage and exit",
 ];
@@ -106,7 +107,7 @@ const HOSTS = [
     label: "opencode",
     detect: () => which("opencode") || exists(path.join(home, ".config", "opencode")),
     steps: [],
-    after: (dryRun) => { installSharedSkills(dryRun); installOpencodeCommands(dryRun); },
+    after: (dryRun, paths) => { installSharedSkills(dryRun, paths); installOpencodeCommands(dryRun); },
     note: "vendored skills copied to ~/.agents/skills plus /batuta-* commands",
   },
   {
@@ -128,6 +129,26 @@ const HOSTS = [
 // however many hosts share the directory — and only counts once it worked.
 const LOCK_NAME = ".batuta-skills-lock.json";
 let sharedSkillsDone = false;
+function treeHash(dir) {
+  const files = [];
+  function visit(current, relative) {
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const childRelative = relative ? `${relative}/${entry.name}` : entry.name;
+      const child = path.join(current, entry.name);
+      if (entry.isDirectory()) visit(child, childRelative);
+      else files.push([childRelative, child]);
+    }
+  }
+  visit(dir, "");
+  const hash = crypto.createHash("sha256");
+  for (const [relative, file] of files.sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
+    hash.update(relative);
+    hash.update("\0");
+    hash.update(fs.readFileSync(file));
+  }
+  return hash.digest("hex");
+}
+
 function installSharedSkills(dryRun, paths = {}) {
   const src = paths.src || path.join(ROOT, "skills");
   const dst = paths.dst || path.join(home, ".agents", "skills");
@@ -138,8 +159,11 @@ function installSharedSkills(dryRun, paths = {}) {
   if (dryRun) { console.log(`  copy ${src}/{${names.join(",")}} -> ${dst}/`); return; }
   const lock = JSON.parse(fs.readFileSync(lockSrc, "utf8"));
   fs.mkdirSync(dst, { recursive: true });
-  let previous = [];
-  try { previous = JSON.parse(fs.readFileSync(path.join(dst, LOCK_NAME), "utf8")).skills || []; } catch { /* first install */ }
+  let previousLock = {};
+  try { previousLock = JSON.parse(fs.readFileSync(path.join(dst, LOCK_NAME), "utf8")); } catch { /* first install */ }
+  const previous = previousLock.skills || [];
+  const previousHashes = previousLock.hashes || {};
+  const hashes = {};
   const skillName = /^[a-z][a-z0-9-]*$/;
   for (const name of names) {
     if (!skillName.test(name)) throw new Error(`vendored skill name "${name}" is not a skill directory name`);
@@ -147,10 +171,18 @@ function installSharedSkills(dryRun, paths = {}) {
   const staged = [];
   try {
     for (const name of names) {
+      const target = path.join(dst, name);
+      const previousHash = previousHashes[name];
+      if (!paths.force && previousHash && exists(target) && treeHash(target) !== previousHash) {
+        hashes[name] = previousHash;
+        console.log(`  kept ${name}: customized locally; rerun with --force-skills to replace it`);
+        continue;
+      }
       const stage = path.join(dst, `.${name}.staging`);
       fs.rmSync(stage, { recursive: true, force: true });
-      staged.push([stage, path.join(dst, name)]);
+      staged.push([stage, target]);
       copy(path.join(src, name), stage);
+      hashes[name] = treeHash(path.join(src, name));
     }
   } catch (e) {
     for (const [stage] of staged) fs.rmSync(stage, { recursive: true, force: true });
@@ -160,12 +192,22 @@ function installSharedSkills(dryRun, paths = {}) {
     fs.rmSync(target, { recursive: true, force: true });
     fs.renameSync(stage, target);
   }
+  const retained = [];
   for (const name of previous) {
     // Names come from a file on disk: only plain skill directory names are ever removed.
     if (!skillName.test(name) || names.includes(name)) continue;
-    fs.rmSync(path.join(dst, name), { recursive: true, force: true });
+    const target = path.join(dst, name);
+    const previousHash = previousHashes[name];
+    if (!paths.force && previousHash && exists(target) && treeHash(target) !== previousHash) {
+      retained.push(name);
+      hashes[name] = previousHash;
+      console.log(`  kept ${name}: customized locally; rerun with --force-skills to replace it`);
+    } else {
+      fs.rmSync(target, { recursive: true, force: true });
+    }
   }
-  lock.skills = names;
+  lock.skills = names.concat(retained);
+  lock.hashes = hashes;
   lock.installedAt = new Date().toISOString();
   fs.writeFileSync(path.join(dst, LOCK_NAME), JSON.stringify(lock, null, 2) + "\n");
   sharedSkillsDone = !paths.src;
@@ -421,6 +463,7 @@ async function main(argv, deps = {}) {
   let list = false;
   let only = "";
   let all = false;
+  let forceSkills = false;
   let withCore = true;
   let help = false;
   let unknown = "";
@@ -430,6 +473,7 @@ async function main(argv, deps = {}) {
     else if (arg === "--list") list = true;
     else if (arg === "--only") only = argv[++i] || "";
     else if (arg === "--all") all = true;
+    else if (arg === "--force-skills") forceSkills = true;
     else if (arg === "--no-core") withCore = false;
     else if (arg === "--help" || arg === "-h") help = true;
     else if (arg.startsWith("--")) { unknown = arg; break; }
@@ -465,7 +509,7 @@ async function main(argv, deps = {}) {
     }
     if (!ok) { failed.push(h.id); console.log(`  ${h.label} skipped: a step failed above`); continue; }
     if (h.after) {
-      try { h.after(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push(h.id); }
+      try { h.after(dryRun, { force: forceSkills }); } catch (e) { console.log(`  failed: ${e.message}`); failed.push(h.id); }
     }
   }
   try { (deps.shadowSharedSkillsInCodex || shadowSharedSkillsInCodex)(dryRun); } catch (e) { console.log(`  failed: ${e.message}`); failed.push("codex"); }

@@ -47,6 +47,13 @@ npx -y github:batuta-ai/batuta
 
 O Codex também lê `~/.agents/skills`. Quando o plugin do Codex e um host de diretório compartilhado (Cursor, opencode, agy) coexistem na mesma máquina, o instalador acrescenta entradas `[[skills.config]]` em `~/.codex/config.toml` que desligam as cópias compartilhadas, e o Codex lista cada skill uma vez, pelo plugin.
 
+### Skills compartilhadas: quem é dono do quê
+
+- O Batuta é dono das cópias vendoradas que instala em `~/.agents/skills` e registra os hashes do conteúdo delas em `.batuta-skills-lock.json`.
+- Uma cópia alterada localmente, inclusive por `npx skills update`, pertence ao usuário: uma instalação normal a mantém e imprime um aviso.
+- `--force-skills` dá explicitamente ao instalador permissão para substituir cópias customizadas e aposentar skills customizadas que o release não distribui mais.
+- O instalador nunca altera o diretório `.agents/skills` de um projeto.
+
 O binário `batuta` (inventário de executores, gates de verificação, loop
 autônomo) é baixado do [release fixado do batuta-ai/core](https://github.com/batuta-ai/core/releases)
 para `~/.local/bin` (`BATUTA_BIN_DIR` muda o destino) e conferido contra o digest

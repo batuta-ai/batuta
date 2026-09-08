@@ -72,6 +72,7 @@ test("--help prints the usage and runs nothing", async () => {
       "--only <host>",
       "--all",
       "--dry-run",
+      "--force-skills",
       "--no-core",
       "--help, -h",
     ]) {
@@ -180,6 +181,87 @@ test("installSharedSkills keeps the previous installation when the copy fails an
   assert.ok(!fs.existsSync(path.join(dst, "batuta-retired")), "skills dropped by the release are removed");
   assert.ok(fs.existsSync(path.join(tmp, "escape")), "lock entries that are not skill names are never deleted");
   assert.ok(fs.existsSync(src), "a `..` entry cannot delete the parent");
+});
+
+test("installSharedSkills keeps a customized skill with a warning and replaces an unchanged skill", () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const crypto = require("node:crypto");
+  const { installSharedSkills } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-skills-customized-"));
+  const src = path.join(tmp, "src"), dst = path.join(tmp, "dst"), lockSrc = path.join(tmp, "skills-lock.json");
+  const hash = (contents) => crypto.createHash("sha256").update("SKILL.md\0").update(contents).digest("hex");
+  try {
+    for (const name of ["customized", "unchanged"]) {
+      fs.mkdirSync(path.join(src, name), { recursive: true });
+      fs.mkdirSync(path.join(dst, name), { recursive: true });
+      fs.writeFileSync(path.join(src, name, "SKILL.md"), `${name} new`);
+    }
+    fs.writeFileSync(path.join(dst, "customized", "SKILL.md"), "locally edited");
+    fs.writeFileSync(path.join(dst, "unchanged", "SKILL.md"), "unchanged old");
+    const previousHashes = {
+      customized: hash("customized old"),
+      unchanged: hash("unchanged old"),
+    };
+    fs.writeFileSync(path.join(dst, ".batuta-skills-lock.json"), JSON.stringify({ ref: "v1", skills: ["customized", "unchanged"], hashes: previousHashes }));
+    fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v2" }));
+
+    const { lines } = quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
+
+    assert.equal(fs.readFileSync(path.join(dst, "customized", "SKILL.md"), "utf8"), "locally edited");
+    assert.equal(fs.readFileSync(path.join(dst, "unchanged", "SKILL.md"), "utf8"), "unchanged new");
+    assert.ok(lines.includes("  kept customized: customized locally; rerun with --force-skills to replace it"));
+    const lock = JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
+    assert.equal(lock.hashes.customized, previousHashes.customized, "the old managed hash is carried forward");
+    assert.equal(lock.hashes.unchanged, hash("unchanged new"));
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test("--force-skills replaces a customized skill and a customized dropped skill is otherwise kept", async () => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const crypto = require("node:crypto");
+  const { installSharedSkills } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-skills-force-"));
+  const src = path.join(tmp, "src"), dst = path.join(tmp, "dst"), lockSrc = path.join(tmp, "skills-lock.json");
+  const hash = (contents) => crypto.createHash("sha256").update("SKILL.md\0").update(contents).digest("hex");
+  try {
+    fs.mkdirSync(path.join(src, "current"), { recursive: true });
+    fs.mkdirSync(path.join(dst, "current"), { recursive: true });
+    fs.mkdirSync(path.join(dst, "dropped"), { recursive: true });
+    fs.writeFileSync(path.join(src, "current", "SKILL.md"), "release new");
+    fs.writeFileSync(path.join(dst, "current", "SKILL.md"), "local current");
+    fs.writeFileSync(path.join(dst, "dropped", "SKILL.md"), "local dropped");
+    fs.writeFileSync(lockSrc, JSON.stringify({ ref: "v2" }));
+    const previousHashes = { current: hash("release old"), dropped: hash("release dropped") };
+    fs.writeFileSync(path.join(dst, ".batuta-skills-lock.json"), JSON.stringify({ ref: "v1", skills: ["current", "dropped"], hashes: previousHashes }));
+
+    quiet(() => installSharedSkills(false, { src, dst, lockSrc }));
+    assert.equal(fs.readFileSync(path.join(dst, "current", "SKILL.md"), "utf8"), "local current");
+    assert.equal(fs.readFileSync(path.join(dst, "dropped", "SKILL.md"), "utf8"), "local dropped");
+    let lock = JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
+    assert.deepEqual(lock.skills, ["current", "dropped"]);
+    assert.equal(lock.hashes.dropped, previousHashes.dropped);
+
+    let afterPaths;
+    const forceHost = host("force", [], (dryRun, paths) => {
+      afterPaths = paths;
+      installSharedSkills(dryRun, { src, dst, lockSrc, ...paths });
+    });
+    const { code } = await quietAsync(() => main(["--no-core", "--force-skills"], { ...noShadow, hosts: [forceHost], run: () => {} }));
+    assert.equal(code, 0);
+    assert.deepEqual(afterPaths, { force: true });
+    assert.equal(fs.readFileSync(path.join(dst, "current", "SKILL.md"), "utf8"), "release new");
+    assert.ok(!fs.existsSync(path.join(dst, "dropped")), "force retires a customized dropped skill");
+    lock = JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
+    assert.deepEqual(lock.skills, ["current"]);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("downloadCore verifies the checksum and installs the binary from the release archive", async () => {
