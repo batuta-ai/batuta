@@ -141,6 +141,24 @@ docs/                    specs de design; docs/specs-history guarda o PRD v1 e o
 `scripts/sync-skills.sh <tag>` atualiza as skills vendoradas; `tests/check.sh`
 falha quando `skills/` diverge do lock.
 
+### Preparar um pacote local
+
+Com Node.js 22, `git` e `npm`, monte o conteúdo num caminho absoluto novo,
+valide-o, exija o marcador de prontidão e crie um arquivo local:
+
+```bash
+node scripts/assemble-package.js --output /caminho/absoluto/batuta-package
+node scripts/check-artifact.js /caminho/absoluto/batuta-package
+node -e 'const assert = require("node:assert/strict"); const fs = require("node:fs"); const marker = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); assert.deepEqual(marker, { schemaVersion: 1, status: "ready" })' /caminho/absoluto/batuta-package/package-ready.json
+(cd /caminho/absoluto/batuta-package && npm pack --ignore-scripts --json --pack-destination /caminho/absoluto/archives)
+```
+
+`package-ready.json` é gravado por último. Um marcador ausente ou malformado
+identifica um destino incompleto: não o empacote nem reutilize; inspecione-o e
+monte novamente em outro caminho. Este fluxo prepara o artefato e não publica
+nada. Veja [o guia de empacotamento local](docs/skills-packaging.md) para os
+requisitos, a recuperação e a validação do artefato extraído.
+
 ## Filosofia
 
 1. **Quem rege não toca** — tokens vão para dirigir, não para digitar código.

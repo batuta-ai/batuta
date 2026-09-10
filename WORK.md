@@ -1,13 +1,14 @@
 # WORK — batuta (host)
 
 ## In progress
-- [ ] Skills package assembly phase1 approved; task1 verified and integrated as76f7c1a; task2 adjustment approved: exclusive output creation and ready marker after validation; resumed with codex/gpt-6-astra; task3 pending dependency. Branch `feat/skills-package-assembly`. No publication authorized.
+- [ ] Skills package assembly phase1 approved; task1 verified and integrated as76f7c1a; task2 verified and integrated; task3 next. Branch `feat/skills-package-assembly`. No publication authorized.
 - QA host PR82 merged as ebd2174 with explicitly authorized admin exception; host0.5.3 release commit a8c63b3 is now the packaging base.
 
 ## Follow-ups
 - The retired-integration scan in tests/check.sh traverses nested excluded worktrees and misclassifies their historical documentation. Normal completed-worktree cleanup removes this false positive; a separate gate fix should respect repository scope.
 
 ## Done
+- [x] Package task2 exclusive assembler → codex/gpt-6-astra high, approved contract adjustment then first implementation attempt, commit 8a99a8b. Independent64 tests, real source fetch and agy review all4 criteria DONE/no findings.
 - [x] Package task1 runtime validation → codex/gpt-5.6-sol, one test-hygiene retry, no escalation, commit 76f7c1a. Independent 47 tests passed; agy/gemini-3.8-flash-low three criteria DONE, no findings.
 - [x] QA host integration: vendor skills v0.8.0 through sync-skills.sh, four qa-plan/qa-run wrappers, README mirrors, and multi-segment command validation with four red-green regressions. Codex/gpt-5.6-sol, first attempt, commit 3159059. Independent host gate and 36 tests passed; agy/gemini-3.8-flash-low review returned SHIP with no findings. Trail: `.batuta/runs/2026-09-10-qa-host.md`.
 - [x] installer review fixes 2: unambiguous tree hash, root entry via lstat, archive deadline and multi-chunk cap tests → codex (codex/gpt-6-astra), primeira tentativa, commit c661f69 em feat/installer-hardening (trail: .batuta/runs/2026-09-08-review-fixes-2.md)

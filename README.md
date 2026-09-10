@@ -141,6 +141,24 @@ docs/                    design specs; docs/specs-history holds the v1 PRD and p
 `scripts/sync-skills.sh <tag>` updates the vendored skills; `tests/check.sh`
 fails when `skills/` drifts from the lock.
 
+### Prepare a local package
+
+With Node.js 22, `git` and `npm`, assemble into a new absolute path, validate it,
+require its ready marker, then create an archive locally:
+
+```bash
+node scripts/assemble-package.js --output /absolute/path/to/batuta-package
+node scripts/check-artifact.js /absolute/path/to/batuta-package
+node -e 'const assert = require("node:assert/strict"); const fs = require("node:fs"); const marker = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); assert.deepEqual(marker, { schemaVersion: 1, status: "ready" })' /absolute/path/to/batuta-package/package-ready.json
+(cd /absolute/path/to/batuta-package && npm pack --ignore-scripts --json --pack-destination /absolute/path/to/archives)
+```
+
+`package-ready.json` is written last. A missing or malformed marker identifies
+an incomplete destination: do not pack or reuse it; inspect it and assemble
+again at a fresh path. This workflow prepares an artifact and does not publish
+it. See [the local packaging guide](docs/skills-packaging.md) for requirements,
+recovery and extracted-artifact validation.
+
 ## Philosophy
 
 1. **The conductor does not play** — tokens go to directing, not typing code.

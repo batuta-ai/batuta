@@ -8,7 +8,7 @@
 - [x] 1. Separate source and runtime artifact validation — tooling/medium
       Scope: tests/check.sh, tests/artifact.test.js, scripts/check-artifact.js
       Accept: standalone runtime validator rejects malformed or incomplete fixtures and accepts valid fixtures → node --test tests/artifact.test.js; existing source gate remains green → bash tests/check.sh
-- [ ] 2. Assemble locked skills into a clean runtime staging directory — tooling/high
+- [x] 2. Assemble locked skills into a clean runtime staging directory — tooling/high
       Depends on: 1
       Scope: scripts/assemble-package.js, tests/assemble-package.test.js
       Accept: exact revision, digest and output safety contracts pass offline fixture tests → node --test tests/assemble-package.test.js; no existing behavior regression → bash tests/check.sh
