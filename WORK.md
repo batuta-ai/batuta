@@ -1,13 +1,15 @@
 # WORK — batuta (host)
 
 ## In progress
-- No active implementation. Packaging phase1 verified locally; publication and further distribution migration are not authorized.
+- Selective packaging rollback verified locally; awaiting rollback PR integration. Keep skills-only/plugin options and existing generated vendoring; no npm migration.
 - QA host PR82 merged as ebd2174 with explicitly authorized admin exception; host0.5.3 release commit a8c63b3 is now the packaging base.
 
 ## Follow-ups
 - The retired-integration scan in tests/check.sh traverses nested excluded worktrees and misclassifies their historical documentation. Normal completed-worktree cleanup removes this false positive; a separate gate fix should respect repository scope.
 
 ## Done
+- [x] Selective rollback of PR84 packaging → codex/gpt-5.6-sol, first attempt, commit 0eb7cc5. Conductor exact pre-PR README/gate equality, nine-path scope, unchanged QA/installers/manifests and36 tests on Node22/26 verified. Plan archived as historical/reverted.
+- [x] Package fixture Git maintenance race → codex/gpt-5.6-sol, first attempt, commit d404341; conductor package tests3 runs plus69 tests on Node22/26. PR84 opened; no merge/publication. Trail: `.batuta/runs/package-fixture-race.md`.
 - [x] Package task3 packed artifact tests/docs → codex/gpt-5.6-sol, one independent-allowlist retry, commit dd91438. Conductor68 tests on Node22 and26; agy all4 criteria DONE/no findings. Phase1 complete locally, no publishing.
 - [x] Package task2 exclusive assembler → codex/gpt-6-astra high, approved contract adjustment then first implementation attempt, commit 8a99a8b. Independent64 tests, real source fetch and agy review all4 criteria DONE/no findings.
 - [x] Package task1 runtime validation → codex/gpt-5.6-sol, one test-hygiene retry, no escalation, commit 76f7c1a. Independent 47 tests passed; agy/gemini-3.8-flash-low three criteria DONE, no findings.
