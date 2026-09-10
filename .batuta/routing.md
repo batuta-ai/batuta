@@ -1,6 +1,6 @@
 # Routing — batuta (host)
 
-<!-- inputs: profile.md@sha256:1b7e8125908b -->
+<!-- inputs: profile.md@sha256:4c7436960cc4 -->
 
 Confirmed with the user by /batuta-init on 2026-09-06, same lanes as batuta-ai/core. Installed and probed: agy 1.1.27, claude 2.1.263, codex 0.153.4, cursor-agent, opencode 1.18.29; cursor-agent and opencode left unrouted by choice. Model IDs from `batuta inventory` on this machine.
 
