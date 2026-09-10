@@ -100,6 +100,8 @@ function fixture(t) {
     fs.writeFileSync(path.join(repoRoot, relative), 'must not ship\n');
   }
   git(skillsRoot, 'init', '-q');
+  git(skillsRoot, 'config', 'maintenance.auto', 'false');
+  git(skillsRoot, 'config', 'gc.auto', '0');
   git(skillsRoot, 'add', 'skills');
   git(skillsRoot, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
     '-c', 'commit.gpgsign=false', 'commit', '-qm', 'fixture');
@@ -109,6 +111,8 @@ function fixture(t) {
   lock.commit = skillsCommit;
   fs.writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
   git(repoRoot, 'init', '-q');
+  git(repoRoot, 'config', 'maintenance.auto', 'false');
+  git(repoRoot, 'config', 'gc.auto', '0');
   git(repoRoot, 'add', '.');
   git(repoRoot, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
     '-c', 'commit.gpgsign=false', 'commit', '-qm', 'host fixture');
@@ -119,6 +123,14 @@ function fixture(t) {
   };
   return { temp, repoRoot, skillsRoot, fetchSkills, outputDir: path.join(temp, 'payload') };
 }
+
+test('fixture repositories disable automatic Git maintenance and gc', (t) => {
+  const f = fixture(t);
+  for (const root of [f.repoRoot, f.skillsRoot]) {
+    assert.equal(git(root, 'config', '--local', '--get', 'maintenance.auto'), 'false');
+    assert.equal(git(root, 'config', '--local', '--get', 'gc.auto'), '0');
+  }
+});
 
 function tarString(block, start, length) {
   const end = block.indexOf(0, start);
