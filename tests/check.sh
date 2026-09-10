@@ -5,19 +5,34 @@ cd "$(dirname "$0")/.."
 fail=0
 bad() { fail=1; printf 'FAIL %s\n' "$*"; }
 
-# 1. Source-only release configuration parses.
-python3 -c "import json;json.load(open('release-please-config.json'))" 2>/dev/null \
-  || bad "release-please-config.json is not valid JSON"
+# 1. Every manifest parses.
+for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json .codex-plugin/plugin.json \
+         .agents/plugins/marketplace.json .cursor-plugin/plugin.json .cursor-plugin/marketplace.json \
+         hooks/hooks.json skills-lock.json release-please-config.json; do
+  python3 -c "import json,sys; json.load(open('$f'))" 2>/dev/null || bad "$f is not valid JSON"
+done
 
-# 2. The source checkout is a valid runtime artifact.
-out=$(node scripts/check-artifact.js . 2>&1) || bad "runtime artifact:"$'\n'"$out"
+# 2. The vendored skills match the lock.
+hash=$(cd skills && find . -type f | LC_ALL=C sort | xargs shasum -a 256 | shasum -a 256 | cut -c1-64)
+locked=$(python3 -c "import json;print(json.load(open('skills-lock.json'))['computedHash'])")
+[ "sha256:$hash" = "$locked" ] || bad "skills/ tree hash sha256:$hash != lock $locked (run scripts/sync-skills.sh)"
 
-# 3. No dependency on retired integrations outside history docs.
+# 3. Every command routes to a skill that exists.
+out=$(bash scripts/check-commands.sh 2>&1) || bad "command routes:"$'\n'"$out"
+
+# 4. Versions agree across manifests.
+v=$(python3 -c "import json;print(json.load(open('.claude-plugin/plugin.json'))['version'])")
+for f in .codex-plugin/plugin.json .cursor-plugin/plugin.json; do
+  fv=$(python3 -c "import json;print(json.load(open('$f'))['version'])")
+  [ "$fv" = "$v" ] || bad "$f version $fv != $v"
+done
+
+# 5. No dependency on retired integrations outside history docs.
 hits=$(grep -rnE 'superpowers\.md|codex-plugin\.md|compozy\.md' --include='*.md' --include='*.json' --include='*.sh' --include='*.js' . \
        | grep -vE '^\./(docs/|CHANGELOG\.md|skills/)' || true)
 [ -z "$hits" ] || bad "retired integration references:"$'\n'"$hits"
 
-# 4. The behavior tests.
+# 6. The installer's behaviour tests.
 out=$(node --test tests/*.test.js 2>&1) || bad "installer tests:"$'\n'"$out"
 
 [ "$fail" -eq 0 ] && echo "batuta check: ok" || { echo "batuta check: FAILED"; exit 1; }
