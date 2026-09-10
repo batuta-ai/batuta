@@ -45,6 +45,13 @@ targets one. Per host, the same thing by hand:
 | Antigravity (`agy`) | `npx -y github:batuta-ai/batuta -- --only agy` (vendored skills → `~/.agents/skills`); any other agent: `npx skills add batuta-ai/skills -g -a <agent>` (without `-a` the skills CLI also links the skills into Claude Code and Codex, which already get them from the plugin) | the skills, by name |
 | CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | the `batuta` agent |
 
+QA planning and execution use `/batuta:qa-plan` and `/batuta:qa-run` in Claude
+Code, `$batuta-qa-plan` and `$batuta-qa-run` in Codex, `/batuta-qa-plan` and
+`/batuta-qa-run` in opencode, and the `batuta-qa-plan` and `batuta-qa-run`
+skill names in shared-directory hosts. The plan entry point creates or updates
+the living QA plan; the run entry point executes its planned persona sessions
+and writes evidence, verdicts, findings and debriefs back to that plan.
+
 Codex also reads `~/.agents/skills`. When the Codex plugin and a shared-directory host (Cursor, opencode, agy) share a machine, the installer appends `[[skills.config]]` entries to `~/.codex/config.toml` that disable the shared copies, so Codex lists each skill once, from the plugin.
 
 ### Shared skills: who owns what

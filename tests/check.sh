@@ -18,10 +18,7 @@ locked=$(python3 -c "import json;print(json.load(open('skills-lock.json'))['comp
 [ "sha256:$hash" = "$locked" ] || bad "skills/ tree hash sha256:$hash != lock $locked (run scripts/sync-skills.sh)"
 
 # 3. Every command routes to a skill that exists.
-for c in commands/*.md hosts/opencode/commands/*.md; do
-  skill=$(grep -oE '`batuta(-[a-z]+)?` skill' "$c" | head -1 | grep -oE 'batuta(-[a-z]+)?')
-  [ -n "$skill" ] && [ -f "skills/$skill/SKILL.md" ] || bad "$c does not route to an existing skill"
-done
+out=$(bash scripts/check-commands.sh 2>&1) || bad "command routes:"$'\n'"$out"
 
 # 4. Versions agree across manifests.
 v=$(python3 -c "import json;print(json.load(open('.claude-plugin/plugin.json'))['version'])")

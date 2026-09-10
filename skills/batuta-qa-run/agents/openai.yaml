@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-qa-run"
+  short_description: "Walk persona QA sessions and record proof"
+  default_prompt: "Use $batuta-qa-run to walk the planned persona sessions and write verified results into the living QA tree."

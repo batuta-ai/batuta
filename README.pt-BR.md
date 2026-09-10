@@ -45,6 +45,14 @@ npx -y github:batuta-ai/batuta
 | Antigravity (`agy`) | `npx -y github:batuta-ai/batuta -- --only agy` (skills vendoradas → `~/.agents/skills`); qualquer outro agente: `npx skills add batuta-ai/skills -g -a <agente>` (sem `-a` a skills CLI também linka as skills no Claude Code e no Codex, que já as recebem pelo plugin) | as skills, pelo nome |
 | CompozyOS | `compozy extension install github:batuta-ai/compozy --allow-unverified --yes` | o agente `batuta` |
 
+O planejamento e a execução de QA usam `/batuta:qa-plan` e `/batuta:qa-run`
+no Claude Code, `$batuta-qa-plan` e `$batuta-qa-run` no Codex,
+`/batuta-qa-plan` e `/batuta-qa-run` no opencode e os nomes de skill
+`batuta-qa-plan` e `batuta-qa-run` nos hosts de diretório compartilhado. O ponto
+de entrada de planejamento cria ou atualiza o plano vivo de QA; o de execução
+realiza as sessões planejadas com personas e grava evidências, vereditos,
+achados e debriefs de volta nesse plano.
+
 O Codex também lê `~/.agents/skills`. Quando o plugin do Codex e um host de diretório compartilhado (Cursor, opencode, agy) coexistem na mesma máquina, o instalador acrescenta entradas `[[skills.config]]` em `~/.codex/config.toml` que desligam as cópias compartilhadas, e o Codex lista cada skill uma vez, pelo plugin.
 
 ### Skills compartilhadas: quem é dono do quê

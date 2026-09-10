@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-qa-plan"
+  short_description: "Plan durable persona journeys and QA session charters"
+  default_prompt: "Use $batuta-qa-plan to map user journeys and plan persona QA sessions in the living QA tree"
