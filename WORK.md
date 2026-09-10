@@ -1,8 +1,13 @@
 # WORK — batuta (host)
 
 ## In progress
+- QA host integration is verified locally on `feat/qa-host` (3159059). Publication, host release and local installation are pending; no push or merge has been performed.
+
+## Follow-ups
+- The retired-integration scan in tests/check.sh traverses nested excluded worktrees and misclassifies their historical documentation. Normal completed-worktree cleanup removes this false positive; a separate gate fix should respect repository scope.
 
 ## Done
+- [x] QA host integration: vendor skills v0.8.0 through sync-skills.sh, four qa-plan/qa-run wrappers, README mirrors, and multi-segment command validation with four red-green regressions. Codex/gpt-5.6-sol, first attempt, commit 3159059. Independent host gate and 36 tests passed; agy/gemini-3.8-flash-low review returned SHIP with no findings. Trail: `.batuta/runs/2026-09-10-qa-host.md`.
 - [x] installer review fixes 2: unambiguous tree hash, root entry via lstat, archive deadline and multi-chunk cap tests → codex (codex/gpt-6-astra), primeira tentativa, commit c661f69 em feat/installer-hardening (trail: .batuta/runs/2026-09-08-review-fixes-2.md)
 - [x] installer review fixes: symlink-safe hashes, cancelled bodies, strict pin-core parser, isolated cleanup test, discoverable shell test → codex (codex/gpt-5.6-sol), primeira tentativa, commit 217cf66 em feat/installer-hardening (trail: .batuta/runs/2026-09-08-review-fixes.md)
 - [x] README: the ownership guarantee is qualified for locks without hashes (review round 4 minor) → conductor, docs only
