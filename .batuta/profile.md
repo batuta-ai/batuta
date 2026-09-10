@@ -4,7 +4,7 @@ Written by /batuta-init on 2026-09-06. Complements README.md and docs/; never re
 
 Stack: Node 22 (CLI installer `bin/install.js`, no dependencies, no build; plugin manifests for Claude Code, Codex, Cursor, opencode; vendored skills)
 Methodology: TDD; conventional commits; feature branches with a PR to main (release-please)
-Test: bash tests/check.sh && node --test tests
+Test: bash tests/check.sh && node --test tests/*.test.js
 Build:
 Install:
 Execution: sequential

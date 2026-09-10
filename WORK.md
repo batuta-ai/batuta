@@ -1,13 +1,14 @@
 # WORK — batuta (host)
 
 ## In progress
-- [ ] Skills package assembly phase1 approved; task1 verified and integrated as76f7c1a; task2 verified and integrated; task3 next. Branch `feat/skills-package-assembly`. No publication authorized.
+- No active implementation. Packaging phase1 verified locally; publication and further distribution migration are not authorized.
 - QA host PR82 merged as ebd2174 with explicitly authorized admin exception; host0.5.3 release commit a8c63b3 is now the packaging base.
 
 ## Follow-ups
 - The retired-integration scan in tests/check.sh traverses nested excluded worktrees and misclassifies their historical documentation. Normal completed-worktree cleanup removes this false positive; a separate gate fix should respect repository scope.
 
 ## Done
+- [x] Package task3 packed artifact tests/docs → codex/gpt-5.6-sol, one independent-allowlist retry, commit dd91438. Conductor68 tests on Node22 and26; agy all4 criteria DONE/no findings. Phase1 complete locally, no publishing.
 - [x] Package task2 exclusive assembler → codex/gpt-6-astra high, approved contract adjustment then first implementation attempt, commit 8a99a8b. Independent64 tests, real source fetch and agy review all4 criteria DONE/no findings.
 - [x] Package task1 runtime validation → codex/gpt-5.6-sol, one test-hygiene retry, no escalation, commit 76f7c1a. Independent 47 tests passed; agy/gemini-3.8-flash-low three criteria DONE, no findings.
 - [x] QA host integration: vendor skills v0.8.0 through sync-skills.sh, four qa-plan/qa-run wrappers, README mirrors, and multi-segment command validation with four red-green regressions. Codex/gpt-5.6-sol, first attempt, commit 3159059. Independent host gate and 36 tests passed; agy/gemini-3.8-flash-low review returned SHIP with no findings. Trail: `.batuta/runs/2026-09-10-qa-host.md`.

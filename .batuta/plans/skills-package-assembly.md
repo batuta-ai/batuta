@@ -1,8 +1,8 @@
 # Plan — Skills package assembly, phase 1
-<!-- inputs: profile.md@sha256:1b7e8125908b routing.md@sha256:eca361d13bc6 -->
+<!-- inputs: profile.md@sha256:4c7436960cc4 routing.md@sha256:b8b88f905e1c -->
 
 **Goal:** Build and verify an independently assembled runtime package from the pinned skills dependency, without changing installed behavior or public distribution. This phase produces the assembler and artifact validation; publication and removal of tracked skills are separate deliveries.
-**Created:** 2026-09-10 · **Status:** in progress
+**Created:** 2026-09-10 · **Status:** done
 
 ## Tasks
 - [x] 1. Separate source and runtime artifact validation — tooling/medium
@@ -12,7 +12,7 @@
       Depends on: 1
       Scope: scripts/assemble-package.js, tests/assemble-package.test.js
       Accept: exact revision, digest and output safety contracts pass offline fixture tests → node --test tests/assemble-package.test.js; no existing behavior regression → bash tests/check.sh
-- [ ] 3. Verify packed artifact and document local build workflow — tooling/medium
+- [x] 3. Verify packed artifact and document local build workflow — tooling/medium
       Depends on: 1, 2
       Scope: tests/package.test.js, docs/skills-packaging.md, README.md, README.pt-BR.md
       Accept: real npm pack extraction and shared installation tests pass → node --test tests/package.test.js; complete project gate passes → bash tests/check.sh; English and Portuguese instructions match implemented commands and explicitly exclude publication → git diff --check
@@ -50,3 +50,6 @@ For every task: write its failing fixture assertion, run its named node test and
 ## Later delivery checkpoints (not executable tasks in this plan)
 
 After phase1, settle npm namespace/ownership and publishing authentication; verify supported client versions and Cursor native marketplace scope. Then test real Git catalog refresh, complete Batuta runtime, corruption/unavailable registry and mixed-version rollback before publishing/promotion changes. Keep artifacts available before pointing catalogs at them. Only a later explicitly approved contraction removes tracked skills and changes developer hydration. Rollback of phase1 is reverting its commits: existing installed distribution never changes.
+
+## Delivery verification
+All three tasks implemented locally. Node22.23.2/npm10.9.8 and Node26.8.1/npm11.19.0 passed68 tests. Use explicit tests/*.test.js: Node22 does not accept directory-only test invocation. No publication, push, merge or vendor removal.
