@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.0](https://github.com/batuta-ai/batuta/compare/v0.5.3...v0.6.0) (2026-09-10)
+
+
+### Features
+
+* **packaging:** assemble and verify pinned skills payload ([b969bb9](https://github.com/batuta-ai/batuta/commit/b969bb9f92ab4e8c4ec5ee307767409c90863e3a))
+* **packaging:** assemble and verify pinned skills payload ([#84](https://github.com/batuta-ai/batuta/issues/84)) ([b969bb9](https://github.com/batuta-ai/batuta/commit/b969bb9f92ab4e8c4ec5ee307767409c90863e3a))
+* **packaging:** assemble pinned skills dependency ([8a99a8b](https://github.com/batuta-ai/batuta/commit/8a99a8bf29b0c5ae2c8e9fb72d4a6bbf5ff03d8e))
+
 ## [0.5.3](https://github.com/batuta-ai/batuta/compare/v0.5.2...v0.5.3) (2026-09-10)
 
 
