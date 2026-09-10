@@ -53,3 +53,6 @@ After phase1, settle npm namespace/ownership and publishing authentication; veri
 
 ## Delivery verification
 All three tasks implemented locally. Node22.23.2/npm10.9.8 and Node26.8.1/npm11.19.0 passed68 tests. Use explicit tests/*.test.js: Node22 does not accept directory-only test invocation. No publication, push, merge or vendor removal.
+
+## Rollback decision — 2026-09-10
+User requested selective reversal after complexity review. Goal is independent skills-only/plugin consumption, not removal of generated copies at any cost. Product packaging additions reverted in 0eb7cc5. This completed plan is historical and must not be resumed. Preserve Node22 explicit test glob, current version/release history and QA integration. No npm migration planned.
