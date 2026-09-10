@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.1](https://github.com/batuta-ai/batuta/compare/v0.6.0...v0.6.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **packaging:** revert distribution assembly expansion ([0eb7cc5](https://github.com/batuta-ai/batuta/commit/0eb7cc5c2c1adf584c0254d3cdd213f83fd8634a))
+* **packaging:** revert unnecessary distribution assembly ([8d66a51](https://github.com/batuta-ai/batuta/commit/8d66a51afb08b4ebbc46c3a6e361bd989545ffed))
+* **packaging:** revert unnecessary distribution assembly ([#86](https://github.com/batuta-ai/batuta/issues/86)) ([8d66a51](https://github.com/batuta-ai/batuta/commit/8d66a51afb08b4ebbc46c3a6e361bd989545ffed))
+
 ## [0.6.0](https://github.com/batuta-ai/batuta/compare/v0.5.3...v0.6.0) (2026-09-10)
 
 
