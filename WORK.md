@@ -1,7 +1,8 @@
 # WORK — batuta (host)
 
 ## In progress
-- QA host integration is verified locally on `feat/qa-host` (3159059). Publication, host release and local installation are pending; no push or merge has been performed.
+- [ ] Skills package assembly phase1 approved; task1 delegated to codex/gpt-5.6-sol in isolated worktree, tasks2/3 pending verification of dependencies. Branch `feat/skills-package-assembly`. No publication authorized.
+- QA host PR82 merged as ebd2174 with explicitly authorized admin exception; host0.5.3 release commit a8c63b3 is now the packaging base.
 
 ## Follow-ups
 - The retired-integration scan in tests/check.sh traverses nested excluded worktrees and misclassifies their historical documentation. Normal completed-worktree cleanup removes this false positive; a separate gate fix should respect repository scope.
