@@ -1,13 +1,14 @@
 # WORK — batuta (host)
 
 ## In progress
-- Selective packaging rollback verified locally; awaiting rollback PR integration. Keep skills-only/plugin options and existing generated vendoring; no npm migration.
-- QA host PR82 merged as ebd2174 with explicitly authorized admin exception; host0.5.3 release commit a8c63b3 is now the packaging base.
+- Post-rollback cleanup verified locally; awaiting cleanup PR integration. Host v0.6.1 is released; rollback PR86 merged as 8d66a51. No npm migration.
 
-## Follow-ups
-- The retired-integration scan in tests/check.sh traverses nested excluded worktrees and misclassifies their historical documentation. Normal completed-worktree cleanup removes this false positive; a separate gate fix should respect repository scope.
+## Next focus
+- Improve Batuta subagent dispatch after cleanup: investigate per-CLI capabilities, instructions and fallback before proposing implementation. Separate delivery, not started.
 
 ## Done
+- [x] Repository-aware retired-reference scan → codex/gpt-5.6-sol, one fixture-cleanup retry, commit 2ecbb05. Conductor39 tests on Node22/26; agy3 criteria DONE/no findings.
+- [x] v0.6.1 installation smoke: real Claude/Codex Git marketplace installs and separate shared-skills-only installer path passed in disposable homes; QA bytes verified, no global installations changed.
 - [x] Selective rollback of PR84 packaging → codex/gpt-5.6-sol, first attempt, commit 0eb7cc5. Conductor exact pre-PR README/gate equality, nine-path scope, unchanged QA/installers/manifests and36 tests on Node22/26 verified. Plan archived as historical/reverted.
 - [x] Package fixture Git maintenance race → codex/gpt-5.6-sol, first attempt, commit d404341; conductor package tests3 runs plus69 tests on Node22/26. PR84 opened; no merge/publication. Trail: `.batuta/runs/package-fixture-race.md`.
 - [x] Package task3 packed artifact tests/docs → codex/gpt-5.6-sol, one independent-allowlist retry, commit dd91438. Conductor68 tests on Node22 and26; agy all4 criteria DONE/no findings. Phase1 complete locally, no publishing.
