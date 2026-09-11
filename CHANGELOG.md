@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.2](https://github.com/batuta-ai/batuta/compare/v0.6.1...v0.6.2) (2026-09-11)
+
+
+### Bug Fixes
+
+* **check:** ignore excluded files in retired-reference scan ([4da5c62](https://github.com/batuta-ai/batuta/commit/4da5c6240ffbbeb7a2a3a4c4a9625eac45f83eb0))
+* **check:** ignore excluded files in retired-reference scan ([#88](https://github.com/batuta-ai/batuta/issues/88)) ([4da5c62](https://github.com/batuta-ai/batuta/commit/4da5c6240ffbbeb7a2a3a4c4a9625eac45f83eb0))
+* **check:** limit retired-reference scan to repository files ([2ecbb05](https://github.com/batuta-ai/batuta/commit/2ecbb0554484552b09acf11cd7d6fa03aedd4ff4))
+
 ## [0.6.1](https://github.com/batuta-ai/batuta/compare/v0.6.0...v0.6.1) (2026-09-10)
 
 

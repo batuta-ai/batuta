@@ -1,6 +1,6 @@
 {
   "name": "@batuta-ai/batuta",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Batuta host package: one install for every AI coding agent.",
   "private": true,
   "bin": {
