@@ -1,8 +1,7 @@
 # Routing — lanes, rules, defaults
 
-This file is the default. `/batuta-init` writes the project's own
-`.batuta/routing.md` with real executors and model IDs; the project copy
-always wins. It is a markdown table — edit freely.
+Default only: `/batuta-init` writes project `.batuta/routing.md` with real
+executors/models, and that editable table wins.
 
 ## Contents
 
@@ -14,28 +13,24 @@ always wins. It is a markdown table — edit freely.
 
 ## Taxonomy
 
-**Complexity** — one of four:
+**Complexity:**
 
 | Lane | Intent | Minimum posture |
 |---|---|---|
-| `low` | contained change, well-trodden path: rename, config, copy, simple test | cheapest coding-capable model |
-| `medium` | isolated feature, bugfix with clear repro, new interface with moderate coordination | mid-tier coding model; raise reasoning before raising cost |
-| `high` | new subsystem, multi-file feature or refactor that a precise brief can fully specify | strong coding model, high reasoning |
-| `critical` | architecture, security-sensitive work, anything needing the conversation's context or open decisions | the conducting host (`self`), or a strong CLI model when loop-first |
+| `low` | contained rename/config/copy/simple test | cheapest coder |
+| `medium` | isolated feature, clear bug, moderately coordinated interface | mid-tier; raise reasoning before cost |
+| `high` | subsystem/multi-file work fully captured by a precise brief | strong model, high reasoning |
+| `critical` | architecture, security or work needing conversation/open decisions | host (`self`), or strong CLI when loop-first |
 
-**Domain** — one of: `backend, frontend, mobile, data, infra, security,
-testing, docs, general, fullstack`. Domain is a routing discriminator: a row
-may name a different executor per domain (e.g. `frontend` → cursor-agent).
-Rows without a domain apply to all.
+**Domain:** `backend, frontend, mobile, data, infra, security, testing, docs,
+general, fullstack`. Rows may select executors by domain; no domain means all.
 
-High vs critical is the **brief test**, not size: self-sufficient brief →
-`high`; needs the conversation → `critical`. In doubt, `critical`: a wrong
-`high` costs a failed delegation cycle; a wrong `critical` costs only the
-price difference.
+High vs critical is the **brief test**, not size: self-sufficient → `high`;
+conversation-dependent → `critical`. In doubt, `critical`.
 
 ## Default table
 
-Assumes the full set is installed. Onboarding adapts it to what exists.
+Onboarding adapts this assumed full installation.
 
 | Lane | Domain | Executor | Model | Cost |
 |---|---|---|---|---|
@@ -44,18 +39,19 @@ Assumes the full set is installed. Onboarding adapts it to what exists.
 | high | * | codex | `<strongest model>`, reasoning high, set at onboarding | ChatGPT subscription |
 | critical | * | self | the session's model | host subscription |
 
-Loop-first projects seat `critical` on a CLI (`codex <strongest model>` or `claude opus`); an open decision then parks the task with `BATUTA-QUESTION`.
+Loop-first seats `critical` on a strong CLI; open decisions park with `BATUTA-QUESTION`.
 
 ## Rules
 
-- Classify alone and announce in one line: `→ codex/gpt-5.6-sol: medium backend — <title>`.
-- The user overrides verbally at any time. Obey.
+- Classify and announce: `→ codex/gpt-5.6-sol: medium backend — <title>`.
+- User overrides always win.
+- Freeze executor, model and effort before choosing transport; see `dispatch.md`.
 - **Escalation:** two failed verifications (original + 1 retry) → one row up.
-- **Unavailable executor** (not installed, not logged in, model not listed) → one row up. Say so.
+- **Unavailable executor** (install/login/model) → announce, then one row up.
 - **Explicit model:** every row names the exact model ID the CLI accepts. Never the CLI's global default — it is whatever the user last touched and may be a premium model, silently defeating cost routing. Exception: codex under a subscription has flat per-task cost, so its default is acceptable on `medium` only. On `high` the model is a capability knob and must be explicit.
-- **Discover, never recall:** model IDs come from the adapter's `models` command on this machine, confirmed once at onboarding. Never write an ID from memory.
+- **Discover, never recall:** onboarding confirms model IDs via adapter `models`.
 - **`self` is the host that conducts.** In Claude Code, `self` is the Claude session and `claude.md` means a background `claude -p`. In Codex, `self` is the Codex session and `codex.md` means a background `codex exec`. Rows never point `self` below `critical`.
-- **Dormant adapters:** the table references, the adapter sleeps. During a cycle an adapter is read only when its row is routed to or added. Onboarding and reconfigure (`batuta-init`) probe every adapter shipped in `adapters/`; nothing ever probes a CLI outside that directory.
+- **Dormant adapters:** read only the routed/added adapter. Onboarding/reconfigure probes every shipped adapter and no outside CLI.
 
 ## Support lane: research
 

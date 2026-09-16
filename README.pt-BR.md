@@ -62,6 +62,14 @@ autorizar implementação. `batuta-write` edita ou redige a partir das evidênci
 fornecidas, preservando fatos, incertezas, citações, texto técnico protegido e
 os contratos dos planos Batuta; não autoriza publicar, enviar ou alterar código.
 
+O despacho nativo exige adesão explícita: adicione `Dispatch: auto` a
+`.batuta/profile.md` para que um maestro interativo possa usar um subagente
+nativo do host somente quando rota, modelo, esforço, isolamento do workspace e
+permissões exatos forem compatíveis. O padrão continua sendo o despacho por CLI,
+e hosts headless sempre usam a CLI. Resultados nativos parciais, cancelados ou
+incertos nunca são repetidos automaticamente pela CLI. O despacho nativo não
+faz alegações de economia de tokens nem de qualificação ACP.
+
 O Codex também lê `~/.agents/skills`. Quando o plugin do Codex e um host de diretório compartilhado (Cursor, opencode, agy) coexistem na mesma máquina, o instalador acrescenta entradas `[[skills.config]]` em `~/.codex/config.toml` que desligam as cópias compartilhadas, e o Codex lista cada skill uma vez, pelo plugin.
 
 ### Skills compartilhadas: quem é dono do quê
