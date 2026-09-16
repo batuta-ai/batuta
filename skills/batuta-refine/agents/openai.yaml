@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-refine"
+  short_description: "Resolve material plan decisions in bounded rounds"
+  default_prompt: "Use $batuta-refine to resolve the material open decisions in this request or plan and summarize the handoff."

@@ -53,6 +53,15 @@ de entrada de planejamento cria ou atualiza o plano vivo de QA; o de execução
 realiza as sessões planejadas com personas e grava evidências, vereditos,
 achados e debriefs de volta nesse plano.
 
+O refinamento de planos e a edição de texto usam `/batuta:refine` e
+`/batuta:write` no Claude Code, `$batuta-refine` e `$batuta-write` no Codex,
+`/batuta-refine` e `/batuta-write` no opencode e os nomes de skill nos hosts de
+diretório compartilhado. `batuta-refine` resolve decisões materiais em rodadas
+limitadas de uma a três perguntas sem reabrir escolhas já definidas nem
+autorizar implementação. `batuta-write` edita ou redige a partir das evidências
+fornecidas, preservando fatos, incertezas, citações, texto técnico protegido e
+os contratos dos planos Batuta; não autoriza publicar, enviar ou alterar código.
+
 O Codex também lê `~/.agents/skills`. Quando o plugin do Codex e um host de diretório compartilhado (Cursor, opencode, agy) coexistem na mesma máquina, o instalador acrescenta entradas `[[skills.config]]` em `~/.codex/config.toml` que desligam as cópias compartilhadas, e o Codex lista cada skill uma vez, pelo plugin.
 
 ### Skills compartilhadas: quem é dono do quê
@@ -67,6 +76,19 @@ autônomo) é baixado do [release fixado do batuta-ai/core](https://github.com/b
 para `~/.local/bin` (`BATUTA_BIN_DIR` muda o destino) e conferido contra o digest
 fixado neste pacote e o `checksums.txt` do release; não precisa de Go no Linux,
 macOS e Windows 10 ou posterior (x64). As skills funcionam sem ele.
+
+O core v1.1.0-beta.22 oferece supervisão local opcional, em primeiro plano,
+com `batuta loop --supervise <delivery> --cursor <caminho-absoluto>`. `--once`
+faz uma observação; `--notify <diretório-absoluto-existente>` grava arquivos
+JSON privados por evento, enquanto `--notify desktop` usa um notificador já
+instalado no macOS ou Linux. Depois que uma entrega é totalmente finalizada, o
+mesmo processo em primeiro plano pode executar uma revisão automática de
+evidências. Um `--policy` explícito e vinculado a digests pode fornecer um
+esclarecimento para uma tarefa aprovada e retomar o runner normal, ou reservar
+uma proposta de correção aprovada pelo operador. Isso não está integrado ao
+fluxo normal de `/batuta:loop`: não há daemon, notificação remota ou automática
+no chat, modelo supervisor, etapa de publicação nem economia medida de tokens.
+Sem `--notify`, os eventos continuam não lidos no cursor durável.
 
 Depois, num projeto: `/batuta:init` uma vez, e é só pedir tarefas de código.
 

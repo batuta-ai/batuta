@@ -52,6 +52,15 @@ skill names in shared-directory hosts. The plan entry point creates or updates
 the living QA plan; the run entry point executes its planned persona sessions
 and writes evidence, verdicts, findings and debriefs back to that plan.
 
+Plan refinement and prose editing use `/batuta:refine` and `/batuta:write` in
+Claude Code, `$batuta-refine` and `$batuta-write` in Codex, `/batuta-refine`
+and `/batuta-write` in opencode, and the skill names in shared-directory hosts.
+`batuta-refine` resolves material decisions in bounded rounds of one to three
+questions without reopening settled choices or authorizing implementation.
+`batuta-write` edits or drafts from supplied evidence while preserving facts,
+uncertainty, citations, protected technical text and Batuta plan contracts; it
+does not authorize publishing, sending or code changes.
+
 Codex also reads `~/.agents/skills`. When the Codex plugin and a shared-directory host (Cursor, opencode, agy) share a machine, the installer appends `[[skills.config]]` entries to `~/.codex/config.toml` that disable the shared copies, so Codex lists each skill once, from the plugin.
 
 ### Shared skills: who owns what
@@ -67,6 +76,18 @@ into `~/.local/bin` (set `BATUTA_BIN_DIR` to change it), checked against the
 digest pinned in this package and the release's `checksums.txt`; no Go needed
 on Linux, macOS and Windows 10 or later (x64).
 The skills work without it.
+
+Core v1.1.0-beta.22 supports optional local, foreground supervision with
+`batuta loop --supervise <delivery> --cursor <absolute-path>`. `--once` makes
+one observation; `--notify <absolute-existing-directory>` writes private JSON
+event files, while `--notify desktop` uses an already installed macOS or Linux
+notifier. After a delivery is fully finalized, the same foreground process can
+run an automatic evidence review. An explicit, digest-bound `--policy` can
+provide one approved-task clarification and resume the normal runner, or
+reserve an operator-approved correction proposal. This is not integrated into
+the normal `/batuta:loop` workflow: there is no daemon, remote or automatic chat
+notification, supervisor model, publication step or measured token savings.
+Without `--notify`, events remain unread in the durable cursor.
 
 Then, in a project: `/batuta:init` once, and just ask for code tasks.
 

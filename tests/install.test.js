@@ -146,6 +146,43 @@ test("installSharedSkills copies the vendored tree, replaces stale files and wri
   assert.ok(lock.installedAt);
 });
 
+test("a disposable skills-only install copies the published refine and write skills", async (t) => {
+  const fs = require("node:fs");
+  const os = require("node:os");
+  const path = require("node:path");
+  const { installSharedSkills } = require("../bin/install.js");
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "batuta-release-skills-"));
+  t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+  const root = path.join(__dirname, "..");
+  const src = path.join(root, "skills"), dst = path.join(tmp, "skills");
+  const lockSrc = path.join(root, "skills-lock.json");
+  let coreCalled = false;
+  const shared = host("shared", [], (dryRun, paths) => {
+    installSharedSkills(dryRun, { src, dst, lockSrc, ...paths });
+  });
+
+  const { code } = await quietAsync(() => main(["--only", "shared", "--no-core"], {
+    ...noShadow,
+    hosts: [shared],
+    run: () => { throw new Error("skills-only smoke must not call a host CLI"); },
+    installCore: async () => { coreCalled = true; },
+  }));
+
+  assert.equal(code, 0);
+  assert.equal(coreCalled, false, "--no-core retains a skills-only installation path");
+  for (const name of ["batuta-refine", "batuta-write"]) {
+    assert.equal(
+      fs.readFileSync(path.join(dst, name, "SKILL.md"), "utf8"),
+      fs.readFileSync(path.join(src, name, "SKILL.md"), "utf8"),
+      `${name} is copied from the vendored release`,
+    );
+  }
+  const lock = JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
+  assert.equal(lock.ref, "v0.9.0");
+  assert.ok(lock.skills.includes("batuta-refine"));
+  assert.ok(lock.skills.includes("batuta-write"));
+});
+
 test("installSharedSkills keeps the previous installation when the copy fails and retires dropped skills", () => {
   const fs = require("node:fs");
   const os = require("node:os");
