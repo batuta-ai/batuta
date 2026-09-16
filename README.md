@@ -61,6 +61,14 @@ questions without reopening settled choices or authorizing implementation.
 uncertainty, citations, protected technical text and Batuta plan contracts; it
 does not authorize publishing, sending or code changes.
 
+Native dispatch is an explicit opt-in: add `Dispatch: auto` to
+`.batuta/profile.md` to let an interactive conductor use a host-native subagent
+only when the exact route, model, effort, workspace isolation and permissions
+are compatible. The default remains CLI dispatch, and headless hosts always use
+the CLI. Partial, cancelled or uncertain native results are never replayed
+automatically through the CLI. Native dispatch makes no token-savings or ACP
+qualification claims.
+
 Codex also reads `~/.agents/skills`. When the Codex plugin and a shared-directory host (Cursor, opencode, agy) share a machine, the installer appends `[[skills.config]]` entries to `~/.codex/config.toml` that disable the shared copies, so Codex lists each skill once, from the plugin.
 
 ### Shared skills: who owns what

@@ -1,11 +1,10 @@
 # The brief — what, never how
 
-Read once per session, at Step 2. The brief is the whole interface between
-the conductor and the executor: the executor sees nothing else.
+Read at Step 2. The brief is the whole conductor–executor interface.
 
 ## Contents
 
-- Sections
+- Eight required sections
 - Acceptance criteria
 - Scope
 - Test laws
@@ -26,8 +25,7 @@ the conductor and the executor: the executor sees nothing else.
 | **Expected evidence** | What the executor reports back: files touched, commands run with actual output, uncertainty declared as such. |
 | **Stop conditions** | When to stop and report instead of improvising. |
 
-A section with nothing to say carries `Unknown — <reason>`. A silent gap
-reads as "nothing to say".
+A missing value carries `Unknown — <reason>`; no section may be omitted.
 
 The brief is self-sufficient. The executor has no access to the
 conversation, the profile or this file.
@@ -62,6 +60,11 @@ verified. Stop conditions, always these three plus any task-specific ones:
 1. The code's shape contradicts the brief.
 2. The same command fails twice for the same unexpected reason (a red test the executor just wrote is not that).
 3. The fix needs edits beyond Scope or Boundaries.
+
+For native delegation this evidence is a receipt of at most 4 KiB:
+`Outcome`, `Changed paths`, `Worker claims` with proof references, and
+`Uncertainty`. Explicit overflow names the owned log and reason to read it;
+claims remain unverified until Step 4.
 
 Progress protocol, same section, verbatim: for each acceptance criterion
 n, print an isolated line `BATUTA-PROGRESS <n> START` before the first

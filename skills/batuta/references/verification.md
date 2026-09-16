@@ -14,8 +14,8 @@ Read once per session, at Step 4. Also the contract of `/batuta-review`.
 
 ## The rule
 
-The executor's report never counts as evidence — not "tests pass", not
-"criterion met", not "done". Every acceptance criterion is verified by
+The receipt's worker claims never count as verified results — not "tests pass",
+not "criterion met", not "done". Every acceptance criterion is verified by
 re-running its smallest public proof (a test, a command, a request) against
 the current tree, by you. A criterion whose proof you did not reproduce is
 unverified, whatever the report says.

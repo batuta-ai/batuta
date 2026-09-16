@@ -178,7 +178,10 @@ test("a disposable skills-only install copies the published refine and write ski
     );
   }
   const lock = JSON.parse(fs.readFileSync(path.join(dst, ".batuta-skills-lock.json"), "utf8"));
-  assert.equal(lock.ref, "v0.9.0");
+  const sourceLock = JSON.parse(fs.readFileSync(lockSrc, "utf8"));
+  assert.equal(lock.ref, sourceLock.ref);
+  assert.equal(lock.commit, sourceLock.commit);
+  assert.equal(lock.computedHash, sourceLock.computedHash);
   assert.ok(lock.skills.includes("batuta-refine"));
   assert.ok(lock.skills.includes("batuta-write"));
 });
