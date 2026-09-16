@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/batuta-ai/batuta/compare/v0.6.2...v0.6.3) (2026-09-16)
+
+
+### Bug Fixes
+
+* package skills v0.9.0 and core v1.1.0-beta.22 ([195ac14](https://github.com/batuta-ai/batuta/commit/195ac14246529506984f5aa9d916125906260c19))
+
 ## [0.6.2](https://github.com/batuta-ai/batuta/compare/v0.6.1...v0.6.2) (2026-09-11)
 
 
