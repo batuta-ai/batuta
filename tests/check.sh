@@ -53,6 +53,13 @@ locked=$(python3 -c "import json;print(json.load(open('skills-lock.json'))['comp
 # 3. Every command routes to a skill that exists.
 out=$(bash scripts/check-commands.sh 2>&1) || bad "command routes:"$'\n'"$out"
 
+for skill in refine write; do
+  [ -f "skills/batuta-$skill/SKILL.md" ] || continue
+  for command in "commands/$skill.md" "hosts/opencode/commands/batuta-$skill.md"; do
+    [ -f "$command" ] || bad "$command is required to discover batuta-$skill"
+  done
+done
+
 # 4. Versions agree across manifests.
 v=$(python3 -c "import json;print(json.load(open('.claude-plugin/plugin.json'))['version'])")
 for f in .codex-plugin/plugin.json .cursor-plugin/plugin.json; do

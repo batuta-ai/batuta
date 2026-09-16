@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-write"
+  short_description: "Polish prose while preserving facts and uncertainty"
+  default_prompt: "Use $batuta-write to edit this prose for clarity while preserving its facts, uncertainty and technical content."
