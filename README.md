@@ -85,17 +85,45 @@ digest pinned in this package and the release's `checksums.txt`; no Go needed
 on Linux, macOS and Windows 10 or later (x64).
 The skills work without it.
 
-Core v1.1.0-beta.22 supports optional local, foreground supervision with
-`batuta loop --supervise <delivery> --cursor <absolute-path>`. `--once` makes
-one observation; `--notify <absolute-existing-directory>` writes private JSON
-event files, while `--notify desktop` uses an already installed macOS or Linux
-notifier. After a delivery is fully finalized, the same foreground process can
-run an automatic evidence review. An explicit, digest-bound `--policy` can
-provide one approved-task clarification and resume the normal runner, or
-reserve an operator-approved correction proposal. This is not integrated into
-the normal `/batuta:loop` workflow: there is no daemon, remote or automatic chat
-notification, supervisor model, publication step or measured token savings.
-Without `--notify`, events remain unread in the durable cursor.
+### Update
+
+Run the installer again to update the plugin or shared skills for detected
+hosts and install the pinned core binary:
+
+```bash
+npx -y github:batuta-ai/batuta
+batuta version
+```
+
+The current package pins core `v1.1.0-beta.23`; `batuta version` should report
+that version. A host's plugin-only update does not update the separate core
+binary. If the installer reports another `batuta` earlier on `PATH`, adjust
+`PATH` so the installed binary is used. Restart the host session after updating
+to load the refreshed plugin or skills. Locally customized shared skills follow
+the preservation rules above.
+
+### Foreground supervision
+
+Core `v1.1.0-beta.23` enables foreground supervision and automatic final delivery
+review for normal new, resume, answer and roadmap loop execution. The runner
+retains execution ownership. After implementation is finalized, review checks
+an immutable delivery snapshot. Missing, failed, uncertain or adverse review
+blocks roadmap progression across restarts; `review_blocked` exits with code
+`2`. An intact `SHIP` report clears progression only, not permission to merge
+or publish. Explicit judgments require the exact review evidence digest and a
+reason. See the [core supervision guide](https://github.com/batuta-ai/core/blob/main/docs/loop-supervision.md)
+for status, judgment and recovery commands.
+
+`batuta loop --supervise <delivery> --cursor <absolute-path>` remains available
+as a separate foreground observer. `--once` makes one observation;
+`--notify <absolute-existing-directory>` writes private JSON event files, while
+`--notify desktop` uses an already installed macOS or Linux notifier. An
+explicit, digest-bound `--policy` can provide an approved-task clarification
+and resume the normal runner, or reserve an operator-approved correction
+proposal. Starting supervision does not authorize either action. The process
+must stay alive; it installs no daemon and sends no automatic chat messages.
+Without `--notify`, events remain unread in the durable cursor. No measured
+token savings are claimed.
 
 Then, in a project: `/batuta:init` once, and just ask for code tasks.
 

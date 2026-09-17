@@ -85,18 +85,48 @@ para `~/.local/bin` (`BATUTA_BIN_DIR` muda o destino) e conferido contra o diges
 fixado neste pacote e o `checksums.txt` do release; não precisa de Go no Linux,
 macOS e Windows 10 ou posterior (x64). As skills funcionam sem ele.
 
-O core v1.1.0-beta.22 oferece supervisão local opcional, em primeiro plano,
-com `batuta loop --supervise <delivery> --cursor <caminho-absoluto>`. `--once`
-faz uma observação; `--notify <diretório-absoluto-existente>` grava arquivos
-JSON privados por evento, enquanto `--notify desktop` usa um notificador já
-instalado no macOS ou Linux. Depois que uma entrega é totalmente finalizada, o
-mesmo processo em primeiro plano pode executar uma revisão automática de
-evidências. Um `--policy` explícito e vinculado a digests pode fornecer um
-esclarecimento para uma tarefa aprovada e retomar o runner normal, ou reservar
-uma proposta de correção aprovada pelo operador. Isso não está integrado ao
-fluxo normal de `/batuta:loop`: não há daemon, notificação remota ou automática
-no chat, modelo supervisor, etapa de publicação nem economia medida de tokens.
-Sem `--notify`, os eventos continuam não lidos no cursor durável.
+### Atualização
+
+Execute o instalador novamente para atualizar o plugin ou as skills
+compartilhadas dos hosts detectados e instalar o binário do core fixado pelo
+pacote:
+
+```bash
+npx -y github:batuta-ai/batuta
+batuta version
+```
+
+O pacote atual fixa o core em `v1.1.0-beta.23`; `batuta version` deve mostrar
+essa versão. Atualizar apenas o plugin pelo host não atualiza o binário separado
+do core. Se o instalador indicar outro `batuta` antes dele no `PATH`, ajuste o
+`PATH` para usar o binário instalado. Reinicie a sessão do host após atualizar
+para carregar o plugin ou as skills atualizados. Skills compartilhadas
+customizadas seguem as regras de preservação acima.
+
+### Supervisão em primeiro plano
+
+O core `v1.1.0-beta.23` habilita supervisão em primeiro plano e revisão final
+automática nos fluxos normais de nova execução, retomada, resposta e roadmap
+do loop. O runner mantém a responsabilidade pela execução. Depois de finalizar
+a implementação, a revisão verifica um snapshot imutável da entrega. Revisão
+ausente, falha, incerta ou com achados que exigem correção bloqueia o avanço do
+roadmap mesmo após reiniciar; `review_blocked` termina com código `2`. Um
+relatório `SHIP` íntegro libera apenas a progressão, não autoriza merge ou
+publicação. Julgamentos explícitos exigem o digest exato das evidências da
+revisão e uma justificativa. Consulte o [guia de supervisão do core](https://github.com/batuta-ai/core/blob/main/docs/loop-supervision.md)
+para comandos de consulta, julgamento e recuperação.
+
+`batuta loop --supervise <delivery> --cursor <caminho-absoluto>` continua
+disponível como observador separado em primeiro plano. `--once` faz uma
+observação; `--notify <diretório-absoluto-existente>` grava arquivos JSON
+privados por evento, enquanto `--notify desktop` usa um notificador já
+instalado no macOS ou Linux. Um `--policy` explícito e vinculado a digests pode
+fornecer um esclarecimento para uma tarefa aprovada e retomar o runner normal,
+ou reservar uma proposta de correção aprovada pelo operador. Iniciar a
+supervisão não autoriza essas ações. O processo precisa continuar ativo; não
+instala daemon nem envia mensagens automáticas ao chat. Sem `--notify`, os
+eventos continuam não lidos no cursor durável. Não há alegação de economia
+medida de tokens.
 
 Depois, num projeto: `/batuta:init` uma vez, e é só pedir tarefas de código.
 
