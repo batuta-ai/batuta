@@ -61,13 +61,26 @@ questions without reopening settled choices or authorizing implementation.
 uncertainty, citations, protected technical text and Batuta plan contracts; it
 does not authorize publishing, sending or code changes.
 
+`--transport cli|auto|acp` belongs to the `batuta dispatch` and `batuta loop`
+commands; it is not a host-package installer flag.
+
 Native dispatch is an explicit opt-in: add `Dispatch: auto` to
 `.batuta/profile.md` to let an interactive conductor use a host-native subagent
 only when the exact route, model, effort, workspace isolation and permissions
-are compatible. The default remains CLI dispatch, and headless hosts always use
-the CLI. Partial, cancelled or uncertain native results are never replayed
-automatically through the CLI. Native dispatch makes no token-savings or ACP
-qualification claims.
+are compatible. Native host subagents are separate from external ACP dispatch;
+headless core has no native host children. The default remains external CLI
+dispatch. External ACP is also opt-in, and only OpenCode `1.18.31` via
+`opencode acp` on `darwin-arm64`, using `opencode/big-pickle` with empty effort,
+is qualified. The default and `--transport auto` use the CLI for every other
+provider, version, platform, model or effort. Explicit `--transport acp` with an
+unqualified tuple stops as unavailable; it never reroutes or switches
+transport. Partial, cancelled or uncertain native or ACP results are never
+replayed automatically through the CLI. For the qualified ACP process lifecycle,
+shutdown is bounded to the owned process group and direct children are reaped,
+but this does not guarantee containment of arbitrary descendants that escape
+that group. The [measured dispatch pilot](docs/dispatch-pilot.md) did not
+establish token savings or quality equivalence, so no savings claim is made and
+ACP remains opt-in.
 
 Codex also reads `~/.agents/skills`. When the Codex plugin and a shared-directory host (Cursor, opencode, agy) share a machine, the installer appends `[[skills.config]]` entries to `~/.codex/config.toml` that disable the shared copies, so Codex lists each skill once, from the plugin.
 
@@ -83,7 +96,10 @@ downloaded from the pinned [batuta-ai/core release](https://github.com/batuta-ai
 into `~/.local/bin` (set `BATUTA_BIN_DIR` to change it), checked against the
 digest pinned in this package and the release's `checksums.txt`; no Go needed
 on Linux, macOS and Windows 10 or later (x64).
-The skills work without it.
+`--no-core` skips the binary while still installing or updating the host
+integration and all thirteen skills, including `batuta-refine` and
+`batuta-write`; the skills work without the binary, while core-only inventory,
+external ACP dispatch, verification gates and unattended-loop features do not.
 
 ### Update
 
@@ -95,7 +111,7 @@ npx -y github:batuta-ai/batuta
 batuta version
 ```
 
-The current package pins core `v1.1.0-beta.23`; `batuta version` should report
+The current package pins core `v1.1.0-beta.24`; `batuta version` should report
 that version. A host's plugin-only update does not update the separate core
 binary. If the installer reports another `batuta` earlier on `PATH`, adjust
 `PATH` so the installed binary is used. Restart the host session after updating
@@ -104,10 +120,11 @@ the preservation rules above.
 
 ### Foreground supervision
 
-Core `v1.1.0-beta.23` enables foreground supervision and automatic final delivery
-review for normal new, resume, answer and roadmap loop execution. The runner
-retains execution ownership. After implementation is finalized, review checks
-an immutable delivery snapshot. Missing, failed, uncertain or adverse review
+Foreground supervision and automatic final delivery review were introduced in
+core `v1.1.0-beta.23` and remain available in the package's pinned
+`v1.1.0-beta.24` for normal new, resume, answer and roadmap loop execution. The
+runner retains execution ownership. After implementation is finalized, review
+checks an immutable delivery snapshot. Missing, failed, uncertain or adverse review
 blocks roadmap progression across restarts; `review_blocked` exits with code
 `2`. An intact `SHIP` report clears progression only, not permission to merge
 or publish. Explicit judgments require the exact review evidence digest and a

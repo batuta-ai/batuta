@@ -31,6 +31,9 @@ A natural `frontend` row.
 Strong on UI work and multi-file edits with a clear brief. Same limits as
 any background executor: nothing that needs the conversation.
 
+External ACP is unqualified; this adapter intentionally has no ACP launch
+metadata. Its legacy `run` and `readonly` paths remain authoritative.
+
 ## Cost
 
 Cursor subscription. Flat per task under the plan; model choice is a

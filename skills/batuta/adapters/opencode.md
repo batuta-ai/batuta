@@ -11,6 +11,9 @@ finished: exit_code
 limit_regex: "rate limit|quota|too many requests|insufficient credits"
 brief_limit_lines: 100
 cwd_flag: --dir {cwd}
+acp_run: opencode acp
+acp_version: 1.18.31
+acp_model_config: model
 ---
 
 # Adapter: opencode — any provider, any model, non-interactive
@@ -45,6 +48,9 @@ Good at renames, config, copy, simple tests, small well-specified
 single-file changes. Budget models follow briefs literally — the brief must
 be exhaustive and may prescribe the how (`brief.md`, sweep exception).
 Avoid anything ambiguous or multi-file.
+
+The ACP metadata describes only the verified launch. Core still requires its
+exact executor/version/platform/model/effort qualification before submission.
 
 ## Cost
 

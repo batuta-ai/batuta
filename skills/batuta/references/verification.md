@@ -14,11 +14,9 @@ Read once per session, at Step 4. Also the contract of `/batuta-review`.
 
 ## The rule
 
-The receipt's worker claims never count as verified results — not "tests pass",
-not "criterion met", not "done". Every acceptance criterion is verified by
-re-running its smallest public proof (a test, a command, a request) against
-the current tree, by you. A criterion whose proof you did not reproduce is
-unverified, whatever the report says.
+Worker claims, receipts and progress are never verified results. Re-run each
+criterion's smallest public proof against the current tree. Unreproduced proof
+is unverified; raw logs stay owned evidence; progress records activity only.
 
 ## The four gates
 
@@ -40,7 +38,7 @@ one verdict per criterion; `gate verifier --criteria <n> [--proofs
 | 0 · finished | Did the executor end on its own terms? | The adapter's `finished` rule (exit code, or the last result event). A crash is not a delivery. |
 | 1 · tree | Did the session write anything? | Signature of `git status --porcelain` + `git diff HEAD` before and after. A signal, not a verdict: a task already done legitimately writes nothing — say so instead of failing. |
 | 2 · tests | Does the suite pass? | The profile's test command, run by you, outside the executor's session, with stdin closed. The executor cannot fake green. |
-| 3 · verify | Do the criteria hold? | Scope check, diff review, then each criterion's proof re-run. On `high`/`critical`, or when gate 1 was silent, or on a retry: also an independent read-only verifier (adapter's `readonly` line, cheap model) that emits one line per criterion — `TASK n: DONE` or `TASK n: INCOMPLETE — <what is missing>`. Zero lines, wrong count or any INCOMPLETE fails. |
+| 3 · verify | Do the criteria hold? | Scope, diff and each proof. On `high`/`critical`, silent gate 1 or retry: an independent session via the adapter `readonly` CLI line and cheap model (never the worker session) emits one line per criterion — `TASK n: DONE` or `TASK n: INCOMPLETE — <missing>`. Zero lines, wrong count or any INCOMPLETE fails. |
 
 ## Scope check
 
@@ -81,9 +79,9 @@ cause, never restates the claim.
 When a second reviewer is dispatched (`high`/`critical` by default,
 `/batuta-review`, or on the user's ask):
 
-- **Reviewer** — any executor from the routing table, invoked through its adapter's `readonly` line, which forbids writing. Never the executor that wrote the diff.
-- **Lenses scale with the diff** — under ~50 changed lines: 1; up to ~200: 2; above: 3. In order: **Skeptic** (what breaks), **Architect** (fits the design and conventions), **Minimalist** (what the brief did not ask for). One dispatch carries all lenses.
-- **Findings are a file you write** — the reviewer prints its findings between the lines `<<<FINDINGS` and `FINDINGS>>>`, one per line: `file:line · severity · concrete failure scenario`, or the single line `none`. You save that block verbatim to `.batuta/runs/<date>-<slug>.review.md` before judging. No block, or anything written to the tree → invalid round.
+- **Reviewer** — a different routing executor through its write-forbidden `readonly` CLI line.
+- **Lenses** — under ~50 changed lines: **Skeptic**; up to ~200 add **Architect**; above add **Minimalist**. One dispatch carries them.
+- **Findings file** — require `<<<FINDINGS`…`FINDINGS>>>` containing `file:line · severity · concrete failure scenario`, or `none`. Save it verbatim to `.batuta/runs/<date>-<slug>.review.md`; no block or any tree write invalidates the round.
 - **Contract parity** — when the item implements a spec or plan, the reviewer receives that artifact verbatim, never a paraphrase.
 - **You judge** — accept or reject each finding with a one-line rationale. Accepted → normal failure flow. Rejected → recorded as declined. The verdict is always yours.
 - **Read-only** — the reviewer's brief carries the read-only contract from `scout.md`. `git status --porcelain` before and after; any change reverts and fails the round.

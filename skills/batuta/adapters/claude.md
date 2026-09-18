@@ -36,6 +36,9 @@ that is `self.md`.
 Good at anything a brief can carry. Never a substitute for `self` when the
 task needs the conversation.
 
+External ACP is unqualified; this adapter intentionally has no ACP launch
+metadata. Its legacy `run` and `readonly` paths remain authoritative.
+
 ## Cost
 
 The user's Claude subscription. Cheaper than the session only when the row

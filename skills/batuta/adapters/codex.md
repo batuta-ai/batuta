@@ -39,6 +39,9 @@ features and refactors, as long as the brief is self-sufficient. Never:
 open architecture decisions, security-sensitive changes, criteria that
 need the conversation — those are `self`.
 
+External ACP is unqualified; this adapter intentionally has no ACP launch
+metadata. Its legacy `run` and `readonly` paths remain authoritative.
+
 ## Cost
 
 ChatGPT subscription or OpenAI API key. Cheaper than the conducting host;
