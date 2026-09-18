@@ -24,7 +24,7 @@ current host's equivalent; without one, ask and stop, or run foreground.
 2. Classify **domain × complexity**: `low | medium | high | critical`. Self-sufficient brief → high; conversation, security judgment or open decisions → critical. In doubt, critical.
 3. Announce in one line: `→ codex/gpt-5.6-sol: medium backend — <title>`.
 4. User override wins.
-5. Without `Dispatch: auto`, check adapter `available`; unavailable → next row. Auto defers to Step 3.
+5. Freeze route/cost. For CLI, check adapter `available`; unavailable → next routing row. Never reroute merely for transport access. `Dispatch: auto` only enables native.
 6. Ambiguous → `references/method/clarify.md`. Multi-session → suggest `/batuta-plan`, never require it.
 
 *Done when:* every deliverable has lane, executor and model announced.
@@ -54,8 +54,8 @@ A task is the smallest deliverable that verifies and commits on its own.
 
 ## Step 3 — Delegate
 
-**STOP. Read `references/dispatch.md` before transport.** Route first; absent
-`Dispatch:` stays CLI, while `Dispatch: auto` must pass native eligibility.
+**STOP. Read `references/dispatch.md` before transport.** Native eligibility and
+external `--transport` policy are separate; external defaults to CLI.
 
 1. Per `dispatch.md`, select/check transport; invoke only its facility/adapter with model flags.
 2. `self` (critical only) → implement test-first; bugs use `references/method/debug.md`; then Step 4.

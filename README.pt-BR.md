@@ -65,10 +65,21 @@ os contratos dos planos Batuta; não autoriza publicar, enviar ou alterar códig
 O despacho nativo exige adesão explícita: adicione `Dispatch: auto` a
 `.batuta/profile.md` para que um maestro interativo possa usar um subagente
 nativo do host somente quando rota, modelo, esforço, isolamento do workspace e
-permissões exatos forem compatíveis. O padrão continua sendo o despacho por CLI,
-e hosts headless sempre usam a CLI. Resultados nativos parciais, cancelados ou
-incertos nunca são repetidos automaticamente pela CLI. O despacho nativo não
-faz alegações de economia de tokens nem de qualificação ACP.
+permissões exatos forem compatíveis. Subagentes nativos do host são separados do
+despacho ACP externo; o core headless não tem filhos nativos do host. O padrão
+continua sendo o despacho externo por CLI. O ACP externo também exige adesão, e
+somente OpenCode `1.18.31` via `opencode acp` em `darwin-arm64`, usando
+`opencode/big-pickle` com esforço vazio, é qualificado. O padrão e
+`--transport auto` usam a CLI para todos os demais provedores, versões,
+plataformas, modelos ou esforços. `--transport acp` explícito com uma tupla não
+qualificada encerra como indisponível; nunca muda a rota nem o transporte.
+Resultados nativos ou ACP parciais, cancelados ou incertos nunca são repetidos
+automaticamente pela CLI. Para o ciclo de vida do processo ACP qualificado, o
+encerramento é limitado ao grupo de processos sob controle e os filhos diretos
+são coletados, mas isso não garante a contenção de descendentes arbitrários que
+escapem desse grupo. O [piloto de despacho medido](docs/dispatch-pilot.md) não
+estabeleceu economia de tokens nem equivalência de qualidade, portanto nenhuma
+economia é alegada e o ACP continua opt-in.
 
 O Codex também lê `~/.agents/skills`. Quando o plugin do Codex e um host de diretório compartilhado (Cursor, opencode, agy) coexistem na mesma máquina, o instalador acrescenta entradas `[[skills.config]]` em `~/.codex/config.toml` que desligam as cópias compartilhadas, e o Codex lista cada skill uma vez, pelo plugin.
 
@@ -83,7 +94,11 @@ O binário `batuta` (inventário de executores, gates de verificação, loop
 autônomo) é baixado do [release fixado do batuta-ai/core](https://github.com/batuta-ai/core/releases)
 para `~/.local/bin` (`BATUTA_BIN_DIR` muda o destino) e conferido contra o digest
 fixado neste pacote e o `checksums.txt` do release; não precisa de Go no Linux,
-macOS e Windows 10 ou posterior (x64). As skills funcionam sem ele.
+macOS e Windows 10 ou posterior (x64). `--no-core` ignora o binário e ainda
+instala ou atualiza a integração do host e todas as treze skills, inclusive
+`batuta-refine` e `batuta-write`; as skills funcionam sem o binário, mas
+inventário, despacho ACP externo, gates de verificação e recursos do loop
+autônomo exclusivos do core não funcionam.
 
 ### Atualização
 
@@ -96,7 +111,7 @@ npx -y github:batuta-ai/batuta
 batuta version
 ```
 
-O pacote atual fixa o core em `v1.1.0-beta.23`; `batuta version` deve mostrar
+O pacote atual fixa o core em `v1.1.0-beta.24`; `batuta version` deve mostrar
 essa versão. Atualizar apenas o plugin pelo host não atualiza o binário separado
 do core. Se o instalador indicar outro `batuta` antes dele no `PATH`, ajuste o
 `PATH` para usar o binário instalado. Reinicie a sessão do host após atualizar
@@ -105,9 +120,10 @@ customizadas seguem as regras de preservação acima.
 
 ### Supervisão em primeiro plano
 
-O core `v1.1.0-beta.23` habilita supervisão em primeiro plano e revisão final
-automática nos fluxos normais de nova execução, retomada, resposta e roadmap
-do loop. O runner mantém a responsabilidade pela execução. Depois de finalizar
+A supervisão em primeiro plano e a revisão final automática foram introduzidas
+no core `v1.1.0-beta.23` e continuam disponíveis no `v1.1.0-beta.24` fixado pelo
+pacote, nos fluxos normais de nova execução, retomada, resposta e roadmap do
+loop. O runner mantém a responsabilidade pela execução. Depois de finalizar
 a implementação, a revisão verifica um snapshot imutável da entrega. Revisão
 ausente, falha, incerta ou com achados que exigem correção bloqueia o avanço do
 roadmap mesmo após reiniciar; `review_blocked` termina com código `2`. Um
