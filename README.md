@@ -61,6 +61,9 @@ questions without reopening settled choices or authorizing implementation.
 uncertainty, citations, protected technical text and Batuta plan contracts; it
 does not authorize publishing, sending or code changes.
 
+`--transport cli|auto|acp` belongs to the `batuta dispatch` and `batuta loop`
+commands; it is not a host-package installer flag.
+
 Native dispatch is an explicit opt-in: add `Dispatch: auto` to
 `.batuta/profile.md` to let an interactive conductor use a host-native subagent
 only when the exact route, model, effort, workspace isolation and permissions

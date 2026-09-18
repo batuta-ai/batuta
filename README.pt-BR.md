@@ -62,6 +62,9 @@ autorizar implementação. `batuta-write` edita ou redige a partir das evidênci
 fornecidas, preservando fatos, incertezas, citações, texto técnico protegido e
 os contratos dos planos Batuta; não autoriza publicar, enviar ou alterar código.
 
+`--transport cli|auto|acp` pertence aos comandos `batuta dispatch` e
+`batuta loop`; não é uma flag do instalador do pacote de hosts.
+
 O despacho nativo exige adesão explícita: adicione `Dispatch: auto` a
 `.batuta/profile.md` para que um maestro interativo possa usar um subagente
 nativo do host somente quando rota, modelo, esforço, isolamento do workspace e
