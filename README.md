@@ -111,7 +111,7 @@ npx -y github:batuta-ai/batuta
 batuta version
 ```
 
-The current package pins core `v1.1.0-beta.24`; `batuta version` should report
+The current package pins core `v1.1.0-beta.42`; `batuta version` should report
 that version. A host's plugin-only update does not update the separate core
 binary. If the installer reports another `batuta` earlier on `PATH`, adjust
 `PATH` so the installed binary is used. Restart the host session after updating
@@ -122,7 +122,7 @@ the preservation rules above.
 
 Foreground supervision and automatic final delivery review were introduced in
 core `v1.1.0-beta.23` and remain available in the package's pinned
-`v1.1.0-beta.24` for normal new, resume, answer and roadmap loop execution. The
+`v1.1.0-beta.42` for normal new, resume, answer and roadmap loop execution. The
 runner retains execution ownership. After implementation is finalized, review
 checks an immutable delivery snapshot. Missing, failed, uncertain or adverse review
 blocks roadmap progression across restarts; `review_blocked` exits with code

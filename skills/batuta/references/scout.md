@@ -2,8 +2,8 @@
 
 Read when Step 2 needs discovery, when `/batuta-init` sweeps the project
 map, or when the user asks where something lives. Research is delegated to
-the research support lane (`routing.md`): a cheap model, read-only, in the
-background. Only its distillate enters your context.
+the research ladder (`routing.md`): a read-only CLI model, in the background.
+Only its distillate enters your context.
 
 ## Contents
 
@@ -17,10 +17,11 @@ background. Only its distillate enters your context.
 
 Always contains:
 
-1. The question(s), objective and answerable.
-2. Starting points from the profile's Project map.
-3. Boundaries: ignore `node_modules`, build output, generated files.
-4. The report contract and the read-only contract below, verbatim — small models follow literal formats.
+1. The research lane: `low` locates, `medium` synthesizes, and `high` judges. In doubt, use `low`.
+2. The question(s), objective and answerable.
+3. Starting points from the profile's Project map.
+4. Boundaries: ignore `node_modules`, build output, generated files.
+5. The report contract and the read-only contract below, verbatim — small models follow literal formats.
 
 Invoke through the adapter's `readonly` line. The scout cannot write: the
 adapter's read-only mode forbids it. The report arrives on stdout and
@@ -63,9 +64,10 @@ Before consuming a report:
 1. **Guard** — `git status --porcelain` captured before dispatch, compared after. Any new or changed entry means the scout wrote: revert those entries, count the run as failed.
 2. **Structure** — the marker block exists with the four sections; save it, then check every cited path exists (`ls`) and every cited symbol greps in the file it is attributed to.
 
-Ghost anchor → one retry carrying the specific feedback ("path X does not
-exist"). Failed again → research it yourself. That is the lane's only
-fallback; nothing escalates.
+Ghost anchor or guard violation → one retry on the same row carrying the
+specific feedback ("path X does not exist"). Failed again → one row up.
+If the top configured research row fails or the next executor is unavailable,
+research it yourself.
 
 Semantic claims with valid anchors are accepted — Step 4 catches them
 indirectly.

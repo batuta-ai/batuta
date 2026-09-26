@@ -1,16 +1,21 @@
 ---
 name: codex
 executable: codex
-run: codex exec --sandbox workspace-write {cwd_flag} {model_flags} "{brief}" < /dev/null
-run_file: codex exec --sandbox workspace-write {cwd_flag} {model_flags} "Follow the instructions in {brief_file}" < /dev/null
+run: codex exec --json --sandbox workspace-write {cwd_flag} {model_flags} "{brief}" < /dev/null
+run_file: codex exec --json --sandbox workspace-write {cwd_flag} {model_flags} "Follow the instructions in {brief_file}" < /dev/null
 model_flags: -m {model} -c model_reasoning_effort="{effort}"
-readonly: codex exec --sandbox read-only {cwd_flag} -m {model} "{prompt}" < /dev/null
+readonly: codex exec --json --sandbox read-only {cwd_flag} -m {model} "{prompt}" < /dev/null
 available: command -v codex && codex login status
 models: codex debug models --bundled
 finished: exit_code
-limit_regex: "rate limit reached|quota exceeded|usage limit reached|too many requests"
+output_decoder: codex-json
+limit_regex: "rate limit reached|quota exceeded|usage limit reached|too many requests|provider error: .*(429|usage_limit|rate_limit_exceeded)"
 brief_limit_lines: 100
 cwd_flag: --cd {cwd}
+acp_run: codex-acp
+acp_version: @agentclientprotocol/codex-acp 1.13.1
+acp_model_config: model
+acp_mode: read-only
 ---
 
 # Adapter: codex — OpenAI Codex CLI, non-interactive
@@ -39,8 +44,12 @@ features and refactors, as long as the brief is self-sufficient. Never:
 open architecture decisions, security-sensitive changes, criteria that
 need the conversation — those are `self`.
 
-External ACP is unqualified; this adapter intentionally has no ACP launch
-metadata. Its legacy `run` and `readonly` paths remain authoritative.
+ACP: `acp_run: codex-acp` (bridge 1.13.1) starts sessions in mode
+`acp_mode: read-only` ("Ask for approval"): despite its name it edits and
+runs commands freely inside the worktree and asks before anything outside
+it, which the worktree permission policy rejects. No `acp_session_meta` is
+declared, and effort follows the session's `thought_level`, so no
+`acp_effort_config` either.
 
 ## Cost
 
@@ -50,5 +59,4 @@ pricier than budget API models.
 ## Review invocation
 
 The `readonly` line: the native sandbox blocks writes; the scout guard
-applies as defense in depth. Model from the research row, not the `high`
-row.
+applies as defense in depth. Model from the research row of the task's lane.
