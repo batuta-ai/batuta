@@ -15,7 +15,7 @@ disable-model-invocation: true
 ## Edit
 
 1. No project copy yet → copy the default there first; never edit the skill's own file.
-2. Apply the change keeping the markdown table: swap a row's executor or model, add a domain-specific row, add or remove the research row.
+2. Apply the change keeping the markdown table: swap a row's executor or model, add a domain-specific row, or add, remove or reseat a research row by lane (`low`, `medium`, `high`). Research `low` is mandatory whenever research exists; `medium` is recommended and `high` optional.
 3. A model change on a multi-model CLI → discover with the adapter's `models` line and confirm the exact ID; never write one from memory.
 4. A new executor without an adapter → copy `../batuta/adapters/_template.md` to `.batuta/adapters/<name>.md`, fill the frontmatter with the user, then add the row.
 5. Refresh the stamp. Show the resulting table for confirmation.

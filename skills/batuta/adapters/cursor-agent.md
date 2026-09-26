@@ -1,8 +1,8 @@
 ---
 name: cursor-agent
 executable: cursor-agent
-run: cursor-agent -p --force --trust --workspace {cwd} {model_flags} --output-format text "{brief}" < /dev/null
-run_file: cursor-agent -p --force --trust --workspace {cwd} {model_flags} --output-format text "Follow the instructions in {brief_file}" < /dev/null
+run: cursor-agent -p --trust --sandbox enabled --workspace {cwd} {model_flags} --output-format text "{brief}" < /dev/null
+run_file: cursor-agent -p --trust --sandbox enabled --workspace {cwd} {model_flags} --output-format text "Follow the instructions in {brief_file}" < /dev/null
 model_flags: --model {model}
 readonly: cursor-agent -p --mode ask --trust --workspace {cwd} --model {model} --output-format text "{prompt}" < /dev/null
 available: command -v cursor-agent && cursor-agent --list-models
@@ -20,7 +20,8 @@ A natural `frontend` row.
 
 ## Invocation notes
 
-- `-p` (`--print`) is the non-interactive mode with full tool access; `--force` (alias `--yolo`) stops it from stalling on command approval; `--trust` skips the workspace-trust prompt.
+- `-p` (`--print`) is the non-interactive mode with full tool access; `--trust` skips the workspace-trust prompt.
+- `--sandbox enabled` contains the run to the worktree: edits and commands inside have full freedom, while edits and commands outside the worktree are refused or blocked by the sandbox. Drop the old `--force` (alias `--yolo`): with it, the sandbox did not contain anything (probe, 2026-09-23). Network and writes outside the worktree, such as a module download, may be refused.
 - `--workspace {cwd}` targets a worktree. Cursor also has its own `-w` worktrees; do not mix them with Batuta's.
 - Model IDs come from `--list-models`. Parameterized models accept bracket overrides: `'claude-opus-4-8[context=1m,effort=high,fast=false]'` — record the whole string in the row when the row needs effort.
 - `--mode ask` is the read-only mode (Q&A, no edits); `--mode plan` also stays read-only but proposes plans — use `ask` for scouts and verifiers.

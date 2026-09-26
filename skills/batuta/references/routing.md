@@ -8,7 +8,7 @@ executors/models, and that editable table wins.
 - Taxonomy
 - Default table
 - Rules
-- Support lane: research
+- Research ladder
 - Adapters
 
 ## Taxonomy
@@ -48,21 +48,33 @@ Loop-first seats `critical` on a strong CLI; open decisions park with `BATUTA-QU
 - Freeze executor, model and effort before choosing transport; see `dispatch.md`.
 - **Escalation:** two failed verifications (original + 1 retry) → one row up.
 - **Unavailable executor** (install/login/model) → announce, then one row up.
-- **Explicit model:** every row names the exact model ID the CLI accepts. Never the CLI's global default — it is whatever the user last touched and may be a premium model, silently defeating cost routing. Exception: codex under a subscription has flat per-task cost, so its default is acceptable on `medium` only. On `high` the model is a capability knob and must be explicit.
-- **Discover, never recall:** onboarding confirms model IDs via adapter `models`.
-- **`self` is the host that conducts.** In Claude Code, `self` is the Claude session and `claude.md` means a background `claude -p`. In Codex, `self` is the Codex session and `codex.md` means a background `codex exec`. Rows never point `self` below `critical`.
-- **Dormant adapters:** read only the routed/added adapter. Onboarding/reconfigure probes every shipped adapter and no outside CLI.
+- **Hidden paths:** Scope under a dot-directory (`.batuta/`, `.github/`, `.claude/`) never goes to agy: it cannot see hidden files. Use codex or `self`.
+- **Explicit model:** name the exact CLI model. Codex default may serve `medium` (flat task cost); `high` stays explicit.
+- **Discover, never recall:** onboarding confirms model IDs with adapter `models`.
+- **`self`:** conducting host; `claude.md`/`codex.md` invoke a background CLI. Never below `critical`.
+- **Dormant adapters:** read only the routed/added one; probe shipped adapters at onboarding.
 
-## Support lane: research
+## Research ladder
 
-Orthogonal to the ladder. The escalation rule does not apply.
+| Lane | Brief |
+|---|---|
+| low (required) | locate one symbol/file or map a directory |
+| medium (recommended) | synthesize cross-module flow, several questions, or diff verification |
+| high (optional) | judge ranked hypotheses or architecture |
 
-| Role | Examples | Executor | Cost |
-|---|---|---|---|
-| research | project map sweep, brief context, "where does X live?" | `<CLI + cheap model>` set at onboarding (opencode + kimi, `claude -p --model haiku`) | cents |
+In doubt use low: its retry is cheap.
 
-- Read-only, contract in `scout.md`. Never writes code, never commits, never appears in `WORK.md`.
-- Scout failed twice or unavailable → you research yourself. Nothing escalates.
+| Role | Lane | Executor | Model | Cost |
+|---|---|---|---|---|
+| review | — | CLI | exact | — |
+| research | low | CLI | exact | cents |
+| research | medium | CLI | exact | varies |
+| research | high | CLI | exact | varies |
+
+Research uses CLI executors (never `self`) and exact models; review stays one
+row. No `Lane` means research low. Per `scout.md`, retry a ghost anchor or guard
+violation once on the same row with feedback, then move up; at the top,
+failure/unavailability means researching it yourself.
 
 ## Adapters
 

@@ -1,14 +1,15 @@
 ---
 name: opencode
 executable: opencode
-run: opencode run --dir {cwd} --model {model} "{brief}" < /dev/null
-run_file: opencode run --dir {cwd} --model {model} "Follow the instructions in {brief_file}" < /dev/null
+run: opencode run --format json --dir {cwd} --model {model} "{brief}" < /dev/null
+run_file: opencode run --format json --dir {cwd} --model {model} "Follow the instructions in {brief_file}" < /dev/null
 model_flags: --model {model}
-readonly: 'opencode run --dir {cwd} --model {model} "Read-only task: do not create, edit or delete any file. {prompt}" < /dev/null'
+readonly: 'opencode run --format json --dir {cwd} --model {model} "Read-only task: do not create, edit or delete any file. {prompt}" < /dev/null'
 available: command -v opencode && opencode models | grep -qx '{model}'
 models: opencode models
 finished: exit_code
-limit_regex: "rate limit|quota|too many requests|insufficient credits"
+output_decoder: opencode-json
+limit_regex: "rate limit (reached|exceeded)|quota exceeded|too many requests|insufficient credits|usage limit reached|provider error: [A-Za-z]+ (402|429):"
 brief_limit_lines: 100
 cwd_flag: --dir {cwd}
 acp_run: opencode acp
@@ -24,8 +25,9 @@ lane with a budget model.
 ## Invocation notes
 
 - The model is mandatory and comes from the row or the user's override. Never the CLI's global default — it is whatever the user last configured and may be a premium model.
+- Containment: the CLI is not contained outside the worktree. It blocks edits outside through `external_directory` but not shell writes (probe, 2026-09-23); nothing stops a command from writing elsewhere on the machine. Kept as-is by the maintainer's decision of 2026-09-23.
 - IDs are `provider/model` and vary per installation (`opencode/kimi-k2.5`, `openrouter/moonshotai/kimi-latest`). Never write one from memory: discover it.
-- `--format json` gives raw events when a log is needed.
+- `--format json` feeds core's `output_decoder`: live text, usage, `provider …` failure lines.
 
 ## Model discovery
 

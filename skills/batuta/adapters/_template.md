@@ -48,4 +48,5 @@ Subscription or pay-per-use, relative to the other adapters.
 ## Review invocation
 
 How this executor serves as second reviewer or verifier: the `readonly`
-line plus the findings-file instruction.
+line plus the findings-file instruction. The verifier sits on the research
+row of the task's lane.
