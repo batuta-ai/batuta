@@ -18,8 +18,8 @@ contract when a second reviewer is dispatched.
 4. **Specification.** `--spec <plan slug or path>` loads acceptance criteria. The review runs each proof in the reviewed tree; criteria without proofs receive a read-only sweep. A proof that changes the tree fails the review.
 5. **Reviewers.** `--reviewer` overrides routing; otherwise the optional `review` role in `.batuta/routing.md` wins, then the general/high lane. `--parallel N` bounds concurrent sessions, default one; `--cohort-files N` sets cohort size, default eight files.
 6. **Rounds.** State is incremental per branch and spec: later rounds review only work beyond the last covered checkpoint. `--full` ignores that state and reviews from `--base` again.
-7. **Engine result.** Exit `0` means SHIP, `2` FIX_BEFORE_SHIP, `3` REWORK and `1` no report. Any blocker, violated criterion or incomplete coverage means REWORK; otherwise any major means FIX_BEFORE_SHIP; otherwise SHIP.
-8. **Artefacts.** Keep `.batuta/reviews/<date>-<slug>/` out of git. It contains `review.md` (also printed to stdout), `findings.json`, `manifest.json` and `state.json`.
+7. **Engine result.** Exit `0` means SHIP, `2` FIX_BEFORE_SHIP, `3` REWORK from findings or violated criteria, `4` review incomplete (core ≥ `v1.1.0-beta.50`: a cohort or the spec sweep failed, nothing else requires rework) and `1` no report. Any blocker, violated criterion or incomplete coverage means REWORK; otherwise any major means FIX_BEFORE_SHIP; otherwise SHIP. On `4`, read `review_failures.json` and rerun the failed cohort before judging; it is not a product verdict.
+8. **Artefacts.** Keep `.batuta/reviews/<date>-<slug>/` out of git. It contains `review.md` (also printed to stdout), `findings.json` (always a list), `review_failures.json` (operational failures behind incomplete coverage, core ≥ `v1.1.0-beta.50`), `manifest.json` and `state.json`.
 9. **Judge.** Engine findings and verdict are evidence, not the final call. Read `review.md`, judge every finding with a one-line rationale and own the verdict. A rejected finding goes to `.batuta/learnings.md` as one rule when it taught one.
 
 ## Manual procedure
