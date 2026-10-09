@@ -38,7 +38,7 @@ targets one. Per host, the same thing by hand:
 
 | Host | Install | Entry points |
 |---|---|---|
-| Claude Code | `claude plugin marketplace add batuta-ai/batuta` · `claude plugin install batuta@batuta` | the `batuta` skill on any code task; `/batuta:init`, `/batuta:plan`, `/batuta:loop`, `/batuta:review`, `/batuta:status`, `/batuta:route`, `/batuta:pause`, `/batuta:resume` |
+| Claude Code | `claude plugin marketplace add batuta-ai/batuta` · `claude plugin install batuta@batuta` | the `batuta` skill on any code task; `/batuta:init`, `/batuta:plan`, `/batuta:council`, `/batuta:loop`, `/batuta:review`, `/batuta:status`, `/batuta:route`, `/batuta:pause`, `/batuta:resume` |
 | Codex CLI | `codex plugin marketplace add batuta-ai/batuta` · `codex plugin add batuta@batuta` | `$batuta`, `$batuta-init`, `$batuta-plan`, … |
 | Cursor | `npx -y github:batuta-ai/batuta -- --only cursor` (vendored skills → `~/.agents/skills`) | the skills, by name |
 | opencode | `npx -y github:batuta-ai/batuta -- --only opencode` (vendored skills → `~/.agents/skills` + `hosts/opencode/commands/`) | `/batuta`, `/batuta-init`, … |
@@ -111,7 +111,7 @@ npx -y github:batuta-ai/batuta
 batuta version
 ```
 
-The current package pins core `v1.1.0-beta.50`; `batuta version` should report
+The current package pins core `v1.1.0-beta.51`; `batuta version` should report
 that version. A host's plugin-only update does not update the separate core
 binary. If the installer reports another `batuta` earlier on `PATH`, adjust
 `PATH` so the installed binary is used. Restart the host session after updating
@@ -122,7 +122,7 @@ the preservation rules above.
 
 Foreground supervision and automatic final delivery review were introduced in
 core `v1.1.0-beta.23` and remain available in the package's pinned
-`v1.1.0-beta.50` for normal new, resume, answer and roadmap loop execution. The
+`v1.1.0-beta.51` for normal new, resume, answer and roadmap loop execution. The
 runner retains execution ownership. After implementation is finalized, review
 checks an immutable delivery snapshot. Missing, failed, uncertain or adverse review
 blocks roadmap progression across restarts; `review_blocked` exits with code

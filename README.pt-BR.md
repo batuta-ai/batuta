@@ -38,7 +38,7 @@ npx -y github:batuta-ai/batuta
 
 | Host | Instalação | Pontos de entrada |
 |---|---|---|
-| Claude Code | `claude plugin marketplace add batuta-ai/batuta` · `claude plugin install batuta@batuta` | a skill `batuta` em qualquer tarefa de código; `/batuta:init`, `/batuta:plan`, `/batuta:loop`, `/batuta:review`, `/batuta:status`, `/batuta:route`, `/batuta:pause`, `/batuta:resume` |
+| Claude Code | `claude plugin marketplace add batuta-ai/batuta` · `claude plugin install batuta@batuta` | a skill `batuta` em qualquer tarefa de código; `/batuta:init`, `/batuta:plan`, `/batuta:council`, `/batuta:loop`, `/batuta:review`, `/batuta:status`, `/batuta:route`, `/batuta:pause`, `/batuta:resume` |
 | Codex CLI | `codex plugin marketplace add batuta-ai/batuta` · `codex plugin add batuta@batuta` | `$batuta`, `$batuta-init`, `$batuta-plan`, … |
 | Cursor | `npx -y github:batuta-ai/batuta -- --only cursor` (vendored skills → `~/.agents/skills`) | as skills, pelo nome |
 | opencode | `npx -y github:batuta-ai/batuta -- --only opencode` (vendored skills → `~/.agents/skills` + `hosts/opencode/commands/`) | `/batuta`, `/batuta-init`, … |
@@ -114,7 +114,7 @@ npx -y github:batuta-ai/batuta
 batuta version
 ```
 
-O pacote atual fixa o core em `v1.1.0-beta.50`; `batuta version` deve mostrar
+O pacote atual fixa o core em `v1.1.0-beta.51`; `batuta version` deve mostrar
 essa versão. Atualizar apenas o plugin pelo host não atualiza o binário separado
 do core. Se o instalador indicar outro `batuta` antes dele no `PATH`, ajuste o
 `PATH` para usar o binário instalado. Reinicie a sessão do host após atualizar
@@ -124,7 +124,7 @@ customizadas seguem as regras de preservação acima.
 ### Supervisão em primeiro plano
 
 A supervisão em primeiro plano e a revisão final automática foram introduzidas
-no core `v1.1.0-beta.23` e continuam disponíveis no `v1.1.0-beta.50` fixado pelo
+no core `v1.1.0-beta.23` e continuam disponíveis no `v1.1.0-beta.51` fixado pelo
 pacote, nos fluxos normais de nova execução, retomada, resposta e roadmap do
 loop. O runner mantém a responsabilidade pela execução. Depois de finalizar
 a implementação, a revisão verifica um snapshot imutável da entrega. Revisão
