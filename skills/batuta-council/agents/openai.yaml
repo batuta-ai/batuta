@@ -1,0 +1,4 @@
+interface:
+  display_name: "batuta-council"
+  short_description: "Ask the council to critique a proposed plan, judge each finding, advise"
+  default_prompt: "Use $batuta-council to ask the council about a proposed plan, judge every finding and advise, without approving"

@@ -45,7 +45,7 @@ straight into the cycle.
    test "$(grep -c '^- \[ \] [0-9]*\.' $f)" = "$(grep -c '^      Accept:' $f)"
    test "$(grep -c '^\*\*Created:\*\*.*\*\*Status:\*\* \(proposed\|approved\|in progress\|done\)$' $f)" = 1
    ```
-6. **Present and wait for approval.** Set `Status: approved` only on the user's word.
+6. **Offer the council, then wait for approval.** When `batuta capabilities` lists `council`, offer [batuta-council](../batuta-council/SKILL.md) (`/batuta-council`): present its findings, apply only the edits the maintainer accepts, rerun the self-check. Then present the plan and ask for approval. Set `Status: approved` only on the user's word.
 7. Approved → execute task by task through the `batuta` cycle, ticking checkboxes and recording in `WORK.md`; or hand off to `/batuta-loop` for an unattended run.
 
 *Done when:* the file exists, the self-check passes, the user approved or asked for changes.
