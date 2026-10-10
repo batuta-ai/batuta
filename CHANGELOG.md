@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.0](https://github.com/batuta-ai/batuta/compare/v0.6.11...v0.7.0) (2026-10-10)
+
+
+### Features
+
+* batuta council — core v1.1.0-beta.51, skills v0.15.0, /batuta:council ([1667fe9](https://github.com/batuta-ai/batuta/commit/1667fe903e14845711365a2c77b79e9acf93b238))
+* **commands:** /batuta:council and the opencode batuta-council command ([2bc368e](https://github.com/batuta-ai/batuta/commit/2bc368e73a3fbdd9b948e1f449c6c75c381a861c))
+
+
+### Bug Fixes
+
+* **install:** pin core v1.1.0-beta.51 ([95363b7](https://github.com/batuta-ai/batuta/commit/95363b7afe0fbe27e2af94f6327458e28c5a097d))
+* **skills:** vendor batuta-ai/skills v0.15.0 ([0b542de](https://github.com/batuta-ai/batuta/commit/0b542def2038a8b87d9cb800f0f3444a559bae35))
+
 ## [0.6.11](https://github.com/batuta-ai/batuta/compare/v0.6.10...v0.6.11) (2026-10-07)
 
 
