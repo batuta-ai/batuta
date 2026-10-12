@@ -114,7 +114,7 @@ npx -y github:batuta-ai/batuta
 batuta version
 ```
 
-O pacote atual fixa o core em `v1.1.0-beta.51`; `batuta version` deve mostrar
+O pacote atual fixa o core em `v1.1.0-beta.52`; `batuta version` deve mostrar
 essa versão. Atualizar apenas o plugin pelo host não atualiza o binário separado
 do core. Se o instalador indicar outro `batuta` antes dele no `PATH`, ajuste o
 `PATH` para usar o binário instalado. Reinicie a sessão do host após atualizar
@@ -124,7 +124,7 @@ customizadas seguem as regras de preservação acima.
 ### Supervisão em primeiro plano
 
 A supervisão em primeiro plano e a revisão final automática foram introduzidas
-no core `v1.1.0-beta.23` e continuam disponíveis no `v1.1.0-beta.51` fixado pelo
+no core `v1.1.0-beta.23` e continuam disponíveis no `v1.1.0-beta.52` fixado pelo
 pacote, nos fluxos normais de nova execução, retomada, resposta e roadmap do
 loop. O runner mantém a responsabilidade pela execução. Depois de finalizar
 a implementação, a revisão verifica um snapshot imutável da entrega. Revisão
