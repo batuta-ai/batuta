@@ -1,5 +1,12 @@
 # WORK — batuta (host)
 
+## Current status — 2026-10-13: v0.7.3, core beta.53, skills v0.15.1
+- [x] batuta#111 pins core `v1.1.0-beta.52` (loop briefs carry the profile's `## Conventions`, core#165) → v0.7.1.
+- [x] batuta#113 vendors skills v0.15.1 (skills#76 fixes the `check.sh` defect of skills#75) → v0.7.2.
+- [x] batuta#115 pins core `v1.1.0-beta.53` (`batuta loop --recover` and `--reconcile`, core#168) → v0.7.3. The maintainer machine runs plugin 0.7.3, core beta.53 and skills v0.15.1.
+- [ ] No host command or skill names `--recover` or `--reconcile` yet. The `batuta-loop` skill is the place for it, through batuta-ai/skills.
+- [ ] The `In progress` and `Next focus` sections below date from v0.6.1 and need a review.
+
 ## In progress
 - Post-rollback cleanup verified locally; awaiting cleanup PR integration. Host v0.6.1 is released; rollback PR86 merged as 8d66a51. No npm migration.
 
