@@ -1,8 +1,13 @@
 # WORK — batuta (host)
 
-## Current status — 2026-10-14: v0.7.4, core beta.54, skills v0.15.1
+## Current status — 2026-10-14: v0.7.5, core beta.54, skills v0.16.0
+- [x] batuta#121 vendors skills v0.16.0 (skills#78: `batuta-init` asks where `batuta loop` puts task worktrees and writes `Worktree-home: repository | cache`, default `cache` for JavaScript and TypeScript projects; a new first-run step keeps the project's test runners, linters and type checkers out of `.batuta/`) → v0.7.5. The maintainer machine runs plugin 0.7.5, core beta.54 and skills v0.16.0.
+- [ ] No host command or skill names `batuta loop --prune` yet, and the conductor cycle (`skills/batuta/references/worktree.md`) keeps its worktrees in `.batuta/worktrees/`: its packet sits at the 9500-token budget.
+- [ ] Still open from Tempo finding 4.4: stop processes whose working directory is inside a removed worktree (own plan in batuta-ai/core), and `batuta doctor` detecting tools that scan `.batuta/`.
+
+## Status — 2026-10-14: v0.7.4, core beta.54, skills v0.15.1
 - [x] batuta#118 pins core `v1.1.0-beta.54` (core#170: profile line `Worktree-home: repository | cache`, which can keep task worktrees in the user cache directory outside the repository, and `batuta loop --prune [--apply]` for orphaned batuta worktrees) → v0.7.4. The maintainer machine runs plugin 0.7.4, core beta.54 and skills v0.15.1.
-- [ ] No host command or skill names `Worktree-home` or `--prune` yet. Part (a) of Tempo finding 4.4, where `batuta-init` adds `.batuta/**` to tool ignore lists and writes `Worktree-home: cache` for JavaScript and TypeScript stacks, gets its own plan in batuta-ai/skills.
+- [x] Part (a) of Tempo finding 4.4 shipped in skills v0.16.0; see the section above.
 
 ## Status — 2026-10-13: v0.7.3, core beta.53, skills v0.15.1
 - [x] batuta#111 pins core `v1.1.0-beta.52` (loop briefs carry the profile's `## Conventions`, core#165) → v0.7.1.
