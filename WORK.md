@@ -1,9 +1,13 @@
 # WORK — batuta (host)
 
-## Current status — 2026-10-13: v0.7.3, core beta.53, skills v0.15.1
+## Current status — 2026-10-14: v0.7.4, core beta.54, skills v0.15.1
+- [x] batuta#118 pins core `v1.1.0-beta.54` (core#170: profile line `Worktree-home: repository | cache`, which can keep task worktrees in the user cache directory outside the repository, and `batuta loop --prune [--apply]` for orphaned batuta worktrees) → v0.7.4. The maintainer machine runs plugin 0.7.4, core beta.54 and skills v0.15.1.
+- [ ] No host command or skill names `Worktree-home` or `--prune` yet. Part (a) of Tempo finding 4.4, where `batuta-init` adds `.batuta/**` to tool ignore lists and writes `Worktree-home: cache` for JavaScript and TypeScript stacks, gets its own plan in batuta-ai/skills.
+
+## Status — 2026-10-13: v0.7.3, core beta.53, skills v0.15.1
 - [x] batuta#111 pins core `v1.1.0-beta.52` (loop briefs carry the profile's `## Conventions`, core#165) → v0.7.1.
 - [x] batuta#113 vendors skills v0.15.1 (skills#76 fixes the `check.sh` defect of skills#75) → v0.7.2.
-- [x] batuta#115 pins core `v1.1.0-beta.53` (`batuta loop --recover` and `--reconcile`, core#168) → v0.7.3. The maintainer machine runs plugin 0.7.3, core beta.53 and skills v0.15.1.
+- [x] batuta#115 pins core `v1.1.0-beta.53` (`batuta loop --recover` and `--reconcile`, core#168) → v0.7.3.
 - [ ] No host command or skill names `--recover` or `--reconcile` yet. The `batuta-loop` skill is the place for it, through batuta-ai/skills.
 - [ ] The `In progress` and `Next focus` sections below date from v0.6.1 and need a review.
 
