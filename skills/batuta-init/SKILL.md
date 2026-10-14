@@ -18,6 +18,7 @@ reconfigure. Read `../batuta/references/routing.md` first in both modes.
    - Test command? Build command? Install command? (install is optional; prepares a worktree)
    - Batch execution: `sequential` (default) or `parallel`?
    - Worktree mode: `off`, `medium+` (default) or `always`?
+   - Where `batuta loop` puts task worktrees: `repository` (`.batuta/worktrees/`) or `cache` (the user cache directory, outside the repository)? Default `cache` when `package.json` or `tsconfig.json` exists, else `repository`.
    - Project rules every executor must follow? (optional; they become the profile's `## Conventions` section)
 3. **Inventory.** With the core binary on PATH: `batuta inventory` (redacted JSON of installed executors and their models). Otherwise, run `available` and `models` for **every** adapter shipped in `../batuta/adapters/` (`agy`, `claude`, `codex`, `cursor-agent`, `opencode`), not only the ones the default table names. Never scan the machine for CLIs outside that directory; a new CLI enters only when the user asks for it. Name what is installed and what is not before proposing anything.
 4. **Propose the lanes** from what is installed, executor and exact model per row, including Role-table research rows by lane. Filter cheap candidates with `kimi|deepseek|glm|qwen|flash|mini|nano|free`; suggest two or three per implementation lane. Use that filter for read-capable candidates: research `low` is mandatory when research exists and takes the cheapest; `medium` takes the mid-tier model when available, and optional `high` takes the strongest. Every research row names a CLI (never `self`) and exact model. Shapes:
@@ -27,17 +28,19 @@ reconfigure. Read `../batuta/references/routing.md` first in both modes.
    - loop-first (the user wants every task in `batuta loop`) → `critical` names a CLI: `codex <strongest model>` or `claude opus`; research still gets at least `low`. Say the trade: no conversation, an open decision parks the task with `BATUTA-QUESTION`; the plan's Decisions must carry what the session would have said.
    - domain rows → propose `<lane> | <domain>` only for an installed CLI that fits: cursor-agent on `frontend` and `fullstack`, agy on `low | docs` plus research. Place it beside that lane's `*` row; `*` stays the default and the domain row wins only for that domain. Never propose an uninstalled or unconfirmed CLI; installed and left out is the user's choice.
 5. **Confirm once.** One question covering the whole mapping and the pointer (step 8). The user has the final word on every row.
-6. **Write** `.batuta/profile.md` (answers as literal lines: `Stack:`, `Methodology:`, `Test:`, `Build:`, `Install:`, `Execution:`, `Worktree:`, `Template: templates/<stack>.md`) and `.batuta/routing.md` (the confirmed table, stamp on line 3 per `../batuta/references/state.md`). Template: the most specific that applies (`nextjs` > `react` > `generic`); in doubt, the child. Project rules go under a `## Conventions` heading as short bullets: the section is pasted verbatim into every executor brief, before the template's, so keep it within 1600 characters (about 400 tokens) and leave out what `AGENTS.md` or the template already says.
+6. **Write** `.batuta/profile.md` (answers as literal lines: `Stack:`, `Methodology:`, `Test:`, `Build:`, `Install:`, `Execution:`, `Worktree:`, `Worktree-home:`, `Template: templates/<stack>.md`) and `.batuta/routing.md` (the confirmed table, stamp on line 3 per `../batuta/references/state.md`). Template: the most specific that applies (`nextjs` > `react` > `generic`); in doubt, the child. Project rules go under a `## Conventions` heading as short bullets: the section is pasted verbatim into every executor brief, before the template's, so keep it within 1600 characters (about 400 tokens) and leave out what `AGENTS.md` or the template already says.
 7. **Roadmap (opt-in).** When the user describes the work in phases, offer `.batuta/roadmap.md`: `# Roadmap — <title>` and one `- [ ] N. <title>` line per phase, no plans yet; `/batuta-plan` plans a phase, `batuta loop --roadmap` runs them in order.
 8. **Pointer (opt-in).** Offer to write `assets/agents-md-block.md` into the project's `AGENTS.md` between its markers. Declined → write nothing, never re-offer. Accepted → replace what sits between existing markers, or create the file with only the block. The last sentence of the block is the anti-loop guard for executors that read `AGENTS.md`.
 9. **Takeover.** Artifacts from another framework (`.planning/`, `TODO.md`, roadmaps) → offer a one-time import: in-progress and done work become `WORK.md` lines, large remaining work becomes `.batuta/plans/<slug>.md`. Old artifacts stay untouched.
 10. **Project map.** Add a "Project map" section to the profile: 20–40 lines of prose — key directories, where routes/components/tests live, entry points, generated files not to touch. Delegate the sweep to the research lane (`../batuta/references/scout.md`); no lane or two failures → sweep yourself. The map says where to start looking, not everything.
 11. **`WORK.md`** at the project root if absent (format in `state.md`). Add `.batuta/runs/`, `.batuta/scout/`, `.batuta/worktrees/`, `.batuta/reviews/`, `.batuta/councils/` and `.batuta/handoff.md` to `.git/info/exclude` if missing.
-12. **Commit (opt-in).** Offer one commit of `.batuta/profile.md`, `.batuta/routing.md` and `WORK.md` — `chore(batuta): set up conducting`. Declined → they stay on disk; the cycle tolerates them as managed state (`../batuta/references/state.md`).
-13. **Self-check**, then report:
+12. **Tool ignores.** Most JavaScript tools walk dot-directories, so `.batuta/**` (runs, reviews, worktrees) can fail the project's own gates. Follow `references/tool-ignores.md`: detect the configured test runners, linters and type checkers, show the edit each needs, and apply only the ones the user accepts. A config you cannot edit safely gets a warning with the line to add, never a guess.
+13. **Commit (opt-in).** Offer one commit of `.batuta/profile.md`, `.batuta/routing.md` and `WORK.md` — `chore(batuta): set up conducting`. Declined → they stay on disk; the cycle tolerates them as managed state (`../batuta/references/state.md`).
+14. **Self-check**, then report:
     ```bash
     test -f .batuta/profile.md && test -f .batuta/routing.md && test -f WORK.md
     grep -q '^Test:' .batuta/profile.md
+    grep -Eq '^Worktree-home: (repository|cache)$' .batuta/profile.md
     sed -n 3p .batuta/routing.md | grep -q 'inputs: profile.md@sha256:'
     ```
     Any failure → fix and re-run. Never report done with a failing check.
@@ -47,9 +50,9 @@ reconfigure. Read `../batuta/references/routing.md` first in both modes.
 ## Reconfigure
 
 1. Re-run the inventory of step 3 above: every shipped adapter, not only the executors the project's table names. Show what is routed, what is installed but unrouted (offer a row for each), and what is routed but no longer available.
-2. Recompute the routing stamp; show the current setup in a few lines: rows, profile answers, stamp state, map age.
+2. Recompute the routing stamp; show the current setup in a few lines: rows, profile answers, stamp state, map age. No `Worktree-home:` line → say the home is `repository` by default; on a JavaScript or TypeScript stack, offer `cache`. Re-run the tool-ignore check of first-run step 12 and name any tool still scanning `.batuta/**`.
 3. **Migrate** a table still using `trivial/medium/complex/critical`: `trivial → low`, `complex → high`; add the Domain column with `*`. Say so.
-4. Ask what to change — one question: a row or model, a profile answer, execution or worktree mode, the pointer (add, rewrite, remove between markers), a fresh map sweep.
+4. Ask what to change — one question: a row or model, a profile answer, execution or worktree mode or home, a tool ignore, the pointer (add, rewrite, remove between markers), a fresh map sweep.
 5. Rewrite only what changed, reusing the first-run discovery and single confirmation for any lane change. Refresh the stamp. Never touch `WORK.md`.
 
 *Done when:* the changed files are rewritten, the self-check above is green, and the user saw the resulting table.
