@@ -1,9 +1,13 @@
 # WORK — batuta (host)
 
-## Current status — 2026-10-16: v0.7.6, core beta.56, skills v0.16.0
-- [x] batuta#124 pins core `v1.1.0-beta.56` (core#174: before batuta removes a worktree, during loop integration or abort and with `batuta loop --prune --apply`, it stops the processes whose working directory is inside it; the loop reports, trails and journals only the stops it confirmed) → v0.7.6. The maintainer machine runs plugin 0.7.6, core beta.56 and skills v0.16.0.
+## Current status — 2026-10-22: v0.7.7, core beta.57, skills v0.16.0
+- [x] batuta#127 pins core `v1.1.0-beta.57` (core#176: `batuta doctor` reports which project tools would scan `.batuta/`, namely Vitest, Jest, Playwright, ESLint, Prettier, Biome, TypeScript and pytest, each with a status and a hint, in text and in `--json`; it only reports, and `/batuta-init` does the patching) → v0.7.7. The maintainer machine still runs plugin 0.7.6 and core beta.56 until it is updated.
 - [ ] No host command or skill names `batuta loop --prune` yet, and the conductor cycle (`skills/batuta/references/worktree.md`) keeps its worktrees in `.batuta/worktrees/`: its packet sits at the 9500-token budget.
-- [ ] Still open from Tempo finding 4.4: `batuta doctor` detecting tools that scan `.batuta/`.
+- [ ] The TypeScript and Biome rows of the skills reference `skills/batuta-init/references/tool-ignores.md` should match the rules `batuta doctor` applies (TypeScript wildcards skip dot-directories; Biome v2 patterns match `.batuta` only as a whole segment). Through batuta-ai/skills.
+
+## Status — 2026-10-16: v0.7.6, core beta.56, skills v0.16.0
+- [x] batuta#124 pins core `v1.1.0-beta.56` (core#174: before batuta removes a worktree, during loop integration or abort and with `batuta loop --prune --apply`, it stops the processes whose working directory is inside it; the loop reports, trails and journals only the stops it confirmed) → v0.7.6. The maintainer machine runs plugin 0.7.6, core beta.56 and skills v0.16.0.
+- [x] Tempo finding 4.4 is complete: `batuta doctor` tool detection shipped in core beta.57; see the section above.
 
 ## Status — 2026-10-14: v0.7.5, core beta.54, skills v0.16.0
 - [x] batuta#121 vendors skills v0.16.0 (skills#78: `batuta-init` asks where `batuta loop` puts task worktrees and writes `Worktree-home: repository | cache`, default `cache` for JavaScript and TypeScript projects; a new first-run step keeps the project's test runners, linters and type checkers out of `.batuta/`) → v0.7.5. The maintainer machine runs plugin 0.7.5, core beta.54 and skills v0.16.0.
