@@ -25,9 +25,9 @@ does not walk the root and needs nothing.
 | Jest | `jest.config.*` or the `jest` key of `package.json` | add `'<rootDir>/.batuta/'` to `testPathIgnorePatterns` and to `modulePathIgnorePatterns`. Keep `'/node_modules/'` in the first: setting the key replaces its default. The second stops the "Haste module naming collision" a worktree's `package.json` causes. |
 | ESLint, flat config | `eslint.config.*` | add `{ ignores: ['.batuta/**'] }` as its own array element. `ignores` is global only in an object with no other key. |
 | ESLint, legacy | `.eslintrc*` | add `.batuta/` to `.eslintignore`. |
-| TypeScript | `tsconfig.json` | nothing when `include` names source directories only. Otherwise add `".batuta"` to `exclude`; when `exclude` is new, also write `"node_modules"`, since an explicit list drops the default. The file is JSONC: edit the text, keep its comments. |
+| TypeScript | `tsconfig.json` | nothing by default: the `*` and `**` wildcards of `include` skip directories whose name starts with a dot. Edit only when `include` or `files` names `.batuta` itself, as `.batuta/...` or `**/.batuta`. In `files`, remove it: `exclude` does not apply to `files`. In `include`, remove it or add `".batuta"` to `exclude`; when `exclude` is new, also write `"node_modules"`, since an explicit list drops the default. The file is JSONC: edit the text, keep its comments. |
 | Prettier | `.prettierignore` | add `.batuta/`. |
-| Biome | `biome.json` | v2: `"!**/.batuta"` in `files.includes`; v1: `".batuta"` in `files.ignore`. |
+| Biome | `biome.json` or `biome.jsonc` | v2: add `"!**/.batuta"` to `files.includes` after the positive patterns, since the last pattern that matches decides. No `files.includes` → write `"files": { "includes": ["**", "!**/.batuta"] }`. v1: add `".batuta"` to `files.ignore`. Write `.batuta` as a whole path segment; `batuta doctor` does not read partial globs such as `.bat*`. The major version comes from the `$schema` URL, else from `@biomejs/biome` in `package.json`. |
 | Playwright | `playwright.config.*` | nothing when `testDir` is set. Otherwise add `'**/.batuta/**'` to `testIgnore`. |
 | pytest | `pytest.ini`, `pyproject.toml`, `setup.cfg` | nothing by default: `norecursedirs` skips `.*`. A project that sets `norecursedirs` must keep `.*` or add `.batuta`. |
 
