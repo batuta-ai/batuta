@@ -23,13 +23,13 @@ const SKILLS = "batuta-ai/skills";
 // The core release this package was tested with. Bump deliberately: a
 // batuta release names the binary it expects (see scripts/sync-skills.sh
 // for the same idea with the skills).
-const CORE_VERSION = "v1.1.0-beta.57";
+const CORE_VERSION = "v1.1.0-beta.58";
 const CORE_CHECKSUMS = {
-  "batuta_darwin_amd64.tar.gz": "e4ab3e17ba1c7871f3e186cd3ea641aaec17db131fb66f80ee4a0fd544e7a479",
-  "batuta_darwin_arm64.tar.gz": "72256398a3fb234c4c24561b2cd58bc7d6a41aff12095817977b20c9c83b873a",
-  "batuta_linux_amd64.tar.gz": "c06aae9896eb42cb15d238c7d742c92699871546b5bc014060913989a5165633",
-  "batuta_linux_arm64.tar.gz": "d2ed8b9415bba3b3fc27cfdfb482293803eca855d3e64dff32721ec0aaad5e15",
-  "batuta_windows_amd64.zip": "b06d86b7febbf7099f089166c1aea61998a912bc6336c1b62096d852cba75543",
+  "batuta_darwin_amd64.tar.gz": "8e0442311cea89e3b469dd15ebb1e99d96ad83636df09c8aa6c5a6c20b5aa153",
+  "batuta_darwin_arm64.tar.gz": "ac37ed85e9849f70fa2cfe54691123f5cbbdc0e355cbe1a0ec89ce8cd6dda9fd",
+  "batuta_linux_amd64.tar.gz": "56734bb9b0ca1943dadc05f6b74a7c3cb2b838f607d70fa3f006febb7f41642e",
+  "batuta_linux_arm64.tar.gz": "edfe414dc167e413b9b13e6b2aae7dadb393ba30e45733dfd2a1dc23a1952327",
+  "batuta_windows_amd64.zip": "2105470ca94986d1442d62abda0f97d3af7d48c9d2abf3bfa18744318ae75cb2",
 };
 const CORE_MODULE = "github.com/batuta-ai/core/cmd/batuta";
 const CORE_RELEASES = `https://github.com/batuta-ai/core/releases/download/${CORE_VERSION}`;
