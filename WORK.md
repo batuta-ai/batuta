@@ -1,8 +1,13 @@
 # WORK — batuta (host)
 
-## Current status — 2026-10-24: v0.7.8, core beta.57, skills v0.16.1
-- [x] batuta#130 vendors skills v0.16.1 (skills#80: the TypeScript and Biome rows of `skills/batuta-init/references/tool-ignores.md` now apply the same rules as `batuta doctor`. TypeScript `include` wildcards skip dot-directories, so tsconfig needs an edit only when `include` or `files` names `.batuta` itself. For Biome v2, the negated pattern comes after the positive ones and `.batuta` is written as a whole segment; `biome.jsonc` is read too.) → v0.7.8. The maintainer machine runs plugin 0.7.8, core beta.57 and skills v0.16.1.
+## Current status — 2026-10-26: v0.7.9, core beta.58, skills v0.16.1
+- [x] batuta#133 pins core `v1.1.0-beta.58` (core#180: `batuta loop --answer` can carry a standing grant with `--allow-path` and `--allow-op`. The runner answers a later question that the grant covers and does not park again; boundary paths such as `WORK.md`, `.batuta/**`, CI configuration, licenses and lockfiles never pass through a grant) → v0.7.9. The maintainer machine still runs plugin 0.7.8 and core beta.57 until it is updated.
 - [ ] No host command or skill names `batuta loop --prune` yet, and the conductor cycle (`skills/batuta/references/worktree.md`) keeps its worktrees in `.batuta/worktrees/`: its packet sits at the 9500-token budget.
+- [ ] The host skills do not yet tell the conductor how to write a grant. Through batuta-ai/skills.
+
+## Status — 2026-10-24: v0.7.8, core beta.57, skills v0.16.1
+- [x] batuta#130 vendors skills v0.16.1 (skills#80: the TypeScript and Biome rows of `skills/batuta-init/references/tool-ignores.md` now apply the same rules as `batuta doctor`. TypeScript `include` wildcards skip dot-directories, so tsconfig needs an edit only when `include` or `files` names `.batuta` itself. For Biome v2, the negated pattern comes after the positive ones and `.batuta` is written as a whole segment; `biome.jsonc` is read too.) → v0.7.8. The maintainer machine runs plugin 0.7.8, core beta.57 and skills v0.16.1.
+- [x] The `--prune` item moved to the current status above.
 
 ## Status — 2026-10-22: v0.7.7, core beta.57, skills v0.16.0
 - [x] batuta#127 pins core `v1.1.0-beta.57` (core#176: `batuta doctor` reports which project tools would scan `.batuta/`, namely Vitest, Jest, Playwright, ESLint, Prettier, Biome, TypeScript and pytest, each with a status and a hint, in text and in `--json`; it only reports, and `/batuta-init` does the patching) → v0.7.7. The maintainer machine still runs plugin 0.7.6 and core beta.56 until it is updated.
