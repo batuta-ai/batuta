@@ -1,7 +1,7 @@
 {
   "source": "github.com/batuta-ai/skills",
-  "ref": "v0.16.1",
-  "commit": "c689ef25caddbbef46e42d330194930c91810f3f",
+  "ref": "v0.17.0",
+  "commit": "fd5588b70c71d719e24e0d0da18006bcffd3b16f",
   "path": "skills",
-  "computedHash": "sha256:188ea09b12e994d953142224d43920b4a0265a247e2063684e117c1d9db6cebd"
+  "computedHash": "sha256:9268ca1d51fdac04bad56f376a57f94a5fb3b5dbab7fca5ab51f2753969b4ad1"
 }
