@@ -11,7 +11,7 @@ disable-model-invocation: true
 3. Plans in `.batuta/plans/*.md` (and legacy `.batuta/plan-*.md`) with `Status ≠ done`; finished ones sit in `.batuta/plans/done/`. With `.batuta/roadmap.md`: phases done, current (its plan and delivery) and next (planned or not).
 4. Stamps: recompute `.batuta/routing.md`'s line-3 stamp against `profile.md`; report `stale` when it differs. Warning only.
 5. Present compactly:
-   - **In progress** — task, executor, since when, state (running / awaiting verification / parked with a question).
+   - **In progress** — task, executor, since when, state (running / awaiting verification / parked with a question; show `grant_park` reason and `beyond_grant` items from the ask file when present).
    - **Done (recent)** — the latest `WORK.md` entries with commits.
    - **Open plans** — title and progress (checked/total); with a roadmap, `phase N of M` first.
    - **Leftovers** — worktrees or journals nothing references.
