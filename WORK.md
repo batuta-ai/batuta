@@ -1,8 +1,12 @@
 # WORK — batuta (host)
 
-## Current status — 2026-10-29: release bundle verified locally
+## Current status — 2026-10-29: v0.7.12 published and installed
+- [x] User-authorized host PR#142 merged as `399cc69` after required CI `40938242822` passed; main CI `40938351056` passed. Release PR#143 published host/plugin v0.7.12 at `87c01b2`; release CI `40938438308` and release-please `40938438461` passed. Core is pinned to v1.1.0-beta.61 and skills to v0.17.2.
+- [x] Official installer from immutable tag checkout `.batuta/worktrees/local-install-v0.7.12` exited 0 for detected Claude/Codex/OpenCode/Antigravity. Claude and Codex plugins are enabled at 0.7.12. All 14 skill trees in shared, Claude and Codex installations match published source; all 14 OpenCode commands match. Shared lock is v0.17.2 at `bb7827f`; PATH core reports beta.61 and its binary matches the verified official archive (SHA-256 `9ce7e86759892e365aabcf8c4c4c3729901d4880af596e91d840b6694b616ce5`). No forced skill overwrite, route changes, or unrelated worktree cleanup. Reopen agent sessions to load updated plugins. Evidence: parent host checkout `.batuta/runs/release-core61-skills0172/installed-verification.json` and `trail.md`.
+
+## Historical checkpoint — 2026-10-29: release bundle verified locally
 - [x] Core `v1.1.0-beta.61` and skills `v0.17.2` pinned through the official scripts; commit `ac0e039`, branch `fix/release-core61-skills0172`, base `40dd7fd`. Routed infra/medium to codex/gpt-5.6-sol; one implementation retry supplied parent-verified checksums after sandbox DNS failed. An earlier empty-effort dispatch failed before model execution; no route escalation. Parent host gate, all 40 Node tests, scope/diff, five published archive digests, exact 64-file skills tree, list/dry-run, and disposable native core plus 14-skill installation passed. Independent agy/gemini-3.8-flash-low review: 3/3 DONE, no code findings; corrected one evidence-path citation. Trail: `.batuta/runs/release-core61-skills0172/trail.md` in the parent host checkout.
-- [ ] Publication and official local upgrade remain pending. No push, PR, merge, tag, release, or global install performed. The user authorized updating the host; confirm publication through the official channel before changing the installed plugin bundle. Existing checkouts/worktrees and routes remain untouched.
+- [x] Publication and official local upgrade completed after separate user authorization; see the current status above. The local-only checkpoint is retained as historical evidence.
 
 ## Current status — 2026-10-29: v0.7.11 installed, skills v0.17.1, core beta.58
 - [x] Host#139 (`c66a9a7`) vendors skills v0.17.1 (`ddc8417`, skills#84/release#85) through the official script. Host#140 published v0.7.11 (`d257980`); merge and release CI/workflows passed. Exact64-file published source comparison, host gate and all40 Node tests passed. Core remains beta.58; skills cycle packet remains9499/9500.
