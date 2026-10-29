@@ -1,8 +1,11 @@
 # WORK — batuta (host)
 
+## Current status — 2026-10-29: skills v0.17.1 packaging
+- [x] skills#84 merged after CI, then release#85 published v0.17.1 (`ddc8417`). Official `scripts/sync-skills.sh v0.17.1` vendors the exact published tree: interactive worktree home selection plus loop/status prune guidance. Core stays beta.58. Host gate and all40 Node tests passed; published skills gate remains9499/9500 cycle tokens. Host PR/release and authorized local update are the remaining steps.
+
 ## Current status — 2026-10-26: v0.7.9, core beta.58, skills v0.16.1
 - [x] batuta#133 pins core `v1.1.0-beta.58` (core#180: `batuta loop --answer` can carry a standing grant with `--allow-path` and `--allow-op`. The runner answers a later question that the grant covers and does not park again; boundary paths such as `WORK.md`, `.batuta/**`, CI configuration, licenses and lockfiles never pass through a grant) → v0.7.9. The maintainer machine still runs plugin 0.7.8 and core beta.57 until it is updated.
-- [ ] No host command or skill names `batuta loop --prune` yet, and the conductor cycle (`skills/batuta/references/worktree.md`) keeps its worktrees in `.batuta/worktrees/`: its packet sits at the 9500-token budget.
+- [x] Worktree home and prune guidance are included in the v0.17.1 packaging above; no new host command is needed.
 - [ ] The host skills do not yet tell the conductor how to write a grant. Through batuta-ai/skills.
 
 ## Status — 2026-10-24: v0.7.8, core beta.57, skills v0.16.1

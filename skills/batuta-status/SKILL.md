@@ -14,7 +14,7 @@ disable-model-invocation: true
    - **In progress** — task, executor, since when, state (running / awaiting verification / parked with a question; show `grant_park` reason and `beyond_grant` items from the ask file when present).
    - **Done (recent)** — the latest `WORK.md` entries with commits.
    - **Open plans** — title and progress (checked/total); with a roadmap, `phase N of M` first.
-   - **Leftovers** — worktrees or journals nothing references.
+   - **Leftovers** — worktrees or journals nothing references; for generated loop task trees, use the read-only `batuta loop --prune` report and `../batuta-loop/references/worktrees.md` for ownership and conditional cleanup guidance.
 6. **Routing read** — on request, or whenever there are 10+ done entries: tally Done lines per lane, escalations, and the delegation rate: the share of tasks whose code was not written by `self`. Facts, not estimates: "14 of 23 tasks never touched the conducting host's subscription". A high escalation rate out of a lane is the actionable signal — suggest a stronger model there or a more conservative classification. Money only when the user put reference prices in the routing table's Cost column; then multiply and label the assumptions as theirs.
 
 *Done when:* the four blocks are shown and any stale stamp or leftover is named.
