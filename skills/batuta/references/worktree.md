@@ -6,6 +6,7 @@ parallel.
 ## Contents
 
 - Mode
+- Home
 - Create
 - Verify inside
 - Integrate
@@ -19,57 +20,65 @@ Profile line `Worktree: off | medium+ | always`; no line = `off`.
 | Mode | Where the executor works |
 |---|---|
 | `off` | main checkout |
-| `medium+` | worktree for `medium` and above; `low` stays on the main checkout (a worktree for a rename is ceremony) |
+| `medium+` | worktree for `medium` and above; `low` stays on the main checkout |
 | `always` | worktree for every lane |
 
 The user may override per request.
 
+## Home
+
+Profile `Worktree-home: repository | cache` defaults to `repository`.
+Repository home: `<root>/.batuta/worktrees`. Cache home:
+`<os.UserCacheDir()>/batuta/worktrees/<digest>`, with `<digest>` = first 16
+hex SHA-256 characters of the canonical repository root path. OS cache: `~/Library/Caches`
+(macOS), `$XDG_CACHE_HOME` or `~/.cache` (Linux), `%LocalAppData%` (Windows).
+Record absolute `<worktree-path>` and `<base>`; use them even if the profile
+changes. Never move an existing tree.
+
 ## Create
 
-1. Ensure `.batuta/worktrees/` is in `.git/info/exclude`.
-2. Record the base: `<base>` is the branch checked out in the user's checkout (`git rev-parse --abbrev-ref HEAD`), whatever its name. Note it in the run trail; every command below uses it, never a hardcoded `main`.
-3. `git worktree add .batuta/worktrees/<slug> -b batuta/<slug> <base>`.
-4. Optional profile `Install: <command>` runs inside the worktree when tests need dependencies.
-5. Invoke the executor with the worktree as its working directory (adapter `cwd` placeholder). The brief's first line names it: *work only inside `<path>`*.
+1. Select the home. For repository home, exclude `.batuta/worktrees/` in `.git/info/exclude`.
+2. Record `<base>` from the user's checkout (`git rev-parse --abbrev-ref HEAD`), never assume `main`.
+3. Set and record `<worktree-path>` to the actual absolute `<home>/<slug>`; `git worktree add <worktree-path> -b batuta/<slug> <base>`.
+4. Run profile `Install: <command>` there if tests need dependencies.
+5. Invoke the executor there (adapter `cwd`); start its brief with *work only inside `<worktree-path>`*.
 
-The executor may commit freely there (WIP). Its history never reaches `<base>`.
+The executor may commit WIP there; that history never reaches `<base>`.
 
 ## Verify inside
 
-- **Snapshot first.** When the executor returns, inside the worktree: `git status --porcelain` non-empty → `git add -A && git commit -q -m "wip(batuta): <slug> candidate"`. Verification, review and the squash all read one complete tree; uncommitted work is never approved and never lost at the squash.
-- Scope check: `git diff --name-only <base>...batuta/<slug>`.
-- Diff review: `git diff <base>...batuta/<slug>`.
-- Tests run inside the worktree. Environment failure (missing dependencies, not a red test) → run the profile's Install command and retry once. No Install line → say so out loud, apply the diff on the user's checkout, run there, revert the applied diff before integrating. Never silently.
-- Retry: same worktree; snapshot again before re-verifying. Escalation: `git reset --hard <base>` inside the worktree, then the next executor takes over.
+- **Snapshot first.** After execution, inside the worktree: non-empty `git status --porcelain` → `git add -A && git commit -q -m "wip(batuta): <slug> candidate"`. Verification, review and squash use one complete tree; no uncommitted work is approved or lost.
+- Check scope with `git diff --name-only <base>...batuta/<slug>`; review `git diff <base>...batuta/<slug>`.
+- Test there. Missing dependencies (not a red test) → run profile Install and retry once. With no Install line, say so, apply the diff on the user's checkout, test there, then revert that diff before integrating. Never silently.
+- Retry in the same tree; snapshot before re-verifying. For escalation, `git reset --hard <base>` there before the next executor takes over.
 
 ## Integrate
 
-Approved → squash onto the user's checkout, on `<base>`, with your message:
+Approved → squash onto the user's checkout on `<base>`:
 
 ```bash
 git merge --squash batuta/<slug>
 git commit -m "<message per the profile's methodology>"
-git worktree remove .batuta/worktrees/<slug>
+git worktree remove <worktree-path>
 git branch -D batuta/<slug>
 ```
 
-One verified task stays one atomic commit. Rejected work is a removed
-worktree, not a revert on the user's checkout. `<base>` moved since the
-worktree was created (another item integrated) → the squash may conflict;
-see Parallel batches.
+One verified task is one atomic commit. Rejected work is a removed worktree,
+not a revert on the user's checkout. If `<base>` moved, the squash may
+conflict; see Parallel batches.
 
 ## Parallel batches
 
-When the profile says `Execution: parallel` or the user asks:
+When profile says `Execution: parallel` or the user asks:
 
-- Independent items run at once, at most **four**, each in its own worktree regardless of the Worktree mode.
-- Dependents wait for their dependency's commit, then start from the updated `<base>`.
-- Verification and commit stay per item, in the order executors return. Integration is sequential: one squash at a time, tests re-run on `<base>` after each when two items touched the same files.
-- A conflict at squash time → the item is re-briefed with the current `<base>` as context and runs again in a fresh worktree. Never resolve a conflict by guessing.
+- Run at most **four** independent items at once, each in its own worktree regardless of Worktree mode.
+- Start dependents after their dependency commits, from updated `<base>`.
+- Verify and commit per item as executors return. Integrate sequentially; re-run tests on `<base>` after each if two items touched the same files.
+- A squash conflict → re-brief with current `<base>` and run in a fresh worktree; never guess a resolution.
 - Scouts never share a worktree with a code executor.
 
 ## Cleanup
 
-An aborted item: `git worktree remove --force .batuta/worktrees/<slug>`
-and `git branch -D batuta/<slug>`. `/batuta-status` lists leftover
-worktrees; `/batuta-pause` records the ones still running.
+Abort: `git worktree remove --force <worktree-path>` then
+`git branch -D batuta/<slug>`. `/batuta-status` lists leftovers;
+`/batuta-pause` records those still running.
