@@ -1,7 +1,8 @@
 # WORK — batuta (host)
 
-## Current status — 2026-10-29: skills v0.17.1 packaging
-- [x] skills#84 merged after CI, then release#85 published v0.17.1 (`ddc8417`). Official `scripts/sync-skills.sh v0.17.1` vendors the exact published tree: interactive worktree home selection plus loop/status prune guidance. Core stays beta.58. Host gate and all40 Node tests passed; published skills gate remains9499/9500 cycle tokens. Host PR/release and authorized local update are the remaining steps.
+## Current status — 2026-10-29: v0.7.11 installed, skills v0.17.1, core beta.58
+- [x] Host#139 (`c66a9a7`) vendors skills v0.17.1 (`ddc8417`, skills#84/release#85) through the official script. Host#140 published v0.7.11 (`d257980`); merge and release CI/workflows passed. Exact64-file published source comparison, host gate and all40 Node tests passed. Core remains beta.58; skills cycle packet remains9499/9500.
+- [x] The authorized official installer ran from immutable v0.7.11 checkout and exited0. Claude updated0.7.9→0.7.11; Codex updated0.7.10→0.7.11; shared skills updated0.16.1→0.17.1. All14 skill trees in shared/Codex/Claude locations match source, all14 OpenCode commands match, shared lock matches `ddc8417`, and PATH core beta.58 verified. Reopen agent sessions to load plugins. Evidence: `.batuta/runs/worktree-lifecycle-publication/` in the delivery worktree; immutable installer checkout `.batuta/worktrees/local-install-v0.7.11` under batuta-host-pin.
 
 ## Current status — 2026-10-26: v0.7.9, core beta.58, skills v0.16.1
 - [x] batuta#133 pins core `v1.1.0-beta.58` (core#180: `batuta loop --answer` can carry a standing grant with `--allow-path` and `--allow-op`. The runner answers a later question that the grant covers and does not park again; boundary paths such as `WORK.md`, `.batuta/**`, CI configuration, licenses and lockfiles never pass through a grant) → v0.7.9. The maintainer machine still runs plugin 0.7.8 and core beta.57 until it is updated.
